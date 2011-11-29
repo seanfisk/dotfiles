@@ -53,6 +53,7 @@ if /usr/bin/which gnome-open > /dev/null; then
 fi
 alias godmode='sudo -i'
 alias reload-shell-config='source ~/.bashrc'
+alias basic-bash='env --ignore-environment bash --login --noprofile --norc'
 
 # multi-processor stuff
 num-procs()
