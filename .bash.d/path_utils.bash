@@ -34,7 +34,7 @@ path_remove_duplicates() {
 	# there are better ways to do this with zsh,
 	# but I'd like to be bash compatible as well
   # path_arr cannot be local, as I think it's being used in a subshell
-	path_arr=($(echo "$PATH"))
+	path_arr=($(echo "$var"))
 	IFS=$'\n'
 	# strip out duplicates lines using awk and bring it back into an array
 	path_arr=($(echo "${path_arr[*]}" | awk ' !x[$0]++'))
