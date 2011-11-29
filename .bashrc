@@ -4,6 +4,10 @@ export PATH="~/bin:~/.local/bin:/usr/local/sbin:/usr/local/bin:$PATH"
 source ~/.bash.d/path_utils.bash
 path_remove_duplicates
 
+# manpath
+export MANPATH=~/.local/man:$MANPATH
+path_remove_duplicates MANPATH
+
 # set the editor
 export EDITOR='emacsclient --alternate-editor='
 
