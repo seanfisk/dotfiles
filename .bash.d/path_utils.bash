@@ -8,7 +8,7 @@
 path_remove() {
 	local var_name=${2:-PATH}
 	# get the value of the variable in var_name
-  local var=$(eval echo $"$var_name")
+  local var=$(eval echo \$$var_name)
 	IFS=:
 	# convert it to an array, the echo is for zsh compatiblity
 	path_arr=($(echo "$var"))
@@ -28,7 +28,7 @@ path_remove() {
 path_remove_duplicates() {
   local var_name=${1:-PATH}
   # get the value of the variable in var_name
-  local var=$(eval echo $"$var_name")
+  local var=$(eval echo \$$var_name)
   IFS=:
 	# convert it to an array, the echo is for zsh compatiblity
 	# there are better ways to do this with zsh,
