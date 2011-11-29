@@ -1,0 +1,4 @@
+# Ignore working directory files
+/.wd/currentscheme
+/.wd/*.scheme
+/.wd/wdenv

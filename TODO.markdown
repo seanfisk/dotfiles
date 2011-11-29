@@ -1,0 +1,13 @@
+TODO for Sean Fisk's Dotfiles
+=============================
+
+* Installation / Removal
+    * Improve install script
+    * Add removal script
+* wd (working-directory)
+    * Port it to zsh, possibly improve it
+    * Look into alternatives like [da](https://github.com/nitrogoldfish/da)
+* oh-my-zsh
+    * Customize it (probably fork it)
+    * Remove the `cd` function, for sure. It's annoying.
+    * Remove other unecessary stuff
