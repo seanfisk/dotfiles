@@ -1,6 +1,6 @@
 #!/bin/bash
 # set the path, remove duplicates
-export PATH="$HOME/bin:$HOME/.local/bin:/usr/local/sbin:/usr/local/bin:$PATH"
+export PATH="~/bin:~/.local/bin:/usr/local/sbin:/usr/local/bin:$PATH"
 source ~/.bash.d/path_utils.bash
 path_remove_duplicates
 
@@ -8,13 +8,13 @@ path_remove_duplicates
 export EDITOR='emacsclient --alternate-editor='
 
 # loads RVM into a shell session
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
+[[ -s ~/.rvm/scripts/rvm ]] && source ~/.rvm/scripts/rvm
 
 # loads PythonBrew into a shell session
-[[ -s "$HOME/.pythonbrew/etc/bashrc" ]] && source "$HOME/.pythonbrew/etc/bashrc"
+[[ -s ~/.pythonbrew/etc/bashrc ]] && source ~/.pythonbrew/etc/bashrc
 
 # working directory
-export WDHOME=$HOME/.wd
+export WDHOME=~/.wd
 source $WDHOME/wdaliases.sh
 
 # source aliases - we want this to error if not found

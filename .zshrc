@@ -1,9 +1,9 @@
 #!/usr/bin/env zsh
 # source bash
-source "$HOME/.bashrc"
+source ~/.bashrc
 
 # Path to your oh-my-zsh configuration.
-export ZSH=$HOME/.oh-my-zsh
+export ZSH=~/.oh-my-zsh
 
 # Set name of the theme to load.
 # Look in ~/.oh-my-zsh/themes/
