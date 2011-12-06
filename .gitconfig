@@ -4,13 +4,11 @@
 [core]
 	excludesfile = ~/.gitignore_global
 [alias]
-	all = !git add --all $(pwd -P) # add all new and changed files in the repo, EVEN IF IN A SUBDIRECTORY
+	all = !git add --all $(pwd -P) # add all new and changed files in the repo, even if in a subdirectory
 	ci = commit
-	cm = commit -m # commit with a message
-	ca = commit --all # all tracked
-	cam = commit --all -m # commit tracked with a message
-	call = !git all && git ci # add all and commit
-	callm = !git all && git cm # add all and commit with a message
+	cim = commit -m # commit with a message
+	cia = commit --all # commit all tracked
+	ciam = commit --all -m # commit all tracked with a message
 	st = status
 	co = checkout
 	freebase = pull --rebase
