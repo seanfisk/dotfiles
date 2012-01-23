@@ -1,4 +1,11 @@
 #!/bin/bash
+
+# exit if non-interactive
+[[ $- != *i* ]] && return
+
+# Source global definitions
+[[ -s /lab/DefaultSetups/bashrc ]] && source /lab/DefaultSetups/bashrc
+
 # set the path, remove duplicates
 
 export PATH=~/bin:~/.local/bin:/usr/local/sbin:/usr/local/bin:$PATH
