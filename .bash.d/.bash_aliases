@@ -12,14 +12,14 @@ elif /usr/bin/which pbcopy &> /dev/null; then
 	alias copy='pbcopy'
 	alias paste='pbpaste'
 fi
-alias dl='wget `paste`'
-alias webclip='wget -nv -O - `paste` | copy'
+alias dl='wget $(paste)'
+alias webclip='wget -nv -O - $(paste) | copy'
 
 # platform-specific
-kernelName=`uname -s`
-if [[ "$kernelName" = Linux ]]; then
+kernel_name=$(uname -s)
+if [[ $kernel_name == Linux ]]; then
 	alias ls='ls --color=always -hF' # colorize, human readable file sizes, classify
-elif [[ "$kernelName" = Darwin ]]; then
+elif [[ $kernelName == Darwin ]]; then
 	export CLICOLOR=1 # show ls colors
 	export CLICOLOR_FORCE=1 # force show ls colors, even when not going to terminal (for example, piping to less)
 	alias ls='ls -hFG' # human readable file sizes, classify, and color
