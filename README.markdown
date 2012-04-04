@@ -29,9 +29,22 @@ Recommended Software
 
 These are some command-line utilities that I use often:
 
-* [tig](http://jonas.nitro.dk/tig/) - text-interface mode for git (git log viewer)
-* [tmux](http://tmux.sourceforge.net/) - terminal multiplexer, GNU screen replacement
-* [rvm](http://beginrescueend.com/) - Ruby Version Manager
-* [pythonbrew](https://github.com/utahta/pythonbrew) - Python version manager
-* [xclip](http://sourceforge.net/projects/xclip/) - command line interface to the X11 clipboard
-* [ack](http://betterthangrep.com/) - file tree search, grep replacement
+* [tig][tig] - text-interface mode for git (git log viewer)
+* [tmux][tmux] - terminal multiplexer, GNU screen replacement
+* [tmux-MacOSX-pasteboard][tmux-osx-pasteboard] - Workaround for `pbpaste` and
+  `pbcopy` under Mac OS X
+* [rvm][rvm] - Ruby Version Manager
+* [pythonbrew][pythonbrew] - Python version manager
+* [xclip][xclip] - command line interface to the X11 clipboard
+* [ack][ack] - file tree search, grep replacement
+* [htop][htop], [htop-osx][htop-osx] - top replacement
+
+[tig]: http://jonas.nitro.dk/tig/
+[tmux]: http://tmux.sourceforge.net/
+[tmux-osx-pasteboard]: https://github.com/ChrisJohnsen/tmux-MacOSX-pasteboard
+[rvm]: http://beginrescueend.com/
+[pythonbrew]: https://github.com/utahta/pythonbrew
+[xclip]: http://sourceforge.net/projects/xclip/
+[ack]: http://betterthangrep.com/
+[htop]: http://htop.sourceforge.net/
+[htop-osx]: https://github.com/cynthia/htop-osx
