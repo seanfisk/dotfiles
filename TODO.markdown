@@ -1,6 +1,9 @@
 TODO for Sean Fisk's Dotfiles
 =============================
 
+* Local configuration
+    * Create a file, maybe called `.bashrc_local' and `.zshrc_local' that
+      contains local modifications (specific to that machine)
 * Installation / Removal
     * Improve install script
     * Add removal script
