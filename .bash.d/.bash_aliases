@@ -25,6 +25,10 @@ elif [[ $kernelName == Darwin ]]; then
 	alias ls='ls -hFG' # human readable file sizes, classify, and color
 	alias openx='env -i open *.xcodeproj' # open Xcode project
 fi
+
+# really? yes, really
+alias c='cd'
+
 alias l='ls -l' # list
 alias ll='ls -l' # list
 alias la='ls -al' # show hidden, list

@@ -17,6 +17,7 @@
 	trackbranch = !sh -c 'git checkout --track -b $0 origin/$0'
 	lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%Creset' --abbrev-commit --date=relative
 	br = branch
+	clone = clone --no-hardlinks
 [color]
 	ui = auto
 [color "branch"]
