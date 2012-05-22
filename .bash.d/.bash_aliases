@@ -60,6 +60,11 @@ alias reload-shell-config='source ~/.bashrc'
 alias basic-bash='env --ignore-environment bash --login --noprofile --norc'
 alias mkdate='date +%Y-%m-%d'
 
+# ack alias (with pager)
+if /usr/bin/which ack &> /dev/null; then
+	alias ackp="ack --pager='less -R'"
+fi
+
 # multi-processor stuff
 num-procs()
 {
