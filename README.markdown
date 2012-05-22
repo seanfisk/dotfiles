@@ -31,6 +31,7 @@ These are some command-line utilities that I use often:
 
 * [tig][tig] - text-interface mode for git (git log viewer)
 * [tmux][tmux] - terminal multiplexer, GNU screen replacement
+* [tmuxinator][tmuxinator] - manage complex tmux sessions easily
 * [tmux-MacOSX-pasteboard][tmux-osx-pasteboard] - Workaround for `pbpaste` and
   `pbcopy` under Mac OS X
 * [rvm][rvm] - Ruby Version Manager
@@ -41,6 +42,7 @@ These are some command-line utilities that I use often:
 
 [tig]: http://jonas.nitro.dk/tig/
 [tmux]: http://tmux.sourceforge.net/
+[tmuxinator]: https://github.com/aziz/tmuxinator
 [tmux-osx-pasteboard]: https://github.com/ChrisJohnsen/tmux-MacOSX-pasteboard
 [rvm]: http://beginrescueend.com/
 [pythonbrew]: https://github.com/utahta/pythonbrew
