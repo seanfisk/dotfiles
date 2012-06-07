@@ -30,4 +30,4 @@ export WDHOME=~/.wd
 source $WDHOME/wdaliases.sh
 
 # source aliases - we want this to error if not found
-source ~/.bash.d/.bash_aliases
+source ~/.bash.d/aliases.bash
