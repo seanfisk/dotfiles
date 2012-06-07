@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Dotfiles installation / removal script
 # by Sean Fisk

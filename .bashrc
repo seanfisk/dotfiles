@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # set the path, remove duplicates
 
@@ -29,5 +29,23 @@ export EDITOR='emacsclient --alternate-editor='
 export WDHOME=~/.wd
 source $WDHOME/wdaliases.sh
 
+# platform-specific code - must come before aliases
+# platform-specific
+kernel_name=$(uname -s)
+case $kernel_name in
+	Linux)
+		source ~/.bash.d/platform_specific/gnu_linux.bash
+		;;
+	Darwin)
+		source ~/.bash.d/platform_specific/mac_os_x.bash
+		;;
+	*)
+		echo 'Kernel not recognized. Please revise the shell configuration' >&2
+		;;
+esac
+
 # source aliases - we want this to error if not found
 source ~/.bash.d/aliases.bash
+
+# local content - useful for stuff only on one machine
+[[ -s ~/.bash.d/local.bash ]] && source ~/.bash.d/local.bash

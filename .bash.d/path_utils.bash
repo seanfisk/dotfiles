@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Utils for manipulating the path
 # Compiled by Sean Fisk
 
@@ -44,4 +44,17 @@ path_remove_duplicates() {
 	unset IFS
 	# output the new array
 	export "$var_name=$new_path"
+}
+
+# check to see if an executable is in the path
+# bash and zsh compatible
+# 
+executable_in_path() {
+	/usr/bin/which "$1" &> /dev/null
+}
+
+# check to see if a function or executable exists
+# this is meant for my use only, so it is not extremely robust
+function_or_executable_exists() {
+	builtin type $1 &> /dev/null
 }

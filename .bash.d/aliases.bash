@@ -1,29 +1,15 @@
-#!/bin/bash
-# copy / paste
-# Linux xclip
+#!/usr/bin/env bash
 
+# Note:
 # Don't use the bash or zsh built-in `which'
 # Use the actual executable for shell independence
-if /usr/bin/which xclip &> /dev/null; then
-	alias copy='xclip -sel c'
-	alias paste='xclip -sel c -o'
-# Mac pbcopy/paste
-elif /usr/bin/which pbcopy &> /dev/null; then
-	alias copy='pbcopy'
-	alias paste='pbpaste'
-fi
-alias dl='wget $(paste)'
-alias webclip='wget -nv -O - $(paste) | copy'
 
-# platform-specific
-kernel_name=$(uname -s)
-if [[ $kernel_name == Linux ]]; then
-	alias ls='ls --color=always -hF' # colorize, human readable file sizes, classify
-elif [[ $kernelName == Darwin ]]; then
-	export CLICOLOR=1 # show ls colors
-	export CLICOLOR_FORCE=1 # force show ls colors, even when not going to terminal (for example, piping to less)
-	alias ls='ls -hFG' # human readable file sizes, classify, and color
-	alias openx='env -i open *.xcodeproj' # open Xcode project
+if function_or_executable_exists copy; then
+	if function_or_executable_exists paste; then
+		alias dl='wget $(paste)'
+		alias webclip='wget -nv -O - $(paste) | copy'
+		alias ssh-copy-id-clipboard='copy < ~/.ssh/id_rsa.pub'
+	fi
 fi
 
 # really? yes, really
@@ -47,31 +33,23 @@ alias gobuddygo='git push'
 alias cometome='git pull'
 
 # handy aliases
-alias u='cd ..'
+alias u='cd ..' # thanks Karlin
 alias changelog="$EDITOR ~/changelog.txt"
-alias ssh-copy-id-clipboard='copy < ~/.ssh/id_rsa.pub'
-alias realpath='readlink -f'
 alias less='less -R'
-if /usr/bin/which gnome-open > /dev/null; then
-	alias open='gnome-open'
-fi
 alias godmode='sudo -i'
 alias reload-shell-config='source ~/.bashrc'
-alias basic-bash='env --ignore-environment bash --login --noprofile --norc'
+alias bash-basic='env --ignore-environment bash --login --noprofile --norc'
 alias mkdate='date +%Y-%m-%d'
 
 # ack alias (with pager)
-if /usr/bin/which ack &> /dev/null; then
+if executable_in_path ack; then
 	alias ackp="ack --pager='less -R'"
 fi
 
-# multi-processor stuff
-num-procs()
-{
-	grep -E 'processor[[:space:]]+: [[:digit:]]+' /proc/cpuinfo | wc -l
-}
-export MAKEFLAGS="--jobs=$(num-procs)" # do this for all make's
-alias parallelmake="make $MAKEFLAGS"	 # add an alias
+if type num-procs &> /dev/null; then
+	export MAKEFLAGS="--jobs=$(num-procs)" # do this for all make's
+	alias make-parallel="make $MAKEFLAGS"	 # add an alias
+fi
 
 # shortcut functions
 cdl() { cd "$1" && ls; }
@@ -115,13 +93,15 @@ unlink-all-exectuables() {
 	done
 }
 # emacs
-if /usr/bin/which aquamacs &> /dev/null; then
-	alias ec=aquamacs # prefer aquamacs script over emacsclient
+if executable_in_path aquamacs; then
+	# prefer aquamacs script over emacsclient
+	alias ec=aquamacs
 else
-	ec() { emacsclient "$@" & } # start emacsclient in the background
-	 # DON'T use alternate editor because it will start emacs in the terminal,
-	 # which is probably not what we want. Instead, just warn us that the server
-	 # does not exist.
+	# start emacsclient in the background
+	ec() { emacsclient "$@" & }
+	# DON'T use alternate editor because it will start emacs in the terminal,
+	# which is probably not what we want. Instead, just warn us that the server
+	# does not exist.
 fi
 ## quick emacs
 alias ecq='emacs --no-window-system --quick'

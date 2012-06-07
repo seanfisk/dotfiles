@@ -2,3 +2,4 @@
 /.wd/currentscheme
 /.wd/*.scheme
 /.wd/wdenv
+/.bash.d/local.bash
