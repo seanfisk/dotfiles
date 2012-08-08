@@ -11,6 +11,7 @@
 	ciam = commit --all -m # commit all tracked with a message
 	st = status
 	co = checkout
+	cob = checkout -b # create a new branch
 	freebase = pull --rebase
 	up = pull --rebase
 	remotebranch = !sh -c 'git push origin HEAD:refs/heads/$0 && git checkout --track -b $0 origin/$0'
