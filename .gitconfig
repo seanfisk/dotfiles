@@ -6,19 +6,19 @@
 [alias]
 	all = !git add --all $(pwd -P) # add all new and changed files in the repo, even if in a subdirectory
 	ci = commit
-	cim = commit -m # commit with a message
+	br = branch
 	cia = commit --all # commit all tracked
 	ciam = commit --all -m # commit all tracked with a message
-	st = status
+	cim = commit -m # commit with a message
+	clone = clone --no-hardlinks
 	co = checkout
 	cob = checkout -b # create a new branch
 	freebase = pull --rebase
-	up = pull --rebase
-	remotebranch = !sh -c 'git push origin HEAD:refs/heads/$0 && git checkout --track -b $0 origin/$0'
-	trackbranch = !sh -c 'git checkout --track -b $0 origin/$0'
 	lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%Creset' --abbrev-commit --date=relative
-	br = branch
-	clone = clone --no-hardlinks
+	remotebranch = !sh -c 'git push origin HEAD:refs/heads/$0 && git checkout --track -b $0 origin/$0'
+	st = status
+	trackbranch = !sh -c 'git checkout --track -b $0 origin/$0'
+	up = pull --rebase
 [color]
 	ui = auto
 [color "branch"]
