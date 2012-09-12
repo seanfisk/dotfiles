@@ -1,9 +1,8 @@
 TODO for Sean Fisk's Dotfiles
 =============================
 
-* Installation / Removal
-    * Improve install script
-    * Add removal script
+* Switch from pythonbrew to pythonz
+* Simplify install script
 * rvm install blows up due to one of my shell configurations
 * wd (working-directory)
     * Port it to zsh, possibly improve it
