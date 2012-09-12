@@ -29,24 +29,25 @@ Recommended Software
 
 These are some command-line utilities that I use often:
 
+* [ack][ack] - file tree search, grep replacement
+* [axel][axel] - download accelerator
+* [htop][htop], [htop-osx][htop-osx] - top replacement
+* [pythonbrew][pythonbrew] - Python version manager
+* [rvm][rvm] - Ruby Version Manager
 * [tig][tig] - text-interface mode for git (git log viewer)
+* [tmux-MacOSX-pasteboard][tmux-osx-pasteboard] - Workaround for `pbpaste` and `pbcopy` under Mac OS X
 * [tmux][tmux] - terminal multiplexer, GNU screen replacement
 * [tmuxinator][tmuxinator] - manage complex tmux sessions easily
-* [tmux-MacOSX-pasteboard][tmux-osx-pasteboard] - Workaround for `pbpaste` and
-  `pbcopy` under Mac OS X
-* [rvm][rvm] - Ruby Version Manager
-* [pythonbrew][pythonbrew] - Python version manager
 * [xclip][xclip] - command line interface to the X11 clipboard
-* [ack][ack] - file tree search, grep replacement
-* [htop][htop], [htop-osx][htop-osx] - top replacement
 
+[ack]: http://betterthangrep.com/
+[axel]: http://axel.alioth.debian.org/
+[htop-osx]: https://github.com/cynthia/htop-osx
+[htop]: http://htop.sourceforge.net/
+[pythonbrew]: https://github.com/utahta/pythonbrew
+[rvm]: http://beginrescueend.com/
 [tig]: http://jonas.nitro.dk/tig/
+[tmux-osx-pasteboard]: https://github.com/ChrisJohnsen/tmux-MacOSX-pasteboard
 [tmux]: http://tmux.sourceforge.net/
 [tmuxinator]: https://github.com/aziz/tmuxinator
-[tmux-osx-pasteboard]: https://github.com/ChrisJohnsen/tmux-MacOSX-pasteboard
-[rvm]: http://beginrescueend.com/
-[pythonbrew]: https://github.com/utahta/pythonbrew
 [xclip]: http://sourceforge.net/projects/xclip/
-[ack]: http://betterthangrep.com/
-[htop]: http://htop.sourceforge.net/
-[htop-osx]: https://github.com/cynthia/htop-osx
