@@ -19,8 +19,8 @@ umask u=rwx,g=,o=
 # loads RVM into a shell session
 [[ -s ~/.rvm/scripts/rvm ]] && source ~/.rvm/scripts/rvm
 
-# loads PythonBrew into a shell session
-[[ -s ~/.pythonbrew/etc/bashrc ]] && source ~/.pythonbrew/etc/bashrc
+# loads pythonz into a shell session
+[[ -s ~/.pythonz/etc/bashrc ]] && source ~/.pythonz/etc/bashrc
 
 # set the editor
 export EDITOR='emacsclient --alternate-editor='
