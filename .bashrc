@@ -40,7 +40,7 @@ case $kernel_name in
 		source ~/.bash.d/platform_specific/mac_os_x.bash
 		;;
 	*)
-		echo 'Kernel not recognized. Please revise the shell configuration' >&2
+		echo 'Kernel not recognized. Please revise the shell configuration.' >&2
 		;;
 esac
 

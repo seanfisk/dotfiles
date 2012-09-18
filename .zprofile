@@ -3,4 +3,4 @@
 source ~/.bash_profile
 
 # Get the aliases and functions
-[[ -f ~/.zshrc ]] && source ~/.zshrc
+[[ -s ~/.zshrc ]] && source ~/.zshrc

@@ -8,13 +8,12 @@
 path_remove() {
 	local var_name=${2:-PATH}
 	# get the value of the variable in var_name
-  local var=$(eval echo \$$var_name)
+	local var=$(eval echo \$$var_name)
 	IFS=:
 	# convert it to an array, the echo is for zsh compatiblity
 	path_arr=($(echo "$var"))
 	unset IFS
 	# perform any array operations to remove elements from the array
-  # path_arr cannot be local, as I think it's being used in a subshell
 	path_arr=(${path_arr[@]%%$1})
 	IFS=:
 	local new_path="${path_arr[*]}"
@@ -26,14 +25,14 @@ path_remove() {
 # remove duplicate path entries
 # $1: optional: name of variable to parse instead of PATH
 path_remove_duplicates() {
-  local var_name=${1:-PATH}
-  # get the value of the variable in var_name
-  local var=$(eval echo \$$var_name)
-  IFS=:
+	local var_name=${1:-PATH}
+	# get the value of the variable in var_name
+	local var=$(eval echo \$$var_name)
+	IFS=:
 	# convert it to an array, the echo is for zsh compatiblity
 	# there are better ways to do this with zsh,
 	# but I'd like to be bash compatible as well
-  # path_arr cannot be local, as I think it's being used in a subshell
+	# path_arr cannot be local, as I think it's being used in a subshell
 	path_arr=($(echo "$var"))
 	IFS=$'\n'
 	# strip out duplicates lines using awk and bring it back into an array
@@ -48,9 +47,9 @@ path_remove_duplicates() {
 
 # check to see if an executable is in the path
 # bash and zsh compatible
-# 
+#
 executable_in_path() {
-	/usr/bin/which "$1" &> /dev/null
+	builtin hash $1 2>&-
 }
 
 # check to see if a function or executable exists

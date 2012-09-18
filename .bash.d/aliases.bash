@@ -1,9 +1,5 @@
 #!/usr/bin/env bash
 
-# Note:
-# Don't use the bash or zsh built-in `which'
-# Use the actual executable for shell independence
-
 if function_or_executable_exists copy; then
 	if function_or_executable_exists paste; then
 		alias dl='wget $(paste)'
@@ -54,7 +50,7 @@ fi
 # shortcut functions
 cdl() { cd "$1" && ls; }
 mk() { mkdir -p "$1" && cd "$1"; }
-old() { mv "$1" "$1.old"; } # make a *.old file	
+old() { mv "$1" "$1.old"; } # make a *.old file
 find-all-executables() {
 	if [[ $# -gt 1 ]]; then
 		echo "Usage: $0 [DIRECTORY]" 1>&2
@@ -70,7 +66,8 @@ link-all-exectuables() {
 	local target_dir=$(readlink --canonicalize-existing "$1")
 	local link_dir=$(readlink --canonicalize-existing "${2:-.}")
 	pushd "$link_dir"
-	find "$target_dir" -maxdepth 1 -type f -executable -exec ln --symbolic --verbose --target-directory . '{}' '+'
+	find "$target_dir" -maxdepth 1 -type f -executable \
+		-exec ln --symbolic --verbose --target-directory . '{}' '+'
 	popd
 }
 unlink-all-exectuables() {
@@ -99,9 +96,9 @@ if executable_in_path aquamacs; then
 else
 	# start emacsclient in the background
 	ec() { emacsclient "$@" & }
-	# DON'T use alternate editor because it will start emacs in the terminal,
-	# which is probably not what we want. Instead, just warn us that the server
-	# does not exist.
+	# DON'T use alternate editor because it will start emacs in the
+	# terminal, which is probably not what we want. Instead, just warn
+	# us that the server does not exist.
 fi
 ## quick emacs
 alias ecq='emacs --no-window-system --quick'
