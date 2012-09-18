@@ -32,8 +32,9 @@ These are some command-line utilities that I use often:
 * [ack][ack] - file tree search, grep replacement
 * [axel][axel] - download accelerator
 * [htop][htop], [htop-osx][htop-osx] - top replacement
-* [pythonbrew][pythonbrew] - Python version manager
-* [rvm][rvm] - Ruby Version Manager
+* [pythonz][pythonz] - Python version manager
+* [virtualenvwrapper][virtualenvwrapper] - Python environment manager
+* [rbenv][rbenv] - Ruby environment manager
 * [tig][tig] - text-interface mode for git (git log viewer)
 * [tmux-MacOSX-pasteboard][tmux-osx-pasteboard] - Workaround for `pbpaste` and `pbcopy` under Mac OS X
 * [tmux][tmux] - terminal multiplexer, GNU screen replacement
@@ -44,8 +45,9 @@ These are some command-line utilities that I use often:
 [axel]: http://axel.alioth.debian.org/
 [htop-osx]: https://github.com/cynthia/htop-osx
 [htop]: http://htop.sourceforge.net/
-[pythonbrew]: https://github.com/utahta/pythonbrew
-[rvm]: http://beginrescueend.com/
+[pythonz]: https://github.com/utahta/pythonbrew
+[virtualenvwrapper]: https://bitbucket.org/dhellmann/virtualenvwrapper
+[rbenv]: https://github.com/sstephenson/rbenv
 [tig]: http://jonas.nitro.dk/tig/
 [tmux-osx-pasteboard]: https://github.com/ChrisJohnsen/tmux-MacOSX-pasteboard
 [tmux]: http://tmux.sourceforge.net/
