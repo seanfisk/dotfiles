@@ -3,7 +3,7 @@ INSTALL_PROGRAM = $(INSTALL)
 INSTALL_DATA = $(INSTALL) -b -m 644
 # INSTALL_RECURSIVE idea stolen from
 # <http://lists.freebsd.org/pipermail/freebsd-ports/2007-February/038476.html>
-INSTALL_RECURSIVE = $(SHELL) -c 'find $$1 | cpio -dmpuv $$2' --
+INSTALL_RECURSIVE = $(SHELL) -c 'find "$$1" | cpio -dmpuv "$$2"' --
 
 # pass prefix on the command-line to change install location
 # e.g.,
@@ -26,10 +26,9 @@ zsh: bash
 	$(INSTALL_DATA) .zshrc "$(prefix)"
 	$(INSTALL_DATA) .zprofile "$(prefix)"
 	$(INSTALL_DATA) .zlogout "$(prefix)"
-	# oh-my-zsh has an auto-update feature, symbolic link so as to
-	# not interfere with it
-	# TODO: This ln command is very troublesome. Try to fix it.
-	ln -s "$(realpath .oh-my-zsh)" "$(realpath $(prefix))/.oh-my-zsh"
+	# oh-my-zsh has an auto-update feature, symbolic link so it works
+	# for linking: symbolic link, no dereference, interactive
+	ln -sni "$(realpath .oh-my-zsh)" "$(abspath $(prefix))/.oh-my-zsh"
 
 ack:
 	$(INSTALL_DATA) .ackrc "$(prefix)"
