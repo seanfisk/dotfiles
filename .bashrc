@@ -21,6 +21,12 @@ umask u=rwx,g=,o=
 
 # loads pythonz into a shell session
 [[ -s ~/.pythonz/etc/bashrc ]] && source ~/.pythonz/etc/bashrc
+# load virtualenvwrapper (python) into a shell session
+# don't use the lazy functions, otherwise we won't get completion on
+# the environments initially
+if executable_in_path virtualenvwrapper.sh; then
+	source virtualenvwrapper.sh
+fi
 
 # set the editor
 export EDITOR='emacsclient --alternate-editor='
