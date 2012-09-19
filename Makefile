@@ -28,6 +28,7 @@ zsh: bash
 	$(INSTALL_DATA) .zlogout "$(prefix)"
 	# oh-my-zsh has an auto-update feature, symbolic link so as to
 	# not interfere with it
+	# TODO: This ln command is very troublesome. Try to fix it.
 	ln -s "$(realpath .oh-my-zsh)" "$(realpath $(prefix))/.oh-my-zsh"
 
 ack:
