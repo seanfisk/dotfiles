@@ -52,7 +52,7 @@ compiled from source and install to my `~/.local` directory.
 * [xclip][xclip] - command line interface to the X11 clipboard
 
 [ack]: http://betterthangrep.com/
-[aptitude][aptitude]: http://wiki.debian.org/Aptitude
+[aptitude]: http://wiki.debian.org/Aptitude
 [autojump]: https://github.com/joelthelion/autojump
 [axel]: http://axel.alioth.debian.org/
 [homebrew]: https://github.com/mxcl/homebrew
@@ -66,4 +66,4 @@ compiled from source and install to my `~/.local` directory.
 [tmuxinator]: https://github.com/aziz/tmuxinator
 [virtualenvwrapper]: https://bitbucket.org/dhellmann/virtualenvwrapper
 [xclip]: http://sourceforge.net/projects/xclip/
-[yum][yum]: http://yum.baseurl.org/
+[yum]: http://yum.baseurl.org/
