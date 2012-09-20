@@ -33,10 +33,6 @@ fi
 # set the editor
 export EDITOR='emacsclient --alternate-editor='
 
-# working directory
-export WDHOME=~/.wd
-source $WDHOME/wdaliases.sh
-
 # platform-specific code - must come before aliases
 # platform-specific
 kernel_name=$(uname -s)
