@@ -16,8 +16,10 @@ umask u=rwx,g=,o=
 # exit if non-interactive
 [[ $- != *i* ]] && return
 
-# loads RVM into a shell session
-[[ -s ~/.rvm/scripts/rvm ]] && source ~/.rvm/scripts/rvm
+# loads rbenv into a shell session
+if executable_in_path rbenv; then
+	eval "$(rbenv init -)"
+fi
 
 # loads pythonz into a shell session
 [[ -s ~/.pythonz/etc/bashrc ]] && source ~/.pythonz/etc/bashrc
