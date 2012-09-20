@@ -1,55 +1,69 @@
 Shell and other configuration files (dotfiles) for Sean Fisk
 ============================================================
 
-These are my configuration files for various shells and other things. Currently, it contains configurations for the **bash shell**, **z shell**, **git**, and my friend Karlin's **[working directory script](https://github.com/karlin/working-directory)**.
+These are my configuration files for various shells and other
+things. Currently, it contains configurations for the **bash shell**,
+**z shell**, **git**, **tmux**, and **ack**.
 
-I don't recommend just cloning this repository and using it. Rather, I would recommend picking out pieces that you like and inserting them into your own configurations.
+I don't recommend just cloning this repository and using it. Rather, I
+would recommend picking out pieces that you like and inserting them
+into your own configurations.
 
 Installation
 ------------
 
-Simply run `./install.bash install` from the repository to symbolic link all relevant dotfiles into your home directory. The script will offer you to backup each file if it already exists. It will not just clobber it.
+To install the dotfiles to your home directory:
 
-To remove the configuration and unlink all files, run `./install.bash remove` from the repository.
+    make install
+    
+To install the dotfiles to a different prefix:
 
-**Mac OS X users!** - this install script uses features specific to the GNU version of the `ln` executable which are not present in Mac OS X's BSD version (I feel the BSD version is severely crippled). To install correctly, either manually link the files, or use [Homebrew](https://github.com/mxcl/homebrew) to install the `coreutils` formula. This installs all the GNU coreutils with a prefix of `g`. Invoke the install script like this:
-
-	brew install coreutils
-	LN_EXECUTABLE=gln ./install.bash install
-	
-The removal of the files does not use `ln` and therefore does not matter for removal.
+    make prefix=/my/different/prefix install
 
 Shell Configurations
 --------------------
 
-My bash and zsh configurations are set up in a special way. I have tried to keep my bash configurations zsh-compatible, so all zsh config files automatically include my bash configuration files as well. In this way, I can use bash and zsh comfortably while maintaining one base for my common files. I mostly stick to using zsh, however.
+My bash and zsh configurations are set up in a special way. I have
+tried to keep my bash configurations zsh-compatible, so all zsh config
+files automatically include my bash configuration files as well. In
+this way, I can use bash and zsh comfortably while maintaining one
+base for my common files. I mostly stick to using zsh, however.
 
 Recommended Software
 --------------------
 
-These are some command-line utilities that I use often:
+These are some command-line utilities that I use often. They are
+usually installed using [Homebrew][homebrew] (Mac OS X), [yum][yum]
+(Fedora, CentOS), or [aptitude][aptitude] (Debian, Ubuntu), or
+compiled from source and install to my `~/.local` directory.
 
 * [ack][ack] - file tree search, grep replacement
+* [autojump][autojump] - easily navigate directories
 * [axel][axel] - download accelerator
 * [htop][htop], [htop-osx][htop-osx] - top replacement
 * [pythonz][pythonz] - Python version manager
-* [virtualenvwrapper][virtualenvwrapper] - Python environment manager
 * [rbenv][rbenv] - Ruby environment manager
 * [tig][tig] - text-interface mode for git (git log viewer)
-* [tmux-MacOSX-pasteboard][tmux-osx-pasteboard] - Workaround for `pbpaste` and `pbcopy` under Mac OS X
+* [tmux-MacOSX-pasteboard][tmux-osx-pasteboard] - Workaround for
+  `pbpaste` and `pbcopy` under Mac OS X
 * [tmux][tmux] - terminal multiplexer, GNU screen replacement
 * [tmuxinator][tmuxinator] - manage complex tmux sessions easily
+* [virtualenvwrapper][virtualenvwrapper] - Python environment manager
 * [xclip][xclip] - command line interface to the X11 clipboard
 
 [ack]: http://betterthangrep.com/
+[aptitude][aptitude]: http://wiki.debian.org/Aptitude
+[autojump]: https://github.com/joelthelion/autojump
 [axel]: http://axel.alioth.debian.org/
+[homebrew]: https://github.com/mxcl/homebrew
 [htop-osx]: https://github.com/cynthia/htop-osx
 [htop]: http://htop.sourceforge.net/
 [pythonz]: https://github.com/utahta/pythonbrew
-[virtualenvwrapper]: https://bitbucket.org/dhellmann/virtualenvwrapper
 [rbenv]: https://github.com/sstephenson/rbenv
 [tig]: http://jonas.nitro.dk/tig/
 [tmux-osx-pasteboard]: https://github.com/ChrisJohnsen/tmux-MacOSX-pasteboard
 [tmux]: http://tmux.sourceforge.net/
 [tmuxinator]: https://github.com/aziz/tmuxinator
+[virtualenvwrapper]: https://bitbucket.org/dhellmann/virtualenvwrapper
 [xclip]: http://sourceforge.net/projects/xclip/
+[yum][yum]: http://yum.baseurl.org/

@@ -11,8 +11,10 @@ INSTALL_RECURSIVE = $(SHELL) -c 'find "$$1" | cpio -dmpuv "$$2"' --
 prefix = $(HOME)
 
 .PHONY: first install bash zsh ack git tmux
-first:
-	@echo "Run \`make install' to install the dotfiles."
+first :
+@echo 'Please type ...'
+@echo "  \`make install' to install to \`$(prefix)'"
+@echo "  \`make prefix=/my/different/prefix install' to install to a different directory."
 
 install: bash zsh ack git tmux
 
