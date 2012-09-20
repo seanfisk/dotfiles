@@ -2,4 +2,9 @@
 /.wd/currentscheme
 /.wd/*.scheme
 /.wd/wdenv
+
+# Ignore local configuration
 /.bash.d/local.bash
+
+# tags file
+TAGS
