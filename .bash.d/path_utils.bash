@@ -49,7 +49,7 @@ path_remove_duplicates() {
 # bash and zsh compatible
 #
 executable_in_path() {
-	builtin hash $1 2>&-
+	builtin hash $1 2>/dev/null
 }
 
 # check to see if a function or executable exists
