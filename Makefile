@@ -12,9 +12,9 @@ prefix = $(HOME)
 
 .PHONY: first install bash zsh ack git tmux
 first :
-@echo 'Please type ...'
-@echo "  \`make install' to install to \`$(prefix)'"
-@echo "  \`make prefix=/my/different/prefix install' to install to a different directory."
+	@echo 'Please type ...'
+	@echo "  \`make install' to install to \`$(prefix)'"
+	@echo "  \`make prefix=/my/different/prefix install' to install to a different directory."
 
 install: bash zsh ack git tmux
 
