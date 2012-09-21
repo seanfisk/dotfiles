@@ -30,6 +30,9 @@ if executable_in_path virtualenvwrapper.sh; then
 	source virtualenvwrapper.sh
 fi
 
+# loads autojump into a shell session
+[[ -s ~/.autojump/etc/profile.d/autojump.zsh ]] && source ~/.autojump/etc/profile.d/autojump.sh
+
 # set the editor
 export EDITOR='emacsclient --alternate-editor='
 
