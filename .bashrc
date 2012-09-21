@@ -2,7 +2,7 @@
 
 # set the path, remove duplicates
 
-export PATH=~/bin:~/.local/bin:/usr/local/sbin:/usr/local/bin:$PATH
+export PATH=~/bin:~/.local/bin:/usr/local/sbin:/usr/local/bin:~/.rbenv/bin:$PATH
 source ~/.bash.d/path_utils.bash
 path_remove_duplicates
 
