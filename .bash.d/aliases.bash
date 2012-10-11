@@ -11,6 +11,7 @@ fi
 # really? yes, really
 alias c='cd'
 
+alias s='ls -l' # list
 alias l='ls -l' # list
 alias ll='ls -l' # list
 alias la='ls -al' # show hidden, list
