@@ -7,3 +7,6 @@
 auto-save-list
 tramp
 .\#*
+
+# Tag files
+TAGS
