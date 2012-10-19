@@ -2,8 +2,17 @@
 
 if function_or_executable_exists copy; then
 	if function_or_executable_exists paste; then
-		alias dl='wget $(paste)'
-		alias webclip='wget -nv -O - $(paste) | copy'
+		if function_or_executable_exists axel; then
+			# axel is a command-line download accelerator
+			# (opens multiple connections)
+			alias dl='axel $(paste)'
+		elif function_or_executable_exists wget; then
+			alias dl='wget $(paste)'
+		fi
+		if function_or_executable_exists wget; then
+			alias webclip=\
+				'wget -no-verbose -output-document=- $(paste) | copy'
+		fi
 		alias ssh-copy-id-clipboard='copy < ~/.ssh/id_rsa.pub'
 	fi
 fi
