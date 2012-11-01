@@ -16,7 +16,7 @@ first :
 	@echo "  \`make install' to install to \`$(prefix)'"
 	@echo "  \`make prefix=/my/different/prefix install' to install to a different directory."
 
-install: bash zsh ack git tmux
+install: bash zsh ack git hg tmux
 
 bash:
 	$(INSTALL_DATA) .bashrc "$(prefix)"
@@ -38,6 +38,9 @@ ack:
 git:
 	$(INSTALL_DATA) .gitconfig "$(prefix)"
 	$(INSTALL_DATA) .gitignore_global "$(prefix)"
+
+hg:
+	$(INSTALL_DATA) .hgrc "$(prefix)"
 
 tmux:
 	$(INSTALL_DATA) .tmux.conf "$(prefix)"
