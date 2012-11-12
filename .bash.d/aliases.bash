@@ -10,8 +10,7 @@ if function_or_executable_exists copy; then
 			alias dl='wget $(paste)'
 		fi
 		if function_or_executable_exists wget; then
-			alias webclip=\
-				'wget -no-verbose -output-document=- $(paste) | copy'
+			alias webclip='wget -no-verbose -output-document=- $(paste) | copy'
 		fi
 		alias ssh-copy-id-clipboard='copy < ~/.ssh/id_rsa.pub'
 	fi
