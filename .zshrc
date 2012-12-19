@@ -1,5 +1,5 @@
-# source bash
-source ~/.bashrc
+# Include common sh-like code.
+source ~/.bash.d/sh_common_rc.bash
 
 # Path to your oh-my-zsh configuration.
 export ZSH=~/.oh-my-zsh
