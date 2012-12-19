@@ -1,4 +1,3 @@
-#!/usr/bin/env zsh
 # Source bash
 source ~/.bash_profile
 

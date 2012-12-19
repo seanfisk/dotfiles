@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 # Mac OS X specific code
 
 # show ls colors

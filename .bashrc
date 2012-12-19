@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 # set the path, remove duplicates
 
 export PATH=~/bin:~/.local/bin:/usr/local/sbin:/usr/local/bin:$PATH

@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 # GNU/Linux specific code
 # Try to keep it generic between different distros
 
