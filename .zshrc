@@ -1,3 +1,8 @@
+# For whatever reason, zsh does not set the $SHELL variable. rbenv
+# uses this variable to determine which shell completion to load. Set
+# it manually for zsh.
+SHELL=$(which zsh)
+
 # Include common sh-like code.
 source ~/.bash.d/sh_common_rc.bash
 

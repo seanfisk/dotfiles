@@ -40,7 +40,7 @@ alias u='cd ..' # thanks Karlin
 alias changelog="$EDITOR ~/changelog.txt"
 alias less='less -R'
 alias godmode='sudo -i'
-alias bash-basic='env --ignore-environment bash --login --noprofile --norc'
+alias bash-basic='env -i bash --login --noprofile --norc'
 alias mkdate='date +%Y-%m-%d'
 
 # ack alias (with pager)
