@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 if function_or_executable_exists copy; then
 	if function_or_executable_exists paste; then
 		if function_or_executable_exists axel; then
