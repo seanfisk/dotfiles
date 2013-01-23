@@ -95,6 +95,20 @@ unlink-all-exectuables() {
 		fi
 	done
 }
+
+# Data URIs
+to_data_uri() {
+  echo "data:text/html;base64,$(base64 < /dev/stdin | tr -d '\r\n')"
+}
+# Code highlighting
+alias pygmentize_to_html='pygmentize -P full=True -P nobackground=True -f html'
+pygmentize_to_data_uri_html() {
+	# All extra options get sent to pygmentize.
+	#
+	# Accepts input on stdin.
+	pygmentize -P full=True -P nobackground=True -f html "$@" < /dev/stdin | to_data_uri
+}
+
 # emacs
 if executable_in_path aquamacs; then
 	# prefer aquamacs script over emacsclient
