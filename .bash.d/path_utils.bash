@@ -1,4 +1,3 @@
-#!/usr/bin/env bash
 # Utils for manipulating the path
 # Compiled by Sean Fisk
 
