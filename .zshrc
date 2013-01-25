@@ -36,7 +36,7 @@ export DISABLE_AUTO_TITLE="true"
 
 # Oh My ZSH configuration
 # in general, avoid aliases and go for more completions
-plugins=(gem git-flow npm pip rvm svn vagrant)
+plugins=(brew gem git-flow pip svn vagrant)
 
 # source Oh My ZSH
 source $ZSH/oh-my-zsh.sh
