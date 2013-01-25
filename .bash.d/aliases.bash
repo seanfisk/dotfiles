@@ -109,16 +109,11 @@ pygmentize_to_data_uri_html() {
 	pygmentize -P full=True -P nobackground=True -f html "$@" < /dev/stdin | to_data_uri
 }
 
-# emacs
-if executable_in_path aquamacs; then
-	# prefer aquamacs script over emacsclient
-	alias ec=aquamacs
-else
-	# start emacsclient in the background
-	ec() { emacsclient "$@" & }
-	# DON'T use alternate editor because it will start emacs in the
-	# terminal, which is probably not what we want. Instead, just warn
-	# us that the server does not exist.
-fi
-## quick emacs
+# Emacs
+# Start emacsclient in the background
+e() { emacsclient "$@" & }
+# DON'T use alternate editor because it will start emacs in the
+# terminal, which is probably not what we want. Instead, just warn us
+# that the server does not exist.
+## Quick Emacs
 alias ecq='emacs --no-window-system --quick'
