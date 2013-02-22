@@ -7,10 +7,7 @@ path_remove_duplicates
 export MANPATH=~/.local/man:$MANPATH
 path_remove_duplicates MANPATH
 
-# Texinfo manual paths According to this post, ending INFOPATH with a
-# colon will append the default value (internally in info). If
-# INFOPATH is empty, this should leave a colon at the end.
-#
+# See this post for some more info (haha):
 # <http://unix.stackexchange.com/questions/22329/gnu-texinfo-directory-search-method>
 export INFOPATH=/usr/local/share/info/emacs:$INFOPATH
 path_remove_duplicates INFOPATH
