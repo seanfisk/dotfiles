@@ -22,3 +22,7 @@ num-procs()
 		grep --extended-regexp 'Total Number Of Cores: [[:digit:]]+' |
 		awk '/Total Number Of Cores/ {print $5};'
 }
+
+# Homebrew deletes (Tex)Info manuals unless you bar it from doing
+# so. Heck yes I want these, I use Emacs!
+export HOMEBREW_KEEP_INFO=true
