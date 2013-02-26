@@ -58,7 +58,7 @@ compiled from source and install to my `~/.local` directory.
 [homebrew]: https://github.com/mxcl/homebrew
 [htop-osx]: https://github.com/cynthia/htop-osx
 [htop]: http://htop.sourceforge.net/
-[pythonz]: https://github.com/utahta/pythonbrew
+[pythonz]: https://github.com/saghul/pythonz
 [rbenv]: https://github.com/sstephenson/rbenv
 [tig]: http://jonas.nitro.dk/tig/
 [tmux-osx-pasteboard]: https://github.com/ChrisJohnsen/tmux-MacOSX-pasteboard
