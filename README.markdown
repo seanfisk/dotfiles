@@ -15,7 +15,7 @@ Installation
 To install the dotfiles to your home directory:
 
     make install
-    
+
 To install the dotfiles to a different prefix:
 
     make prefix=/my/different/prefix install
