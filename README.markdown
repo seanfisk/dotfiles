@@ -23,11 +23,11 @@ To install the dotfiles to a different prefix:
 Shell Configurations
 --------------------
 
-My bash and zsh configurations are set up in a special way. I have
-tried to keep my bash configurations zsh-compatible, so all zsh config
-files automatically include my bash configuration files as well. In
-this way, I can use bash and zsh comfortably while maintaining one
-base for my common files. I mostly stick to using zsh, however.
+My bash and zsh configurations are set up in a special way. Both bash
+and zsh include a common set of aliases and functions usable in each
+shell. In this way, I can use bash and zsh comfortably while
+maintaining one base for my common files. I mostly stick to using zsh,
+however.
 
 Recommended Software
 --------------------
@@ -36,6 +36,9 @@ These are some command-line utilities that I use often. They are
 usually installed using [Homebrew][homebrew] (Mac OS X), [yum][yum]
 (Fedora, CentOS), or [aptitude][aptitude] (Debian, Ubuntu), or
 compiled from source and install to my `~/.local` directory.
+
+[autojump][autojump] is vendorized in this repository and is
+automatically installed.
 
 * [ack][ack] - file tree search, grep replacement
 * [autojump][autojump] - easily navigate directories

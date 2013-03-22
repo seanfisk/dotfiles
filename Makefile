@@ -16,7 +16,7 @@ first :
 	@echo "  \`make install' to install to \`$(prefix)'"
 	@echo "  \`make prefix=/my/different/prefix install' to install to a different directory."
 
-install: bash zsh ack git hg tmux
+install: bash zsh autojump ack git hg tmux
 
 bash:
 	$(INSTALL_DATA) .bashrc "$(prefix)"
@@ -31,6 +31,9 @@ zsh: bash
 	# oh-my-zsh has an auto-update feature, symbolic link so it works
 	# for linking: symbolic link, no dereference, interactive
 	ln -sni "$(realpath .oh-my-zsh)" "$(abspath $(prefix))/.oh-my-zsh"
+
+autojump:
+	$(INSTALL_RECURSIVE) .autojump "$(prefix)"
 
 ack:
 	$(INSTALL_DATA) .ackrc "$(prefix)"
