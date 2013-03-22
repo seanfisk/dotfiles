@@ -4,19 +4,20 @@ INSTALL_DATA = $(INSTALL) -b -m 644
 # INSTALL_RECURSIVE idea stolen from
 # <http://lists.freebsd.org/pipermail/freebsd-ports/2007-February/038476.html>
 INSTALL_RECURSIVE = $(SHELL) -c 'find "$$1" | cpio -dmpuv "$$2"' --
+ALL_INSTALL_TARGETS = bash zsh autojump ack git hg tmux x11
 
 # pass prefix on the command-line to change install location
 # e.g.,
 # make prefix=/home/dir/with/weird/path
 prefix = $(HOME)
 
-.PHONY: first install bash zsh ack git tmux
+.PHONY: first install $(ALL_INSTALL_TARGETS)
 first :
 	@echo 'Please type ...'
 	@echo "  \`make install' to install to \`$(prefix)'"
 	@echo "  \`make prefix=/my/different/prefix install' to install to a different directory."
 
-install: bash zsh autojump ack git hg tmux
+install: $(ALL_INSTALL_TARGETS)
 
 bash:
 	$(INSTALL_DATA) .bashrc "$(prefix)"
@@ -47,3 +48,6 @@ hg:
 
 tmux:
 	$(INSTALL_DATA) .tmux.conf "$(prefix)"
+
+x11:
+	$(INSTALL_DATA) .Xkbmap "$(prefix)"
