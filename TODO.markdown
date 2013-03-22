@@ -6,4 +6,6 @@ TODO for Sean Fisk's Dotfiles
 * Write a function for creating a new tmux tab and automatically naming it.
 * Investigate other or "more proper" ways of swapping Caps Lock and
   Control under X11.
+* Get SSH keys under control. Decide which ones need to be shared, and
+  add a passphrase or something using `ssh-agent`.
 * Update README with all the changes.
