@@ -5,3 +5,4 @@ TODO for Sean Fisk's Dotfiles
     * Definitely has to do with `/etc/zshenv` and `/usr/libexec/path_helper`.
 * Write a function for creating a new tmux tab and automatically naming it.
 * Update README with all the changes.
+* Switch from axel to aria2.
