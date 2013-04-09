@@ -8,5 +8,3 @@ TODO for Sean Fisk's Dotfiles
   Control under X11.
 * Get SSH keys under control. Decide which ones need to be shared, and
   add a passphrase or something using `ssh-agent`.
-* Update README with all the changes.
-* Switch from axel to aria2.

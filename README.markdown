@@ -45,8 +45,8 @@ vendorized. However, I've decided not to do that at this time because
 I don't use Python and Ruby on every single machine on which I work.
 
 * [ack][ack] - file tree search, grep replacement
+* [aria2][aria2] - download utility and accelerator, similar to `wget`
 * [autojump][autojump] - easily navigate directories
-* [axel][axel] - download accelerator
 * [htop][htop], [htop-osx][htop-osx] - top replacement
 * [pythonz][pythonz] - Python version manager
 * [rbenv][rbenv] - Ruby environment manager
@@ -60,8 +60,8 @@ I don't use Python and Ruby on every single machine on which I work.
 
 [ack]: http://betterthangrep.com/
 [aptitude]: http://wiki.debian.org/Aptitude
+[aria2]: http://aria2.sourceforge.net/
 [autojump]: https://github.com/joelthelion/autojump
-[axel]: http://axel.alioth.debian.org/
 [homebrew]: https://github.com/mxcl/homebrew
 [htop-osx]: https://github.com/cynthia/htop-osx
 [htop]: http://htop.sourceforge.net/

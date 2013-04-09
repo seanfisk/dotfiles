@@ -1,9 +1,9 @@
 if function_or_executable_exists copy; then
 	if function_or_executable_exists paste; then
-		if function_or_executable_exists axel; then
-			# axel is a command-line download accelerator
+		if function_or_executable_exists aria2c; then
+			# aria2c is a command-line download accelerator
 			# (opens multiple connections)
-			alias dl='axel $(paste)'
+			alias dl='aria2c $(paste)'
 		elif function_or_executable_exists wget; then
 			alias dl='wget $(paste)'
 		fi
