@@ -15,7 +15,7 @@
 	cob = checkout -b # create a new branch
 	freebase = pull --rebase
 	lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%Creset' --abbrev-commit --date=relative
-	prune = remote prune origin
+	pr = remote prune origin
 	remotebranch = !sh -c 'git push origin HEAD:refs/heads/$0 && git checkout --track -b $0 origin/$0'
 	st = status
 	trackbranch = !sh -c 'git checkout --track -b $0 origin/$0'
