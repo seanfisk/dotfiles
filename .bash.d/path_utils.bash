@@ -1,11 +1,29 @@
 # Utils for manipulating the path
 # Compiled by Sean Fisk
 
+# Inspired by <http://technotales.wordpress.com/2010/09/19/managing-path-and-manpath/>
+# $1: Hiearchy to add (e.g., `/usr/local')
+add_hierarchy_to_path() {
+	local hierarchy=$1
+	if [[ -d $hierarchy/bin ]]; then
+		PATH=$hierarchy/bin:$PATH
+	fi
+	if [[ -d $hierarchy/sbin ]]; then
+		PATH=$hierarchy/sbin:$PATH
+	fi
+	if [[ -d $hierarchy/man ]]; then
+		MANPATH=$hierarchy/man:$MANPATH
+	fi
+	if [[ -d $hierarchy/share/man ]]; then
+		MANPATH=$hierarchy/share/man:$MANPATH
+	fi
+}
+
 # Credit : <http://stackoverflow.com/questions/370047/what-is-the-most-elegant-way-to-remove-a-path-from-the-path-variable-in-bash/370255#370255>
 # $1: element to remove from the path
-# $2: optional: name of variable to parse instead of PATH
+# $2: name of variable to parse
 path_remove() {
-	local var_name=${2:-PATH}
+	local var_name=$2
 	# get the value of the variable in var_name
 	local var=$(eval echo \$$var_name)
 	IFS=:
@@ -18,13 +36,13 @@ path_remove() {
 	local new_path="${path_arr[*]}"
 	unset IFS
 	# output the new array
-	export "$var_name=$new_path"
+	eval "$var_name=$new_path"
 }
 
 # remove duplicate path entries
-# $1: optional: name of variable to parse instead of PATH
+# $1: name of variable to parse
 path_remove_duplicates() {
-	local var_name=${1:-PATH}
+	local var_name=$1
 	# get the value of the variable in var_name
 	local var=$(eval echo \$$var_name)
 	IFS=:
@@ -41,7 +59,7 @@ path_remove_duplicates() {
 	local new_path="${path_arr[*]}"
 	unset IFS
 	# output the new array
-	export "$var_name=$new_path"
+	eval "$var_name=$new_path"
 }
 
 # check to see if an executable is in the path

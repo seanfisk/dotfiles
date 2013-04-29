@@ -1,16 +1,25 @@
-# set the path, remove duplicates
-export PATH=~/bin:~/.local/bin:/usr/local/sbin:/usr/local/bin:$PATH
+# Path munging
 source ~/.bash.d/path_utils.bash
-path_remove_duplicates
+# Start with default manpath entries and existing value of variable.
+MANPATH=$MANPATH:$(man --path)
+# Add extra hierarchies.
+add_hierarchy_to_path /usr/local
+add_hierarchy_to_path ~/.local
+# Add scripts directory.
+PATH=~/bin:$PATH
 
-# manpath
-export MANPATH=~/.local/man:$MANPATH
+# Nuke the dupes.
+path_remove_duplicates PATH
 path_remove_duplicates MANPATH
+
+export PATH
+export MANPATH
 
 # See this post for some more info (haha):
 # <http://unix.stackexchange.com/questions/22329/gnu-texinfo-directory-search-method>
-export INFOPATH=/usr/local/share/info/emacs:$INFOPATH
+INFOPATH=/usr/local/share/info/emacs:$INFOPATH
 path_remove_duplicates INFOPATH
+export INFOPATH
 
 # Set umask for more privacy
 umask u=rwx,g=,o=
