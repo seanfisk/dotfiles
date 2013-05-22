@@ -49,7 +49,8 @@ if executable_in_path ack; then
 fi
 
 if type num-procs &> /dev/null; then
-	export MAKEFLAGS="--jobs=$(num-procs)" # do this for all make's
+	# Don't export this by default. Use the alias to make in parallel explicitly.
+	MAKEFLAGS="--jobs=$(num-procs)"
 	alias make-parallel="make $MAKEFLAGS"	 # add an alias
 fi
 
