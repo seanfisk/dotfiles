@@ -47,6 +47,15 @@ fi
 # set the editor
 export EDITOR='emacsclient --alternate-editor='
 
+# Boot up ssh-agent if it's not already started.
+if [[ -z "$SSH_AUTH_SOCK" && -z "$SSH_AGENT_PID" ]]; then
+	# `-s' causes ssh-agent to output Bourne shell syntax
+	echo "Starting ssh-agent. Run \`ssh-add' to unlock a key."
+	source <(ssh-agent -s)
+	# Since ssh-add requires a password, we must run that manually to
+	# get access to the key.
+fi
+
 # platform-specific code - must come before aliases
 # platform-specific
 kernel_name=$(uname -s)
