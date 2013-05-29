@@ -48,6 +48,14 @@ if executable_in_path ack; then
 	alias ackp="ack --pager='less -R'"
 fi
 
+if executable_in_path ag; then
+	# ag with pager
+	# Without `--color', ag will omit colors when being piped to less.
+	agp() {
+		ag --color "$@" | less
+	}
+fi
+
 if type num-procs &> /dev/null; then
 	# Don't export this by default. Use the alias to make in parallel explicitly.
 	MAKEFLAGS="--jobs=$(num-procs)"
