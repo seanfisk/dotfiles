@@ -58,6 +58,8 @@ fi
 cdl() { cd "$1" && ls; }
 mk() { mkdir -p "$1" && cd "$1"; }
 old() { mv "$1" "$1.old"; } # make a *.old file
+
+# These are somewhat legacy. In here for documentation mostly.
 find-all-executables() {
 	if [[ $# -gt 1 ]]; then
 		echo "Usage: $0 [DIRECTORY]" 1>&2
