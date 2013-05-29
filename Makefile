@@ -30,8 +30,8 @@ zsh: bash
 	$(INSTALL_DATA) .zprofile "$(prefix)"
 	$(INSTALL_DATA) .zlogout "$(prefix)"
 	# oh-my-zsh has an auto-update feature, symbolic link so it works
-	# for linking: symbolic link, no dereference, interactive
-	ln -sni "$(realpath .oh-my-zsh)" "$(abspath $(prefix))/.oh-my-zsh"
+	# for linking: symbolic link, no dereference, force
+	ln -snf "$(realpath .oh-my-zsh)" "$(abspath $(prefix))/.oh-my-zsh"
 
 autojump:
 	$(INSTALL_RECURSIVE) .autojump "$(prefix)"
