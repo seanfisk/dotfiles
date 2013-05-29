@@ -3,7 +3,7 @@
 
 # Inspired by <http://technotales.wordpress.com/2010/09/19/managing-path-and-manpath/>
 # $1: Hiearchy to add (e.g., `/usr/local')
-add_hierarchy_to_path() {
+path_add_hierarchy() {
 	local hierarchy=$1
 	if [[ -d $hierarchy/bin ]]; then
 		PATH=$hierarchy/bin:$PATH

@@ -3,8 +3,8 @@ source ~/.bash.d/path_utils.bash
 # Start with default manpath entries and existing value of variable.
 MANPATH=$MANPATH:$(man --path)
 # Add extra hierarchies.
-add_hierarchy_to_path /usr/local
-add_hierarchy_to_path ~/.local
+path_add_hierarchy /usr/local
+path_add_hierarchy ~/.local
 # Add scripts directory.
 PATH=~/bin:$PATH
 
