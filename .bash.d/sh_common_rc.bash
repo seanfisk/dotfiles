@@ -54,6 +54,9 @@ if [[ -z "$SSH_AUTH_SOCK" && -z "$SSH_AGENT_PID" ]]; then
 	source <(ssh-agent -s)
 	# Since ssh-add requires a password, we must run that manually to
 	# get access to the key.
+
+	# Kill ssh-agent upon exit from *this* shell (the shell in which it was started).
+	trap 'source <(ssh-agent -k)' EXIT
 fi
 
 # platform-specific code - must come before aliases
