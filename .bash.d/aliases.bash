@@ -30,6 +30,17 @@ alias lag='la | grep'
 alias laeg='la | egrep'
 alias lafg='la | fgrep'
 
+# process aliases
+for program in ps pgrep pkill htop; do
+	if executable_in_path $program; then
+		# All these programs support a -u argument specifying the
+		# user. For ps, pgrep, and pkill it is effective user id
+		# (euid). For htop this is unspecified. In most of my cases, euid
+		# and ruid will be the same anyway.
+		alias "my$program=$program -u $(whoami)"
+	fi
+done
+
 # git aliases
 alias gt='git status'
 alias gobuddygo='git push'
