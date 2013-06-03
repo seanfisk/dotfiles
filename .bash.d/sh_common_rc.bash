@@ -2,9 +2,13 @@
 source ~/.bash.d/path_utils.bash
 # Start with default manpath entries and existing value of variable.
 MANPATH=$MANPATH:$(man --path)
+
 # Add extra hierarchies.
 path_add_hierarchy /usr/local
 path_add_hierarchy ~/.local
+# pip install --user XXX installs to here on Mac OS 10.8
+path_add_hierarchy ~/Library/Python/2.7
+
 # Add scripts directory.
 PATH=~/bin:$PATH
 
