@@ -11,13 +11,15 @@ ALL_INSTALL_TARGETS = bash zsh autojump ack git hg tmux x11
 # make prefix=/home/dir/with/weird/path
 prefix = $(HOME)
 
-.PHONY: first install $(ALL_INSTALL_TARGETS)
+.PHONY: first install install-osx $(ALL_INSTALL_TARGETS) tmux-patch
 first :
 	@echo 'Please type ...'
 	@echo "  \`make install' to install to \`$(prefix)'"
 	@echo "  \`make prefix=/my/different/prefix install' to install to a different directory."
 
 install: $(ALL_INSTALL_TARGETS)
+
+install-osx: $(ALL_INSTALL_TARGETS) tmux-patch
 
 bash:
 	$(INSTALL_DATA) .bashrc "$(prefix)"
@@ -51,3 +53,6 @@ tmux:
 
 x11:
 	$(INSTALL_DATA) .Xkbmap "$(prefix)"
+
+tmux-patch:
+	patch "$(prefix)/.tmux.conf" tmux-macosx.patch
