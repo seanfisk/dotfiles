@@ -32,6 +32,7 @@ umask u=rwx,g=,o=
 [[ $- != *i* ]] && return
 
 # loads rbenv into a shell session
+[[ -d ~/.rbenv ]] && path_add_hierarchy ~/.rbenv
 if executable_in_path rbenv; then
 	eval "$(rbenv init -)"
 fi
