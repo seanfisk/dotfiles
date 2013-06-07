@@ -17,6 +17,9 @@ path_add_hierarchy() {
 	if [[ -d $hierarchy/share/man ]]; then
 		MANPATH=$hierarchy/share/man:$MANPATH
 	fi
+	if [[ -d $hierarchy/share/info ]]; then
+		INFOPATH=$hierarchy/share/info:$INFOPATH
+	fi
 }
 
 # Credit : <http://stackoverflow.com/questions/370047/what-is-the-most-elegant-way-to-remove-a-path-from-the-path-variable-in-bash/370255#370255>

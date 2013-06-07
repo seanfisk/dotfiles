@@ -15,9 +15,11 @@ PATH=~/bin:$PATH
 # Nuke the dupes.
 path_remove_duplicates PATH
 path_remove_duplicates MANPATH
+path_remove_duplicates INFOPATH
 
 export PATH
 export MANPATH
+export INFOPATH
 
 # See this post for some more info (haha):
 # <http://unix.stackexchange.com/questions/22329/gnu-texinfo-directory-search-method>
