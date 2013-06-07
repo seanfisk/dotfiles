@@ -41,15 +41,7 @@ for program in ps pgrep pkill htop lsof; do
 done
 
 # List my tmux sockets
-mytmux() {
-	# -U: UNIX domain sockets
-	lsof -u $(whoami) -a -U | \
-		grep '^tmux' | \
-		grep --invert-match --fixed-strings socket | \
-		tr --squeeze-repeats ' ' | \
-		cut --fields 9 --delimiter ' ' | \
-		sort --unique
-}
+alias mytmux="lsof -u $(whoami) -a -U | grep '^tmux'"
 
 # git aliases
 alias gt='git status'
