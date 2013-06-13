@@ -1,6 +1,10 @@
+# Add some more types
 --type-set
 gsp=.gsp
 --type-set
 scss=.scss
 --type-set
 sass=.sass
+
+# Always color, even if piping to another program
+--color
