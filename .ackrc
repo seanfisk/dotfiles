@@ -8,3 +8,6 @@ sass=.sass
 
 # Always color, even if piping to another program
 --color
+
+# Ignore .tox directories
+--ignore-dir=.tox
