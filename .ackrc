@@ -6,8 +6,13 @@ scss=.scss
 --type-set
 sass=.sass
 
-# Always color, even if piping to another program
+# Always color, even if piping to another program.
+# To turn off color, use the `--nocolor' argument.
 --color
 
-# Ignore .tox directories
+# Ignore `.tox' directories.
 --ignore-dir=.tox
+
+# Almost always want to ignore `build' directories.
+# To unignore, use `--noignore-dir=build'.
+--ignore-dir=build
