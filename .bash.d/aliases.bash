@@ -122,16 +122,23 @@ unlink-all-exectuables() {
 
 # Data URIs
 to_data_uri() {
+	# Filter; accepts input on stdin and echoes to stdout
   echo "data:text/html;base64,$(base64 < /dev/stdin | tr -d '\r\n')"
 }
 # Code highlighting
-alias pygmentize_to_html='pygmentize -P full=True -P nobackground=True -f html'
+pygmentize_to_html='pygmentize -P full=True -P nobackground=True -f html'
 pygmentize_to_data_uri_html() {
 	# All extra options get sent to pygmentize.
 	#
-	# Accepts input on stdin.
-	pygmentize -P full=True -P nobackground=True -f html "$@" < /dev/stdin | to_data_uri
+	# Accepts input on stdin or as a file name.
+	pygmentize_to_html "$@" < /dev/stdin | to_data_uri
 }
+if function_or_executable_exists copy; then
+	hilite() {
+		# Synatx highlight code and send to the clipboard
+		pygmentize_to_data_uri_html "$@" < /dev/stdin | copy
+	}
+fi
 
 # Emacs
 # Start emacsclient in the background
