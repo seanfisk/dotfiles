@@ -126,7 +126,7 @@ to_data_uri() {
   echo "data:text/html;base64,$(base64 < /dev/stdin | tr -d '\r\n')"
 }
 # Code highlighting
-pygmentize_to_html='pygmentize -P full=True -P nobackground=True -f html'
+alias pygmentize_to_html='pygmentize -P full=True -P nobackground=True -f html'
 pygmentize_to_data_uri_html() {
 	# All extra options get sent to pygmentize.
 	#
