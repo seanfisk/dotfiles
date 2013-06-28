@@ -2,7 +2,6 @@ TODO for Sean Fisk's Dotfiles
 =============================
 
 * Investigate other ways of install autojump.
-* Remove oh-my-zsh auto-update feature.
 * Figure out why MANPATH isn't getting set correctly in bash but it is in zsh.
     * Definitely has to do with `/etc/zshenv` and `/usr/libexec/path_helper`.
     * Problem mitigated by new configuration.
