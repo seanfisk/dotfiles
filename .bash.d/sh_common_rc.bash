@@ -3,7 +3,9 @@ source ~/.bash.d/path_utils.bash
 # Start with default manpath entries and existing value of variable.
 MANPATH=$MANPATH:$(man --path)
 
-# Add extra hierarchies.
+# Add hierarchies. It is helpful to add /usr so that INFOPATH gets
+# correctly populated.
+path_add_hierarchy /usr
 path_add_hierarchy /usr/local
 path_add_hierarchy ~/.local
 # pip install --user XXX installs to here on Mac OS 10.8
