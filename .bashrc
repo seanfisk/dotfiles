@@ -3,6 +3,9 @@ source ~/.bash.d/sh_common_rc.bash
 
 # Bash-specific stuff
 
+# A simple prompt, useful for recording shell sessions.
+alias prompt-simple="PS1='\h:\w\$ '"
+
 alias reload-shell-config='source ~/.bashrc'
 
 ## Key bindings for paging and lolcat-ing. See here:
