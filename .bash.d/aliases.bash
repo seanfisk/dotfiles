@@ -141,8 +141,21 @@ if function_or_executable_exists copy; then
 fi
 
 # Emacs
-# Start emacsclient in the background
-e() { emacsclient "$@" & }
+# Start emacsclient
+e() {
+	if [[ $# -ne 0 ]]; then
+		# Normal usage
+		emacsclient --no-wait "$@"
+	else
+		# Allow output to be piped to an Emacs buffer.
+		# See the EmacsWiki:
+		# <http://www.emacswiki.org/emacs/EmacsClient#toc44>
+		local stdin_tmp_file=$(mktemp --tmpdir emacs-stdin-XXXXXXXXXX)
+		local stdin_tmp_file_base=$(basename "$stdin_tmp_file")
+		cat > "$stdin_tmp_file"
+		emacsclient --eval "(let ((b (create-file-buffer \"*$stdin_tmp_file_base*\"))) (switch-to-buffer b) (insert-file-contents \"$stdin_tmp_file\") (delete-file \"$stdin_tmp_file\"))"
+	fi
+}
 # DON'T use alternate editor because it will start emacs in the
 # terminal, which is probably not what we want. Instead, just warn us
 # that the server does not exist.
