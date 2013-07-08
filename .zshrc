@@ -50,7 +50,7 @@ alias reload-shell-config='source ~/.zshrc'
 ## We use `|&' to pipe stdout AND stderr.
 bindkey -s '\C-j' ' |& less\C-m'
 if executable_in_path lolcat; then
-	bindkey -s '\C-i' ' |& lolcat\C-m'
-	bindkey -s '\C-o' ' |& lolcat --animate\C-m'
-	bindkey -s '\C-v' ' |& lolcat --force |& less -R\C-m'
+	bindkey -s '\C-xl' ' |& lolcat\C-m'
+	bindkey -s '\C-x\C-l' ' |& lolcat --force |& less -R\C-m'
+	bindkey -s '\C-xa' ' |& lolcat --animate\C-m'
 fi
