@@ -3,6 +3,7 @@ TODO for Sean Fisk's Dotfiles
 
 * Check out bind (bash) and bindkey (zsh).
     * Specifically, add bindings for normal paging, lolcat, and lolcat paging. See [this SO answer](http://serverfault.com/questions/31845/is-there-a-way-to-configure-bash-to-always-page-output/31870#31870) for advice.
+    * Use a shared data structure to maintain these keybindings and not just literal values.
 * Set up a tmuxinator config which opens up emacs config and dotfiles repos.
 * Make sure my machines use the latest versions of bash and zsh.
 * Try to get rid of eval hackery in path utils.

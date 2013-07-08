@@ -41,4 +41,16 @@ plugins=(brew gem git-flow pip svn vagrant)
 # source Oh My ZSH
 source $ZSH/oh-my-zsh.sh
 
+# ZSH-specific stuff
+
 alias reload-shell-config='source ~/.zshrc'
+
+## Key bindings for paging and lolcat-ing. See here:
+## <http://serverfault.com/questions/31845/is-there-a-way-to-configure-bash-to-always-page-output/31870#31870>
+## We use `|&' to pipe stdout AND stderr.
+bindkey -s '\C-j' ' |& less\C-m'
+if executable_in_path lolcat; then
+	bindkey -s '\C-i' ' |& lolcat\C-m'
+	bindkey -s '\C-o' ' |& lolcat --animate\C-m'
+	bindkey -s '\C-v' ' |& lolcat --force |& less -R\C-m'
+fi
