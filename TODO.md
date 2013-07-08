@@ -8,6 +8,7 @@ TODO for Sean Fisk's Dotfiles
 * Set up a tmuxinator config which opens up emacs config and dotfiles repos.
 * Make sure my machines use the latest versions of bash and zsh.
 * Try to get rid of eval hackery in path utils.
+* Write a zsh-specific version of path_utils, since it could be a lot more efficient.
 * Investigate other ways of install autojump.
 * Figure out why MANPATH isn't getting set correctly in bash but it is in zsh.
     * Definitely has to do with `/etc/zshenv` and `/usr/libexec/path_helper`.
