@@ -1,3 +1,11 @@
+# Version check
+
+MIN_ZSH_VERSION=5
+if [[ ${ZSH_VERSION:0:1} -lt $MIN_ZSH_VERSION ]]; then
+	echo 2>&1 "This configuration is compatible only with Zsh version $MIN_ZSH_VERSION and upwards. Please update your Zsh version."
+	return
+fi
+
 # For whatever reason, zsh does not set the $SHELL variable. rbenv
 # uses this variable to determine which shell completion to load. Set
 # it manually for zsh.

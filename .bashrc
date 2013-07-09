@@ -1,3 +1,11 @@
+# Version check
+
+MIN_BASH_VERSION=4
+if [[ ${BASH_VERSION:0:1} -lt $MIN_BASH_VERSION ]]; then
+	echo 2>&1 "This configuration is compatible only with GNU Bash version $MIN_BASH_VERSION and upwards. Please update your Bash version."
+	return
+fi
+
 # Include common sh-like code.
 source ~/.bash.d/sh_common_rc.bash
 
