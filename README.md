@@ -30,7 +30,7 @@ My bash and zsh configurations are set up in a special way. Both bash and zsh in
 Recommended Software
 --------------------
 
-These are some command-line utilities that I use often. They are usually installed using [Homebrew][homebrew] (Mac OS X), [yum][yum] (Fedora, CentOS), or [aptitude][aptitude] (Debian, Ubuntu), or compiled from source and install to my `~/.local` directory.
+These are some command-line utilities that I use often. They are usually installed using [Homebrew][homebrew] (Mac OS X), [yum][yum] (Fedora, CentOS), or [aptitude][aptitude] (Debian, Ubuntu), or compiled from source and installed to my `~/.local` directory.
 
 Since I use it frequently, [autojump][autojump] is vendorized in this repository and is automatically installed.
 
