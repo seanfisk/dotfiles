@@ -3,6 +3,8 @@ Shell and other configuration files (dotfiles) for Sean Fisk
 
 These are my configuration files for various shells and other things. Currently, it contains configurations for the **bash shell**, **z shell**, **git**, **hg**, **tmux**, **ack**, and **X windows**.
 
+This configuration is compatible only with **GNU Bash 4 and up** and **Zsh 5 and up**. Backwards compatibility is typically not an issue because I compile my own software when it is not available on a given machine.
+
 I don't recommend just cloning this repository and using it. Rather, I would recommend picking out pieces that you like and inserting them into your own configurations.
 
 Installation
