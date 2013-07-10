@@ -7,8 +7,10 @@ TODO for Sean Fisk's Dotfiles
     * Find more keys that could be bound.
 * Remove redundancy in the version check.
 * Set up a tmuxinator config which opens up emacs config and dotfiles repos.
+* Make `ssh-agent` connect to any previously started `ssh-agent` process.
 * Try to get rid of eval hackery in path utils.
 * Write a zsh-specific version of path_utils, since it could be a lot more efficient.
+* Write a command for updating the dotfiles and emacs repos.
 * Investigate other ways of install autojump.
 * Figure out why MANPATH isn't getting set correctly in bash but it is in zsh.
     * Definitely has to do with `/etc/zshenv` and `/usr/libexec/path_helper`.
