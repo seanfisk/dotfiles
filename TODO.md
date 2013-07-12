@@ -6,6 +6,7 @@ TODO for Sean Fisk's Dotfiles
     * Use a shared data structure to maintain these keybindings and not just literal values.
     * Find more keys that could be bound.
 * Remove redundancy in the version check.
+* Decide standard of hyphens (probably) or underscores (probably not) and stick to them for functions, aliases, commands, and file names.
 * Set up a tmuxinator config which opens up emacs config and dotfiles repos.
 * Make `ssh-agent` connect to any previously started `ssh-agent` process.
 * Try to get rid of eval hackery in path utils.
