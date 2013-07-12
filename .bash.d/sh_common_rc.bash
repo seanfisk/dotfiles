@@ -54,17 +54,49 @@ fi
 # set the editor
 export EDITOR='emacsclient --alternate-editor='
 
-# Boot up ssh-agent if it's not already started.
-if [[ -z "$SSH_AUTH_SOCK" && -z "$SSH_AGENT_PID" ]]; then
-	# `-s' causes ssh-agent to output Bourne shell syntax
-	echo "Starting ssh-agent. Run \`ssh-add' to unlock a key."
-	source <(ssh-agent -s)
-	# Since ssh-add requires a password, we must run that manually to
-	# get access to the key.
+# ssh-agent handling
+# See here for lots of tips:
+# <http://mah.everybody.org/docs/ssh>
+SSH_ENV_FILE=~/.ssh/ssh_agent_environment
 
-	# Kill ssh-agent upon exit from *this* shell (the shell in which it was started).
-	trap 'source <(ssh-agent -k)' EXIT
-fi
+# Made this a function so I can call it directly from the shell.
+ssh-agent-bootstrap() {
+	# Boot up ssh-agent if it's not already started.
+	# if [[ -z "$SSH_AUTH_SOCK" && -z "$SSH_AGENT_PID" ]]; then
+	should_start_ssh_agent=true
+	if [[ -f $SSH_ENV_FILE ]]; then
+		source "$SSH_ENV_FILE"
+		# Check to see if ssh-agent is still running. If not, boot it up. If
+		# so, we're done.
+		#
+		# - `-p' checks for a specific PID
+		# - `-o comm=' prints the command only (not the args). This could be
+		#   a full path, so check for "ssh-agent" at the end. The equals
+		#   sign with nothing else disables printing of the header.
+		if [[ "$(ps -p $SSH_AGENT_PID -o comm=)" == *ssh-agent ]]; then
+			should_start_ssh_agent=false
+			echo 'Connected to existing ssh-agent.'
+		fi
+	fi
+
+	if $should_start_ssh_agent; then
+		# trap doesn't work in a function since the function runs it in a
+		# subshell (I think).
+
+		# Start ssh-agent in this shell.
+		# `-s' causes ssh-agent to output Bourne shell syntax
+		echo "Starting ssh-agent. Run \`ssh-add' to unlock a key."
+		ssh-agent -s > "$SSH_ENV_FILE"
+		source "$SSH_ENV_FILE"
+		# Since ssh-add requires a password, we must run that manually to
+		# get access to the key.
+
+		# Kill ssh-agent upon exit from *this* shell (the shell in which it was started).
+		trap 'source <(ssh-agent -k)' EXIT
+	fi
+}
+
+ssh-agent-bootstrap
 
 # platform-specific code - must come before aliases
 # platform-specific
