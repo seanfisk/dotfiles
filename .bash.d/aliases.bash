@@ -156,7 +156,7 @@ e() {
 		local stdin_tmp_file_base=$(basename "$stdin_tmp_file")
 		cat > "$stdin_tmp_file"
 		# create-file-buffer normally appends <1>, <2>, etc. if the buffer already exists. That would be appropriate, but when using uniquify, it appends directory names. That isn't useful, and is extremely confusing when it chooses the name of the directory that `e' was *run in*. Just name the buffer according to the temp file that has been created, since we know that will be unique.
-		emacsclient --eval "(let ((b (create-file-buffer \"*$stdin_tmp_file_base*\"))) (switch-to-buffer b) (insert-file-contents \"$stdin_tmp_file\") (delete-file \"$stdin_tmp_file\"))"
+		emacsclient --eval "(let ((b (create-file-buffer \"*$stdin_tmp_file_base*\"))) (switch-to-buffer b) (insert-file-contents \"$stdin_tmp_file\") (delete-file \"$stdin_tmp_file\"))" &> /dev/null
 	fi
 }
 # DON'T use alternate editor because it will start emacs in the
