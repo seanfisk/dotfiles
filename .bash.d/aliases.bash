@@ -150,7 +150,9 @@ e() {
 		# Allow output to be piped to an Emacs buffer.
 		# See the EmacsWiki:
 		# <http://www.emacswiki.org/emacs/EmacsClient#toc44>
-		local stdin_tmp_file=$(mktemp --tmpdir emacs-stdin-XXXXXXXXXX)
+
+		# Passing a literal /tmp in here is probably not the best idea, but I've never seen /tmp not exist on a box. The reason we do it is because mktemp options drastically differ from GNU to BSD (as usual, the GNU options are better).
+		local stdin_tmp_file=$(mktemp emacs-stdin-XXXXXXXXXX)
 		local stdin_tmp_file_base=$(basename "$stdin_tmp_file")
 		cat > "$stdin_tmp_file"
 		# create-file-buffer normally appends <1>, <2>, etc. if the buffer already exists. That would be appropriate, but when using uniquify, it appends directory names. That isn't useful, and is extremely confusing when it chooses the name of the directory that `e' was *run in*. Just name the buffer according to the temp file that has been created, since we know that will be unique.
