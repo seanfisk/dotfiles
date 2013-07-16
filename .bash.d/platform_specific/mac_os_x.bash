@@ -26,3 +26,6 @@ num-procs()
 # Homebrew deletes (Tex)Info manuals unless you bar it from doing
 # so. Heck yes I want these, I use Emacs!
 export HOMEBREW_KEEP_INFO=true
+
+# ssh-agent handling code is not needed in Mac OS X because it is
+# handled by the operating system.
