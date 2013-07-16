@@ -62,7 +62,6 @@ SSH_ENV_FILE=~/.ssh/ssh_agent_environment
 # Made this a function so I can call it directly from the shell.
 ssh-agent-bootstrap() {
 	# Boot up ssh-agent if it's not already started.
-	# if [[ -z "$SSH_AUTH_SOCK" && -z "$SSH_AGENT_PID" ]]; then
 	should_start_ssh_agent=true
 	if [[ -f $SSH_ENV_FILE ]]; then
 		source "$SSH_ENV_FILE"
@@ -73,7 +72,22 @@ ssh-agent-bootstrap() {
 		# - `-o comm=' prints the command only (not the args). This could be
 		#   a full path, so check for "ssh-agent" at the end. The equals
 		#   sign with nothing else disables printing of the header.
-		if [[ "$(ps -p $SSH_AGENT_PID -o comm=)" == *ssh-agent ]]; then
+		# if [[ "$(ps -p $SSH_AGENT_PID -o comm=)" == *ssh-agent ]]; then
+		# 	should_start_ssh_agent=false
+		# 	echo 'Connected to existing ssh-agent.'
+		# fi
+
+		# The previous code doesn't work with Mac OS X, which doesn't
+		# actually start ssh-agent. It uses launchd as a super-server and
+		# "and creates a UNIX domain socket which listens for connections,
+		# on behalf of ssh-agent". See this page for more information:
+		# <http://www.dribin.org/dave/blog/archives/2007/11/28/ssh_agent_leopard/>
+		#
+		# Instead of checking for a running ssh-agent, we will check for
+		# an existing UNIX domain socket. If ssh-agent receives SIGINT, it
+		# will delete the socket. Just try not to SIGKILL it because it
+		# will then not be able to cleanup the socket.
+		if [[ -S "$SSH_AUTH_SOCK" ]]; then
 			should_start_ssh_agent=false
 			echo 'Connected to existing ssh-agent.'
 		fi
