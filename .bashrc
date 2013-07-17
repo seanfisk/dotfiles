@@ -14,7 +14,7 @@ source ~/.bash.d/sh_common_rc.bash
 # A simple prompt, useful for recording shell sessions.
 alias prompt-simple="PS1='\h:\w\$ '"
 
-alias reload-shell-config='source ~/.bashrc'
+alias rl='source ~/.bashrc'
 
 ## Key bindings for paging and lolcat-ing. See here:
 ## <http://serverfault.com/questions/31845/is-there-a-way-to-configure-bash-to-always-page-output/31870#31870>

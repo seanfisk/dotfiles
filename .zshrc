@@ -51,7 +51,7 @@ source $ZSH/oh-my-zsh.sh
 
 # ZSH-specific stuff
 
-alias reload-shell-config='source ~/.zshrc'
+alias rl='source ~/.zshrc'
 
 ## Key bindings for paging and lolcat-ing. See here:
 ## <http://serverfault.com/questions/31845/is-there-a-way-to-configure-bash-to-always-page-output/31870#31870>
