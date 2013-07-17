@@ -1,6 +1,7 @@
 TODO for Sean Fisk's Dotfiles
 =============================
 
+* Put bash function "docstrings" within the function, because they can be seen when using `type -f`.
 * Check out bind (bash) and bindkey (zsh).
     * Use a shared data structure to maintain these keybindings and not just literal values.
 * Remove redundancy in the version check.
