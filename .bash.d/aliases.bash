@@ -164,3 +164,26 @@ e() {
 # that the server does not exist.
 ## Quick Emacs
 alias ecq='emacs --no-window-system --quick'
+
+# tmux update environment
+# adapted from here: <http://raim.codingfarm.de/blog/2013/01/30/tmux-update-environment/>
+
+if [[ -n "$TMUX" ]]; then
+	# The TMUX environment variable will be set if we are in tmux. Otherwise this function is useless.
+	re() {
+		# Refresh the local environment with values from tmux
+		local line
+		while read line; do
+			if [[ $line == -* ]]; then
+				# Remove the `-'.
+				unset ${line/#-/}
+			else
+				# Add quotes around the argument.
+				# Quoting differs from the original for zsh compatibility.
+				line=${line/=/'="'}
+				line=${line/%/\"}
+				eval export $line
+			fi
+		done < <(tmux show-environment)
+	}
+fi

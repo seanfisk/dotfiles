@@ -1,7 +1,6 @@
 TODO for Sean Fisk's Dotfiles
 =============================
 
-* Use [tmux update-environment](http://raim.codingfarm.de/blog/2013/01/30/tmux-update-environment/) for updating (maybe instead of the ssh-agent hack).
 * Check out bind (bash) and bindkey (zsh).
     * Use a shared data structure to maintain these keybindings and not just literal values.
 * Remove redundancy in the version check.
