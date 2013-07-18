@@ -5,6 +5,7 @@ TODO for Sean Fisk's Dotfiles
 * Check out bind (bash) and bindkey (zsh).
     * Use a shared data structure to maintain these keybindings and not just literal values.
 * Remove redundancy in the version check.
+* Figure out how to restart `ssh-agent` on Mac OS X when I accidentally kill it.
 * Decide standard of hyphens (probably) or underscores (probably not) and stick to them for functions, aliases, commands, and file names.
 * Set up a tmuxinator config which opens up emacs config and dotfiles repos.
 * Try to get rid of eval hackery in path utils.
