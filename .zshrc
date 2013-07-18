@@ -44,7 +44,11 @@ export DISABLE_AUTO_TITLE="true"
 
 # Oh My ZSH configuration
 # in general, avoid aliases and go for more completions
-plugins=(brew gem git-flow pip svn vagrant)
+#
+# Although I use pip a lot, the pip plugin has one annoyance: it
+# prevents completion of `requirements.txt' or `requirements-dev.txt'
+# when using the `-r' flag. Disable it until that is fixed.
+plugins=(brew gem git-flow svn vagrant)
 
 # source Oh My ZSH
 source $ZSH/oh-my-zsh.sh
