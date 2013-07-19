@@ -2,6 +2,7 @@ TODO for Sean Fisk's Dotfiles
 =============================
 
 * Put bash function "docstrings" within the function, because they can be seen when using `type -f`.
+* Add a keybinding for running the last command. Thinking about `C-x p` for previous. It's also harder to type that accidentally.
 * Check out bind (bash) and bindkey (zsh).
     * Use a shared data structure to maintain these keybindings and not just literal values.
 * Remove redundancy in the version check.
