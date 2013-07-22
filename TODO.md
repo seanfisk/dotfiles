@@ -14,7 +14,7 @@ TODO for Sean Fisk's Dotfiles
 * Try to get rid of eval hackery in path utils.
 * Write a zsh-specific version of path_utils, since it could be a lot more efficient.
 * Write a command for updating the dotfiles and emacs repos.
-* Investigate other ways of install autojump.
+* Move autojump into local-install-scripts repo.
 * Figure out why MANPATH isn't getting set correctly in bash but it is in zsh.
     * Definitely has to do with `/etc/zshenv` and `/usr/libexec/path_helper`.
     * Problem mitigated by new configuration.
