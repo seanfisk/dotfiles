@@ -3,6 +3,8 @@ TODO for Sean Fisk's Dotfiles
 
 * Put bash function "docstrings" within the function, because they can be seen when using `type -f`.
 * Add a keybinding for running the last command. Thinking about `C-x p` for previous. It's also harder to type that accidentally.
+* Write a `find-tmux` function that will find a tmux session given a list of a number of machines. Test on Yellowstone/EOS.
+* Write a function that will log in to the machine with the lightest load give a list of a number of machines. Test on Yellowstone/EOS.
 * Check out bind (bash) and bindkey (zsh).
     * Use a shared data structure to maintain these keybindings and not just literal values.
 * Remove redundancy in the version check.
