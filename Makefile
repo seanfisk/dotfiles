@@ -4,7 +4,7 @@ INSTALL_DATA = $(INSTALL) -b -m 644
 # INSTALL_RECURSIVE idea stolen from
 # <http://lists.freebsd.org/pipermail/freebsd-ports/2007-February/038476.html>
 INSTALL_RECURSIVE = $(SHELL) -c 'find "$$1" | cpio -dmpuv "$$2"' --
-ALL_INSTALL_TARGETS = bash zsh autojump ack git hg tmux x11
+ALL_INSTALL_TARGETS = bash zsh ack git hg tmux x11
 
 # pass prefix on the command-line to change install location
 # e.g.,
@@ -34,9 +34,6 @@ zsh: bash
 	# oh-my-zsh has an auto-update feature, symbolic link so it works
 	# for linking: symbolic link, no dereference, force
 	ln -snf "$(realpath .oh-my-zsh)" "$(abspath $(prefix))/.oh-my-zsh"
-
-autojump:
-	$(INSTALL_RECURSIVE) .autojump "$(prefix)"
 
 ack:
 	$(INSTALL_DATA) .ackrc "$(prefix)"

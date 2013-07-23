@@ -32,10 +32,6 @@ Recommended Software
 
 These are some command-line utilities that I use often. They are usually installed using [Homebrew][homebrew] (Mac OS X), [yum][yum] (Fedora, CentOS), or [aptitude][aptitude] (Debian, Ubuntu), or compiled from source and installed to my `~/.local` directory.
 
-Since I use it frequently, [autojump][autojump] is vendorized in this repository and is automatically installed.
-
-[pythonz][pythonz] and [rbenv][rbenv] could possibly be vendorized. However, I've decided not to do that at this time because I don't use Python and Ruby on every single machine on which I work.
-
 * [ack][ack] - file tree search, grep replacement
 * [aria2][aria2] - download utility and accelerator, similar to `wget`
 * [autojump][autojump] - easily navigate directories
