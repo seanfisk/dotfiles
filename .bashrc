@@ -25,3 +25,8 @@ if executable_in_path lolcat; then
 	bind '"\C-x\C-l": " 2>&1 | lolcat --force 2>&1 | less -R\C-m"'
 	bind '"\C-xa": " 2>&1 | lolcat --animate\C-m"'
 fi
+
+# Key binding for executing last command.
+#
+# This is equivalent to pressing C-p or the up arrow, then Enter.
+bind '"\C-xp": "\C-p\C-m"'

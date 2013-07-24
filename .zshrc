@@ -66,3 +66,8 @@ if executable_in_path lolcat; then
 	bindkey -s '\C-x\C-l' ' |& lolcat --force |& less -R\C-m'
 	bindkey -s '\C-xa' ' |& lolcat --animate\C-m'
 fi
+
+# Key binding for executing last command.
+#
+# This is equivalent to pressing C-p or the up arrow, then Enter.
+bindkey -s '\C-xp' '\C-p\C-m'
