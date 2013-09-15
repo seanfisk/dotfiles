@@ -57,6 +57,9 @@ source $ZSH/oh-my-zsh.sh
 
 alias rl='source ~/.zshrc'
 
+## Set ZSH options
+setopt INTERACTIVE_COMMENTS
+
 ## Key bindings for paging and lolcat-ing. See here:
 ## <http://serverfault.com/questions/31845/is-there-a-way-to-configure-bash-to-always-page-output/31870#31870>
 ## We use `|&' to pipe stdout AND stderr.
