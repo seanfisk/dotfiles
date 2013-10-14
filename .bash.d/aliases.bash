@@ -14,6 +14,22 @@ if function_or_executable_exists copy; then
 	fi
 fi
 
+if function_or_executable_exists qpdf; then
+	# For more info, see
+	# <http://qpdf.sourceforge.net/files/qpdf-manual.html#ref.page-selection>.
+	# The bolded command, however, is incorrect, and the `--' has to
+	# come *before* the name of the output file.
+
+	# I can never remember this...
+	pdf-merge() {
+		output_file=$1
+		shift
+		qpdf --empty --pages "$@" -- "$output_file"
+	}
+	# I also can never remember that qpdf calls it "merging", not "joining"
+	alias pdf-join=pdf-merge
+fi
+
 # really? yes, really
 alias c='cd'
 
