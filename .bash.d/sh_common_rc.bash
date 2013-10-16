@@ -33,20 +33,14 @@ umask u=rwx,g=,o=
 # exit if non-interactive
 [[ $- != *i* ]] && return
 
-# loads rbenv into a shell session
-[[ -d ~/.rbenv ]] && path_add_hierarchy ~/.rbenv
-if executable_in_path rbenv; then
-	eval "$(rbenv init -)"
-fi
-
-# loads pythonz into a shell session
-[[ -s ~/.pythonz/etc/bashrc ]] && source ~/.pythonz/etc/bashrc
-# load virtualenvwrapper (python) into a shell session
-# don't use the lazy functions, otherwise we won't get completion on
-# the environments initially
-if executable_in_path virtualenvwrapper.sh; then
-	source virtualenvwrapper.sh
-fi
+# load pyenv and rbenv into shell session
+for prefix in rb py; do
+	tool=${prefix}env
+	[[ -d ~/.$tool ]] && path_add_hierarchy ~/.$tool
+	if executable_in_path $tool; then
+		eval "$($tool init -)"
+	fi
+done
 
 # loads autojump into a shell session
 [[ -s ~/.autojump/etc/profile.d/autojump.sh ]] && source ~/.autojump/etc/profile.d/autojump.sh
