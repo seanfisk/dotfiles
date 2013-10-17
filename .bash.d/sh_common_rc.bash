@@ -30,9 +30,6 @@ export INFOPATH
 # Set umask for more privacy
 umask u=rwx,g=,o=
 
-# exit if non-interactive
-[[ $- != *i* ]] && return
-
 # load pyenv and rbenv into shell session
 for prefix in rb py; do
 	tool=${prefix}env
@@ -42,11 +39,14 @@ for prefix in rb py; do
 	fi
 done
 
-# loads autojump into a shell session
-[[ -s ~/.autojump/etc/profile.d/autojump.sh ]] && source ~/.autojump/etc/profile.d/autojump.sh
-
 # set the editor
 export EDITOR='emacsclient --alternate-editor='
+
+# exit if non-interactive
+[[ $- != *i* ]] && return
+
+# loads autojump into a shell session
+[[ -s ~/.autojump/etc/profile.d/autojump.sh ]] && source ~/.autojump/etc/profile.d/autojump.sh
 
 # platform-specific code - must come before aliases
 # platform-specific
