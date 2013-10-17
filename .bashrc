@@ -9,6 +9,9 @@ fi
 # Include common sh-like code.
 source ~/.bash.d/sh_common_rc.bash
 
+# Exit if non-interactive. Has to be here again because return only returns from one file.
+[[ $- != *i* ]] && return
+
 # Bash-specific stuff
 
 # A simple prompt, useful for recording shell sessions.
