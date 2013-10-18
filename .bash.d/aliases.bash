@@ -97,46 +97,6 @@ mk() { mkdir -p "$1" && cd "$1"; }
 old() { mv "$1" "$1.old"; } # make a *.old file
 unold() { mv "$1" "${1%.old}"}
 
-# These are somewhat legacy. In here for documentation mostly.
-find-all-executables() {
-	if [[ $# -gt 1 ]]; then
-		echo "Usage: $0 [DIRECTORY]" 1>&2
-		return 1
-	fi
-	find "${1:-.}" -maxdepth 1 -type f -executable
-}
-link-all-exectuables() {
-	if [[ $# -eq 0 || $# -gt 2 ]]; then
-		echo "Usage: $0 TARGET_DIR [LINK_DIR]" 1>&2
-		return 1
-	fi
-	local target_dir=$(readlink --canonicalize-existing "$1")
-	local link_dir=$(readlink --canonicalize-existing "${2:-.}")
-	pushd "$link_dir"
-	find "$target_dir" -maxdepth 1 -type f -executable \
-		-exec ln --symbolic --verbose --target-directory . '{}' '+'
-	popd
-}
-unlink-all-exectuables() {
-	if [[ $# -eq 0 || $# -gt 2 ]]; then
-		echo "Usage: $0 TARGET_DIR [LINK_DIR]" 1>&2
-		return 1
-	fi
-	local target_dir=$(readlink --canonicalize-existing "$1")
-	local link_dir=$(readlink --canonicalize-existing "${2:-.}")
-	for target in $(find-all-executables "$target_dir"); do
-		local link=$link_dir/$(basename "$target")
-		if [[ ! -L "$link" ]]; then
-			continue
-		fi
-		local target_path=$(readlink --canonicalize-existing "$target")
-		local link_path=$(readlink --canonicalize-existing "$link")
-		if [[ $target_path == $link_path ]]; then
-			rm --verbose "$link"
-		fi
-	done
-}
-
 # Data URIs
 to_data_uri() {
 	# Filter; accepts input on stdin and echoes to stdout
