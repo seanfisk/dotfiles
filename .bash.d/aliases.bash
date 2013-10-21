@@ -95,7 +95,7 @@ fi
 cdl() { cd "$1" && ls; }
 mk() { mkdir -p "$1" && cd "$1"; }
 old() { mv "$1" "$1.old"; } # make a *.old file
-unold() { mv "$1" "${1%.old}"}
+unold() { mv "$1" "${1%.old}"; }
 
 # Data URIs
 to_data_uri() {
