@@ -1,6 +1,7 @@
 TODO for Sean Fisk's Dotfiles
 =============================
 
+* Reorganize in accordance with http://shreevatsa.wordpress.com/2008/03/30/zshbash-startup-files-loading-order-bashrc-zshrc-etc/.
 * Put bash function "docstrings" within the function, because they can be seen when using `type -f`.
 * Write a `find-tmux` function that will find a tmux session given a list of a number of machines. Test on Yellowstone/EOS.
 * Write a function that will log in to the machine with the lightest load give a list of a number of machines. Test on Yellowstone/EOS.
