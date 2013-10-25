@@ -5,6 +5,7 @@ INSTALL_DATA = $(INSTALL) -b -m 644
 # <http://lists.freebsd.org/pipermail/freebsd-ports/2007-February/038476.html>
 INSTALL_RECURSIVE = $(SHELL) -c 'find "$$1" | cpio -dmpuv "$$2"' --
 ALL_INSTALL_TARGETS = bash zsh ack git hg tmux x11
+PYPI_ROOT = http://localhost:4040/root/pypi/+simple/
 
 # pass prefix on the command-line to change install location
 # e.g.,
@@ -53,3 +54,10 @@ x11:
 
 tmux-patch:
 	patch "$(prefix)/.tmux.conf" tmux-macosx.patch
+
+# Not yet included in ALL_INSTALL_TARGETS because it modifies global pip settings.
+python:
+	$(INSTALL_RECURSIVE) .pip "$(prefix)"
+	echo "$(PYPI_ROOT)" >> "$(prefix)/.pip/pip.conf"
+	$(INSTALL_DATA) .pydistutils.cfg "$(prefix)"
+	echo "$(PYPI_ROOT)" >> "$(prefix)/.pydistutils.cfg"
