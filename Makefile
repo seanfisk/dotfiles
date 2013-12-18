@@ -25,13 +25,11 @@ install-osx: $(ALL_INSTALL_TARGETS) tmux-patch
 bash:
 	$(INSTALL_DATA) .bashrc "$(prefix)"
 	$(INSTALL_DATA) .bash_profile "$(prefix)"
-	$(INSTALL_DATA) .bash_logout "$(prefix)"
-	$(INSTALL_RECURSIVE) .bash.d "$(prefix)"
+	$(INSTALL_RECURSIVE) .shell_common.d "$(prefix)"
 
 zsh: bash
 	$(INSTALL_DATA) .zshrc "$(prefix)"
 	$(INSTALL_DATA) .zprofile "$(prefix)"
-	$(INSTALL_DATA) .zlogout "$(prefix)"
 	# oh-my-zsh has an auto-update feature, symbolic link so it works
 	# for linking: symbolic link, no dereference, force
 	ln -snf "$(realpath .oh-my-zsh)" "$(abspath $(prefix))/.oh-my-zsh"

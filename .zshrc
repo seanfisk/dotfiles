@@ -6,16 +6,16 @@ if [[ $ZSH_VERSION[0,1] -lt $MIN_ZSH_VERSION ]]; then
 	return
 fi
 
-# For whatever reason, zsh does not set the $SHELL variable. rbenv
-# uses this variable to determine which shell completion to load. Set
-# it manually for zsh.
+# Although bash does, zsh does not set the $SHELL variable when
+# started. rbenv uses this variable to determine which shell
+# completion to load. Set it manually for zsh.
 SHELL=$(which zsh)
 
-# Include common sh-like code.
-source ~/.bash.d/sh_common_rc.bash
+# Include runtime configuration.
+source ~/.shell_common.d/rc.bash
 
 # Exit if non-interactive. Has to be here again because return only returns from one file.
-[[ $- != *i* ]] && return
+# [[ $- != *i* ]] && return
 
 # Path to your oh-my-zsh configuration.
 export ZSH=~/.oh-my-zsh
@@ -24,10 +24,7 @@ export ZSH=~/.oh-my-zsh
 # Look in ~/.oh-my-zsh/themes/
 # Optionally, if you set this to "random", it'll load a random theme each
 # time that oh-my-zsh is loaded.
-#export ZSH_THEME=robbyrussell
 export ZSH_THEME=bira-simple
-#export ZSH_THEME=fletcherm
-#export ZSH_THEME=kphoen
 
 # Set to this to use case-sensitive completion
 export CASE_SENSITIVE="true"

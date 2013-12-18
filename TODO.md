@@ -1,8 +1,6 @@
 TODO for Sean Fisk's Dotfiles
 =============================
 
-* Reorganize in accordance with http://shreevatsa.wordpress.com/2008/03/30/zshbash-startup-files-loading-order-bashrc-zshrc-etc/.
-* Get devpi configuration solidified.
 * Put bash function "docstrings" within the function, because they can be seen when using `type -f`.
 * Write a `find-tmux` function that will find a tmux session given a list of a number of machines. Test on Yellowstone/EOS.
 * Write a function that will log in to the machine with the lightest load give a list of a number of machines. Test on Yellowstone/EOS.
@@ -17,8 +15,5 @@ TODO for Sean Fisk's Dotfiles
 * Try to get rid of eval hackery in path utils.
 * Write a zsh-specific version of path_utils, since it could be a lot more efficient.
 * Write a command for updating the dotfiles and emacs repos.
-* Figure out why MANPATH isn't getting set correctly in bash but it is in zsh.
-    * Definitely has to do with `/etc/zshenv` and `/usr/libexec/path_helper`.
-    * Problem mitigated by new configuration.
 * Write a function for creating a new tmux tab and automatically naming it.
 * Get SSH keys under control. Decide which ones need to be shared.

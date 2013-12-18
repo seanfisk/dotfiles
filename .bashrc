@@ -7,10 +7,10 @@ if [[ ${BASH_VERSION:0:1} -lt $MIN_BASH_VERSION ]]; then
 fi
 
 # Include common sh-like code.
-source ~/.bash.d/sh_common_rc.bash
+source ~/.shell_common.d/rc.bash
 
 # Exit if non-interactive. Has to be here again because return only returns from one file.
-[[ $- != *i* ]] && return
+# [[ $- != *i* ]] && return
 
 # Bash-specific stuff
 

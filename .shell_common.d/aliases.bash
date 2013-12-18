@@ -1,3 +1,5 @@
+source ~/.shell_common.d/path_utils.bash
+
 if function_or_executable_exists copy; then
 	if function_or_executable_exists paste; then
 		if function_or_executable_exists aria2c; then

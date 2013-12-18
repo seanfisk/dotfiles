@@ -1,5 +1,9 @@
+# Commands to be run in .bash_profile and .zprofile
+#
+# We would like this file to be run for all interative login shells.
+
 # Path munging
-source ~/.bash.d/path_utils.bash
+source ~/.shell_common.d/path_utils.bash
 # Start with default manpath entries and existing value of variable.
 MANPATH=$MANPATH:$(man --path)
 
@@ -41,30 +45,3 @@ done
 
 # set the editor
 export EDITOR='emacsclient --alternate-editor='
-
-# exit if non-interactive
-[[ $- != *i* ]] && return
-
-# loads autojump into a shell session
-[[ -s ~/.autojump/etc/profile.d/autojump.sh ]] && source ~/.autojump/etc/profile.d/autojump.sh
-
-# platform-specific code - must come before aliases
-# platform-specific
-kernel_name=$(uname -s)
-case $kernel_name in
-	Linux)
-		source ~/.bash.d/platform_specific/gnu_linux.bash
-		;;
-	Darwin)
-		source ~/.bash.d/platform_specific/mac_os_x.bash
-		;;
-	*)
-		echo 'Kernel not recognized. Please revise the shell configuration.' >&2
-		;;
-esac
-
-# source aliases - we want this to error if not found
-source ~/.bash.d/aliases.bash
-
-# local content - useful for stuff only on one machine
-[[ -s ~/.bash.d/local.bash ]] && source ~/.bash.d/local.bash

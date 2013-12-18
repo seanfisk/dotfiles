@@ -4,7 +4,7 @@
 /.wd/wdenv
 
 # Ignore local configuration
-/.bash.d/local.bash
+/.shell_common.d/localrc.bash
 
 # tags file
 TAGS
