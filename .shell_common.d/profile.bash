@@ -34,13 +34,10 @@ export INFOPATH
 # Set umask for more privacy
 umask u=rwx,g=,o=
 
-# load pyenv and rbenv into shell session
+# Add pyenv and rbenv paths to PATH.
 for prefix in rb py; do
 	tool=${prefix}env
 	[[ -d ~/.$tool ]] && path_add_hierarchy ~/.$tool
-	if executable_in_path $tool; then
-		eval "$($tool init -)"
-	fi
 done
 
 # set the editor
