@@ -1,6 +1,8 @@
 # GNU/Linux specific code
 # Try to keep it generic between different distros
 
+source ~/.shell_common.d/path_utils.bash
+
 # colorize, human readable file sizes, classify
 alias ls='ls --color=always -hF'
 
