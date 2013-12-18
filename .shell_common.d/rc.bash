@@ -5,7 +5,7 @@
 # exit if non-interactive
 # [[ $- != *i* ]] && return
 
-# loads autojump into a shell session
+# Load autojump into a shell session. This needs to be loaded in each interactive shell session because it loads functions, aliases, etc. Unfortunately, it also amends the PATH, so successive inner shells that get started will have multiple paths to autojump's bin directory in the PATH. We could call path_remove_duplicates, but we'd rather not do this in here. It's not a huge deal and it doesn't break anything, so we'll deal with it for now.
 [[ -s ~/.autojump/etc/profile.d/autojump.sh ]] && source ~/.autojump/etc/profile.d/autojump.sh
 
 # platform-specific aliases and functions - must come before aliases.bash
