@@ -1,7 +1,7 @@
 Sean's Dotfiles
 ===============
 
-These are my configuration files for shells other common software. Currently, this repository contains configurations for **bash**, **zsh**, **git**, **mercurial**, **tmux**, **ack**, and **X windows**.
+These are my configuration files for shells and other common software on UNIX-like operating systems. Currently, this repository contains configurations for **bash**, **zsh**, **git**, **mercurial**, **tmux**, **ack**, and **X windows**.
 
 This configuration is compatible only with **GNU Bash 4 and up** and **Zsh 5 and up**. Backwards compatibility is typically not an issue because I compile my own software when it is not available on a given machine.
 
@@ -18,9 +18,21 @@ To install the dotfiles to a different prefix:
 
     make prefix=/my/different/prefix install
 
-To install with the tmux pasteboard workaround on Mac OS X (see `tmux-macosx.patch`):
+Mac OS X Notes
+--------------
+
+Mac OS X suffers from two issues which pertain directly to the dotfiles.
+
+First, the Mac OS X-provided global zsh startup files are organized incorrectly. Mac OS X uses a small utility called [`path_helper`][path_helper] which loads a default `PATH` for various shells. With bash, it is configured to append to the `PATH` only when bash is started as a login shell (using `/etc/profile`). However, with zsh, this code is placed in `/etc/zshenv` which is read on login and non-login shell startups. A [workaround in my Macbook configuration][macbook-chef-zsh] remedies this problem.
+
+[path_helper]: https://developer.apple.com/library/mac/documentation/Darwin/Reference/ManPages/man8/path_helper.8.html
+[macbook-chef-zsh]: https://github.com/seanfisk/macbook-chef-repo/blob/f18ba3df5439ec681dc3b59b7faedcae1fdcb9e6/cookbooks/macbook_setup/recipes/default.rb#L67
+
+The second issue has to do with [tmux][tmux] and the Mac OS X clipboard. Please see the [tmux-MacOSX-pasteboard][tmux-macosx-pasteboard] repository for the description of the problem and the workaround. To install with the tmux pasteboard workaround run:
 
     make install-osx
+
+Please see `tmux-macosx.patch` for the patch that is applied. This patch assumes that the `reattach-to-user-namespace` utility is on the `PATH` (I put it in `~/bin`).
 
 Shell Configurations
 --------------------
@@ -50,7 +62,7 @@ These are some command-line utilities that I use often. They are usually install
 * [pyenv][pyenv] - Python environment manager
 * [rbenv][rbenv] - Ruby environment manager
 * [tig][tig] - text-interface mode for git (git log viewer, mostly replaced by [magit](https://github.com/magit/magit))
-* [tmux-MacOSX-pasteboard][tmux-osx-pasteboard] - Workaround for `pbpaste` and `pbcopy` under Mac OS X
+* [tmux-MacOSX-pasteboard][tmux-macosx-pasteboard] - workaround for `pbpaste` and `pbcopy` under Mac OS X
 * [tmux][tmux] - terminal multiplexer, GNU screen replacement
 * [tmuxinator][tmuxinator] - manage complex tmux sessions easily
 * [xclip][xclip] - command line interface to the X11 clipboard
@@ -63,7 +75,7 @@ These are some command-line utilities that I use often. They are usually install
 [pyenv]: https://github.com/yyuu/pyenv
 [rbenv]: https://github.com/sstephenson/rbenv
 [tig]: http://jonas.nitro.dk/tig/
-[tmux-osx-pasteboard]: https://github.com/ChrisJohnsen/tmux-MacOSX-pasteboard
+[tmux-macosx-pasteboard]: https://github.com/ChrisJohnsen/tmux-MacOSX-pasteboard
 [tmux]: http://tmux.sourceforge.net/
 [tmuxinator]: https://github.com/aziz/tmuxinator
 [xclip]: http://sourceforge.net/projects/xclip/
