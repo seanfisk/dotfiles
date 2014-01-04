@@ -14,6 +14,8 @@ path_add_hierarchy /usr/local
 path_add_hierarchy ~/.local
 # pip install --user XXX installs to here on Mac OS 10.8
 path_add_hierarchy ~/Library/Python/2.7
+# On Mac OS X, find the emacsclient executable (and other Emacs utilities) included with the Emacs app bundle.
+path_add_hierarchy /Applications/Emacs.app/Contents/MacOS
 
 # Add scripts directory.
 PATH=~/bin:$PATH
