@@ -16,7 +16,19 @@ for prefix in rb py; do
 done
 
 # Load autojump into a shell session. This needs to be loaded in each interactive shell session because it loads functions, aliases, etc. Unfortunately, it also amends the PATH, so successive inner shells that get started will have multiple paths to autojump's bin directory in the PATH. We could call path_remove_duplicates, but we'd rather not do this in here. It's not a huge deal and it doesn't break anything, so we'll deal with it for now.
-[[ -s ~/.autojump/etc/profile.d/autojump.sh ]] && source ~/.autojump/etc/profile.d/autojump.sh
+#
+# For Homebrew installs
+if executable_in_path brew; then
+	AUTOJUMP_BREW_PATH="$(brew --prefix)/etc/autojump.sh"
+	if [[ -s $AUTOJUMP_BREW_PATH ]]; then
+		source "$AUTOJUMP_BREW_PATH"
+	fi
+	unset AUTOJUMP_BREW_PATH
+fi
+# Normal installs
+if ! function_or_executable_exists j; then
+	[[ -s ~/.autojump/etc/profile.d/autojump.sh ]] && source ~/.autojump/etc/profile.d/autojump.sh
+fi
 
 # platform-specific aliases and functions - must come before aliases.bash
 kernel_name=$(uname -s)
