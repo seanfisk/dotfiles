@@ -21,7 +21,7 @@ first :
 
 install: $(ALL_INSTALL_TARGETS)
 
-install-osx: $(ALL_INSTALL_TARGETS) tmux-patch
+install-osx: $(ALL_INSTALL_TARGETS) tmux-patch slate
 
 bash:
 	$(INSTALL_DATA) .bashrc "$(prefix)"
@@ -53,6 +53,10 @@ x11:
 
 tmux-patch:
 	patch "$(prefix)/.tmux.conf" tmux-macosx.patch
+
+# Slate is a window manager for Mac OS X.
+slate:
+	$(INSTALL_DATA) .slate "$(prefix)"
 
 # Not yet included in ALL_INSTALL_TARGETS because it modifies global pip settings.
 python:
