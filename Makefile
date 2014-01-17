@@ -16,6 +16,7 @@ prefix = $(HOME)
 first :
 	@echo 'Please type ...'
 	@echo "  \`make install' to install to \`$(prefix)'"
+	@echo "  \`make python' to install PyPi settings for devpi"
 	@echo "  \`make prefix=/my/different/prefix install' to install to a different directory."
 
 install: $(ALL_INSTALL_TARGETS)
