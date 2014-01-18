@@ -5,10 +5,11 @@ config nudgePercentOf screenSize
 config resizePercentOf screenSize
 
 # Resize Bindings
-bind right:alt       resize +10% +0
-bind left:alt        resize -10% +0
-bind up:alt          resize +0   -10%
-bind down:alt        resize +0   +10%
+# right:alt and left:alt are annoying for bindings, because they interfere with forward-word and backward-word in the GUI.
+# bind right:alt       resize +10% +0
+# bind left:alt        resize -10% +0
+# bind up:alt          resize +0   -10%
+# bind down:alt        resize +0   +10%
 # bind right:ctrl;alt  resize -10% +0 bottom-right
 # bind left:ctrl;alt   resize +10% +0 bottom-right
 # bind up:ctrl;alt     resize +0   +10% bottom-right
