@@ -62,6 +62,10 @@ key='\C-j'; keybindings[$key]=' |& less\C-m'
 # This is equivalent to pressing C-p or the up arrow, then Enter.
 key='\C-xp'; keybindings[$key]='\C-p\C-m'
 
+# Up a directory, aliased to `u' for me.
+# Note: `^[u' means `ESC+' then `u' as opposed to `\M-u', which means `Meta' then `u'. I have both Option keys on my Mac configured to send `ESC+' in iTerm2.
+key='^[j'; keybindings[$key]='u\C-m'
+
 # Lolcat-ing.
 if executable_in_path lolcat; then
 	key='\C-xl'; keybindings[$key]=' |& lolcat\C-m'
