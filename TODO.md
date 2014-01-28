@@ -19,6 +19,3 @@ TODO for Sean Fisk's Dotfiles
 
 * SSH
     * Get SSH keys under control. Decide which ones need to be shared.
-    * Incorporate some tips from here: http://blogs.perl.org/users/smylers/2011/08/ssh-productivity-tips.html
-        * multiple connections / connection sharing
-        * repeated connections / persistent connections
