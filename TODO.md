@@ -5,7 +5,6 @@ TODO for Sean Fisk's Dotfiles
 * Write a `find-tmux` function that will find a tmux session given a list of a number of machines. Test on Yellowstone/EOS.
 * Write a function that will log in to the machine with the lightest load give a list of a number of machines. Test on Yellowstone/EOS.
 * Check out bind (bash) and bindkey (zsh).
-    * Use a shared data structure to maintain these keybindings and not just literal values.
     * Consider binding some things like "up a directory".
     * Don't forget about the Alt key as a prefix.
 * Remove redundancy in the version check.

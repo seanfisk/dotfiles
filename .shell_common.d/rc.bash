@@ -47,5 +47,27 @@ esac
 # source aliases - we want this to error if not found
 source ~/.shell_common.d/aliases.bash
 
+# Common bash/zsh keybindings data structure.
+# See here: <http://serverfault.com/questions/31845/is-there-a-way-to-configure-bash-to-always-page-output/31870#31870>
+
+# There is apparently no way portable between Bash and Zsh to declare subscripts to an associative array which have backslashes. Zsh interprets the subscript as if it was between double quotes (with some other funky rules), and Bash follows regular quoting rules (I think). The workaround is to use the intermediate `key' variable to get consistent quoting.
+
+declare -A keybindings # delcare as associative array
+
+# Paging
+# Note: `|&' is Bash 4 and Zsh only.
+key='\C-j'; keybindings[$key]=' |& less\C-m'
+
+# Executing last command.
+# This is equivalent to pressing C-p or the up arrow, then Enter.
+key='\C-xp'; keybindings[$key]='\C-p\C-m'
+
+# Lolcat-ing.
+if executable_in_path lolcat; then
+	key='\C-xl'; keybindings[$key]=' |& lolcat\C-m'
+	key='\C-x\C-l'; keybindings[$key]=' |& lolcat --force |& less -R\C-m'
+	key='\C-xa'; keybindings[$key]=' |& lolcat --animate\C-m'
+fi
+
 # local runtime configuration - useful for stuff only on one machine
 [[ -s ~/.shell_common.d/localrc.bash ]] && source ~/.shell_common.d/localrc.bash
