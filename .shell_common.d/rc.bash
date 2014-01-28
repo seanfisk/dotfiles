@@ -63,7 +63,7 @@ key='\C-j'; keybindings[$key]=' |& less\C-m'
 key='\C-xp'; keybindings[$key]='\C-p\C-m'
 
 # Up a directory, aliased to `u' for me.
-# Note: `^[u' means `ESC+' then `u' as opposed to `\M-u', which means `Meta' then `u'. I have both Option keys on my Mac configured to send `ESC+' in iTerm2.
+# Note: `^[j' means `ESC+' then `j' as opposed to `\M-j', which means `Meta' then `j'. I have both Option keys on my Mac configured to send `ESC+' in iTerm2.
 key='^[j'; keybindings[$key]='u\C-m'
 
 # Lolcat-ing.
