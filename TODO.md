@@ -16,4 +16,9 @@ TODO for Sean Fisk's Dotfiles
 * Write a zsh-specific version of path_utils, since it could be a lot more efficient.
 * Write a command for updating the dotfiles and emacs repos.
 * Write a function for creating a new tmux tab and automatically naming it.
-* Get SSH keys under control. Decide which ones need to be shared.
+
+* SSH
+    * Get SSH keys under control. Decide which ones need to be shared.
+    * Incorporate some tips from here: http://blogs.perl.org/users/smylers/2011/08/ssh-productivity-tips.html
+        * multiple connections / connection sharing
+        * repeated connections / persistent connections
