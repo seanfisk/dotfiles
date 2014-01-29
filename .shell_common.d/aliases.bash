@@ -166,3 +166,30 @@ if [[ -n "$TMUX" ]]; then
 		done < <(tmux show-environment)
 	}
 fi
+
+# Find size of files in a git repo
+git-repo-size() {
+	# See here for sources of approaches: http://serverfault.com/questions/351598/get-total-files-size-from-a-file-containing-a-file-list
+
+	if executable_in_path gwc; then
+		local WC=gwc
+	else
+		local WC=wc
+	fi
+	local num_bytes=$(git ls-files -z | $WC --bytes --files0-from=- | tail -1 | cut -d' ' -f1)
+
+	# Another approach:
+	# if executable_in_path gstat; then
+	# 	local STAT=gstat
+	# else
+	# 	local STAT=stat
+	# fi
+	# local num_bytes=$(git ls-files -z | while read -d $'\0' filename;  do $STAT -c '%s' "$filename"; done | awk '{total+=$1} END {print total}')
+
+	if executable_in_path gnumfmt; then
+		local NUMFMT=gnumfmt
+	else
+		local NUMFMT=numfmt
+	fi
+	$NUMFMT --to=iec-i --suffix=B "$num_bytes"
+}
