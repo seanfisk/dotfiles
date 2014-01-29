@@ -60,17 +60,8 @@ alias rl='source ~/.zshrc'
 ## Set ZSH options
 setopt INTERACTIVE_COMMENTS
 
-## Key bindings for paging and lolcat-ing. See here:
-## <http://serverfault.com/questions/31845/is-there-a-way-to-configure-bash-to-always-page-output/31870#31870>
-## We use `|&' to pipe stdout AND stderr.
-bindkey -s '\C-j' ' |& less\C-m'
-if executable_in_path lolcat; then
-	bindkey -s '\C-xl' ' |& lolcat\C-m'
-	bindkey -s '\C-x\C-l' ' |& lolcat --force |& less -R\C-m'
-	bindkey -s '\C-xa' ' |& lolcat --animate\C-m'
-fi
-
-# Key binding for executing last command.
-#
-# This is equivalent to pressing C-p or the up arrow, then Enter.
-bindkey -s '\C-xp' '\C-p\C-m'
+#           Fetch keys of the assoc array
+#             V
+for key in ${(k)keybindings}; do
+	bindkey -s $key ${keybindings[$key]}
+done
