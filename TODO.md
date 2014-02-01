@@ -1,6 +1,9 @@
 TODO for Sean Fisk's Dotfiles
 =============================
 
+* Fix scp (for EOS).
+* Persistent SSH connections don't work on EOS.
+* Bitbucket doesn't like shared SSH connections.
 * `num-procs` is broken on Mavericks.
 * Put bash function "docstrings" within the function, because they can be seen when using `type -f`.
 * Write a `find-tmux` function that will find a tmux session given a list of a number of machines. Test on Yellowstone/EOS.
