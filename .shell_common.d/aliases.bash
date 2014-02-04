@@ -171,14 +171,29 @@ fi
 tmux_attach_or_new() {
 	# This is idempotent: if a server already exists, this does nothing.
 	tmux start-server
+	local tmux_subcommand
+	if tmux has-session 2>/dev/null; then
+		tmux_subcommand=attach
+	else
+		tmux_subcommand=new-session
+	fi
+	# When we exec, the tmux process replaces the currently running shell. Since the only purpose the "currently running shell" serves is to start tmux, we don't really need it anymore.
 	# While it's not absolutely necessary to exec, if we do, then when
 	# the process terminates, the terminal window/tab or SSH session
 	# will exit, which is kind of cool.
-	if tmux has-session 2>/dev/null; then
-		exec tmux attach
-	else
-		exec tmux new-session
-	fi
+	exec tmux "$tmux_subcommand"
+}
+
+# Start an SSH connection by running the shell function `tmux_attach_or_new' within bash.
+ssh_tmux() {
+	# All args are passed to `ssh' *before* the remote command. This allows us to easily specify, e.g., `-X'.
+
+	# Note: This function is primarily intended for the EOS labs.
+	# - By using -c, we are telling bash that it should not be invoked as a login shell. However, if it's not a login shell, it won't read our .bash_profile, which includes setting the PATH to find tmux (on EOS). Therefore we need to add --login to the command-line.
+	# - See above for what `tmux_attach_or_new' does.
+	# - We use exec so that the SSH session replaces our current shell. This is done because I typically open up a new window for SSH sessions and just use that window for tmux on the remote machine. I don't typically use the terminal emulator's tab feature at all (because we have tmux).
+	# - By calling `tmux_attach_or_new' on the *remote* server we are assuming that the dotfiles (and tmux) are installed on the remote server. Errors will ensue if these assumptions are not correct.
+	exec ssh -t "$@" 'bash --login -c tmux_attach_or_new'
 }
 
 # Find size of files in a git repo
