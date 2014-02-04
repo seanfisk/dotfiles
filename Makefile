@@ -22,7 +22,7 @@ first :
 
 install: $(ALL_INSTALL_TARGETS)
 
-install-osx: $(ALL_INSTALL_TARGETS) macosx-tmux-patch slate
+install-osx: $(ALL_INSTALL_TARGETS) macosx-tmux-patch
 
 install-eos: $(ALL_INSTALL_TARGETS) eos-ssh-config-patch
 
@@ -63,10 +63,6 @@ macosx-tmux-patch:
 
 eos-ssh-config-patch:
 	patch "$(prefix)/.ssh/config" patches/eos-ssh-config.patch
-
-# Slate is a window manager for Mac OS X.
-slate:
-	$(INSTALL_DATA) .slate "$(prefix)"
 
 # Not yet included in ALL_INSTALL_TARGETS because it modifies global pip settings.
 python:
