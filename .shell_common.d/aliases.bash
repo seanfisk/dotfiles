@@ -48,12 +48,17 @@ alias lag='la | grep'
 alias laeg='la | egrep'
 alias lafg='la | fgrep'
 
-for program in ps pgrep pkill htop lsof; do
+for program in ps pgrep pkill htop lsof pstree; do
 	if executable_in_path $program; then
 		# All these programs support a -u argument specifying the
 		# user. For ps, pgrep, and pkill it is effective user id
 		# (euid). For htop and lsof this is unspecified. In most of my
 		# cases, euid and ruid will be the same anyway.
+		#
+		# There are two different versions of pstree:
+		# - http://freecode.com/projects/pstree, used on my Mac OS X
+		# - http://psmisc.sourceforge.net/, used on most GNU/Linux machines
+		# But they both support the -u flag!
 		alias "my$program=$program -u $(whoami)"
 	fi
 done
