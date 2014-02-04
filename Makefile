@@ -22,7 +22,9 @@ first :
 
 install: $(ALL_INSTALL_TARGETS)
 
-install-osx: $(ALL_INSTALL_TARGETS) tmux-patch slate
+install-osx: $(ALL_INSTALL_TARGETS) macosx-tmux-patch slate
+
+install-eos: $(ALL_INSTALL_TARGETS) eos-ssh-config-patch
 
 bash:
 	$(INSTALL_DATA) .bashrc "$(prefix)"
@@ -56,8 +58,11 @@ tmux:
 x11:
 	$(INSTALL_DATA) .Xkbmap "$(prefix)"
 
-tmux-patch:
-	patch "$(prefix)/.tmux.conf" tmux-macosx.patch
+macosx-tmux-patch:
+	patch "$(prefix)/.tmux.conf" patches/macosx-tmux.patch
+
+eos-ssh-config-patch:
+	patch "$(prefix)/.ssh/config" patches/eos-ssh-config.patch
 
 # Slate is a window manager for Mac OS X.
 slate:

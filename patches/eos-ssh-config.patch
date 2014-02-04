@@ -1,0 +1,12 @@
+diff --git a/.ssh/config b/.ssh/config
+index a838f72..2d72aa9 100644
+--- a/.ssh/config
++++ b/.ssh/config
+@@ -36,5 +36,6 @@ ControlMaster auto
+ ControlPath /tmp/ssh_mux_%h_%p_%r
+ 
+ # Persist connections for 2 hours.
+-ControlPersist 2h
++# Not available on EOS.
++# ControlPersist 2h
+ 
