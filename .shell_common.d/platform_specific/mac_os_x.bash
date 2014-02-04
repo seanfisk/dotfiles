@@ -18,9 +18,11 @@ alias paste='pbpaste'
 # multi-processor stuff
 num-procs()
 {
-	system_profiler SPHardwareDataType |
-		grep --extended-regexp 'Total Number Of Cores: [[:digit:]]+' |
-		awk '/Total Number Of Cores/ {print $5};'
+	# From Snow Leopard to Mavericks, the line was change so that `Of' has now become `of'.
+	# The echo strips spaces.
+	echo $(system_profiler SPHardwareDataType |
+		grep --extended-regexp --ignore-case 'Total Number of Cores: [[:digit:]]+' |
+		cut -d ':' -f 2)
 }
 
 # Homebrew deletes (Tex)Info manuals unless you bar it from doing

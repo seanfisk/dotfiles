@@ -167,6 +167,20 @@ if [[ -n "$TMUX" ]]; then
 	}
 fi
 
+# Attach to an existing tmux session, or create one if it doesn't exist
+tmux_attach_or_new() {
+	# This is idempotent: if a server already exists, this does nothing.
+	tmux start-server
+	# While it's not absolutely necessary to exec, if we do, then when
+	# the process terminates, the terminal window/tab or SSH session
+	# will exit, which is kind of cool.
+	if tmux has-session 2>/dev/null; then
+		exec tmux attach
+	else
+		exec tmux new-session
+	fi
+}
+
 # Find size of files in a git repo
 git-repo-size() {
 	# See here for sources of approaches: http://serverfault.com/questions/351598/get-total-files-size-from-a-file-containing-a-file-list
