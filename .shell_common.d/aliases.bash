@@ -194,11 +194,11 @@ ssh_tmux() {
 	# All args are passed to `ssh' *before* the remote command. This allows us to easily specify, e.g., `-X'.
 
 	# Note: This function is primarily intended for the EOS labs.
-	# - By using -c, we are telling bash that it should not be invoked as a login shell. However, if it's not a login shell, it won't read our .bash_profile, which includes setting the PATH to find tmux (on EOS). Therefore we need to add --login to the command-line.
+	# - By using -c, we are telling bash that it should not be invoked as a non-interactive login shell. However, if it's not a login shell, it won't read our .bash_profile, which includes setting the PATH to find tmux (on EOS). And if it's not interactive, it won't get far enough to read our functions and aliases (of which tmux_attach_or_new is one). Therefore we need to add `--login -i' to the command-line.
 	# - See above for what `tmux_attach_or_new' does.
 	# - We use exec so that the SSH session replaces our current shell. This is done because I typically open up a new window for SSH sessions and just use that window for tmux on the remote machine. I don't typically use the terminal emulator's tab feature at all (because we have tmux).
 	# - By calling `tmux_attach_or_new' on the *remote* server we are assuming that the dotfiles (and tmux) are installed on the remote server. Errors will ensue if these assumptions are not correct.
-	exec ssh -t "$@" 'bash --login -c tmux_attach_or_new'
+	exec ssh -t "$@" 'bash --login -i -c tmux_attach_or_new'
 }
 
 # Find size of files in a git repo
