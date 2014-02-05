@@ -4,9 +4,6 @@
 
 source ~/.shell_common.d/path_utils.bash
 
-# exit if non-interactive
-# [[ $- != *i* ]] && return
-
 # Load pyenv and rbenv into the shell session. We need to load this here, in the rc file, because it loads up shell functions. For example, `pyenv shell' is only available when this `eval' command is run *within the shell*.
 for prefix in rb py; do
 	tool=${prefix}env
@@ -14,6 +11,9 @@ for prefix in rb py; do
 		eval "$($tool init -)"
 	fi
 done
+
+# exit if non-interactive
+[[ $- != *i* ]] && return
 
 # Load autojump into a shell session. This needs to be loaded in each interactive shell session because it loads functions, aliases, etc. Unfortunately, it also amends the PATH, so successive inner shells that get started will have multiple paths to autojump's bin directory in the PATH. We could call path_remove_duplicates, but we'd rather not do this in here. It's not a huge deal and it doesn't break anything, so we'll deal with it for now.
 #
