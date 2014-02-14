@@ -79,9 +79,12 @@ alias godmode='sudo -i'
 alias bash-basic='env -i bash --login --noprofile --norc'
 alias mkdate='date +%Y-%m-%d'
 
-# ack alias (with pager)
+# ack aliases
 if executable_in_path ack; then
 	alias ackp="ack --pager='less -R'"
+	# Note: by default `git ls-files' only shows tracked files.
+	alias ackg='git ls-files | ack --files-from=-'
+	alias ackpg='git ls-files | ackp --files-from=-'
 fi
 
 if executable_in_path ag; then
