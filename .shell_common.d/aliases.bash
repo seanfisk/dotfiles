@@ -113,18 +113,34 @@ to_data_uri() {
   echo "data:text/html;base64,$(base64 < /dev/stdin | tr -d '\r\n')"
 }
 # Code highlighting
-alias pygmentize_to_html='pygmentize -P full=True -P nobackground=True -f html'
-pygmentize_to_data_uri_html() {
-	# All extra options get sent to pygmentize.
-	#
-	# Accepts input on stdin or as a file name.
-	pygmentize_to_html "$@" < /dev/stdin | to_data_uri
-}
-if function_or_executable_exists copy; then
-	hilite() {
-		# Synatx highlight code and send to the clipboard
-		pygmentize_to_data_uri_html "$@" < /dev/stdin | copy
+if function_or_executable_exists pygmentize; then
+
+	alias pygmentize_to_html='pygmentize -P full=True -P nobackground=True -f html'
+	pygmentize_to_data_uri_html() {
+		# All extra options get sent to pygmentize.
+		#
+		# Accepts input on stdin or as a file name.
+		pygmentize_to_html "$@" < /dev/stdin | to_data_uri
 	}
+
+	if function_or_executable_exists copy; then
+		hilite() {
+			# Synatx highlight code and send to the clipboard
+			pygmentize_to_data_uri_html "$@" < /dev/stdin | copy
+		}
+	fi
+
+	if function_or_executable_exists llc; then
+		llvm_api_for_cpp() {
+			if [[ $# -ne 1 ]]; then
+				echo >&2 "Usage: $0 SOURCE_FILE"
+				return
+			fi
+			# Inspired by the LLVM demo (disabled) and <http://ellcc.org/demo/index.cgi>
+			# Some command-lines used from <http://ellcc.org/viewvc/svn/ellcc/trunk/www.ellcc/demo/index.cgi?view=markup>
+			clang++ -S -emit-llvm -Wall -c "$1" -o - | llc -march=cpp | pygmentize -l cpp | command less -R
+		}
+	fi
 fi
 
 # Emacs
