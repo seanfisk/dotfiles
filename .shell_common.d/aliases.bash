@@ -87,6 +87,18 @@ if executable_in_path ack; then
 	alias ackpg='git ls-files | ackp --files-from=-'
 fi
 
+# count lines of code in git repository
+if executable_in_path ohcount; then
+	git-count-lines() {
+		local filenames=()
+		git ls-files -z | while read -r -d$'\0' filename; do
+			filenames+=("$filename")
+		done
+		echo "${filenames[@]}"
+		ohcount "${filenames[@]}"
+	}
+fi
+
 if executable_in_path ag; then
 	# ag with pager
 	# Without `--color', ag will omit colors when being piped to less.
