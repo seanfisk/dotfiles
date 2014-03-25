@@ -33,6 +33,11 @@ if ! function_or_executable_exists j; then
 	[[ -s ~/.autojump/etc/profile.d/autojump.sh ]] && source ~/.autojump/etc/profile.d/autojump.sh
 fi
 
+# Load hub.
+if executable_in_path hub; then
+	eval "$(hub alias -s)"
+fi
+
 # platform-specific aliases and functions - must come before aliases.bash
 kernel_name=$(uname -s)
 case $kernel_name in
