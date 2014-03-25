@@ -1,8 +1,22 @@
 diff --git a/.ssh/config b/.ssh/config
-index a838f72..2d72aa9 100644
+index a838f72..0f592ad 100644
 --- a/.ssh/config
 +++ b/.ssh/config
-@@ -36,5 +36,6 @@ ControlMaster auto
+@@ -5,13 +5,6 @@
+ # Also, this file is indentation-insensitive and the `Host' directive causes all following directives to apply to it. Hence the `Host *' at the end.
+ 
+ # --------------------------------------------------------------------------------
+-# EOS
+-# Match all eos01, eos11, arch08, etc.
+-Host eos?? arch??
+-HostName %h.cis.gvsu.edu
+-User fiskse
+-
+-# --------------------------------------------------------------------------------
+ # EOS with VNC
+ Host eosvnc
+ HostName eos10.cis.gvsu.edu
+@@ -36,5 +29,6 @@ ControlMaster auto
  ControlPath /tmp/ssh_mux_%h_%p_%r
  
  # Persist connections for 2 hours.
