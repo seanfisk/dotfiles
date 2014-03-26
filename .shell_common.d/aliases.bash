@@ -79,12 +79,19 @@ alias godmode='sudo -i'
 alias bash-basic='env -i bash --login --noprofile --norc'
 alias mkdate='date +%Y-%m-%d'
 
-# ack aliases
+# ack and ag aliases
 if executable_in_path ack; then
-	alias ackp="ack --pager='less -R'"
+	# Just 'less' is fine; we don't need to pass 'less -R' to get colors to work.
+	alias ackp='ack --pager=less'
 	# Note: by default `git ls-files' only shows tracked files.
 	alias ackg='git ls-files | ack --files-from=-'
 	alias ackpg='git ls-files | ackp --files-from=-'
+fi
+
+if executable_in_path ag; then
+	# Just 'less' is fine; we don't need to pass 'less -R' to get colors to work.
+	alias agp='ag --pager less'
+	# ag doesn't support `--files-from'. Too bad.
 fi
 
 # count lines of code in git repository
@@ -96,14 +103,6 @@ if executable_in_path ohcount; then
 		done
 		echo "${filenames[@]}"
 		ohcount "${filenames[@]}"
-	}
-fi
-
-if executable_in_path ag; then
-	# ag with pager
-	# Without `--color', ag will omit colors when being piped to less.
-	agp() {
-		ag --color "$@" | less
 	}
 fi
 
