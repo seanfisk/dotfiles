@@ -61,12 +61,12 @@ for program in ps pgrep pkill htop lsof pstree; do
 		# But they both support the -u flag!
 		#
 		# `id -u' is used since `whoami' has been obsoleted and is not POSIX.
-		alias "my$program=$program -u $(id -u)"
+		alias "my$program=$program"' -u $(id -u)'
 	fi
 done
 
 # List my tmux sockets
-alias mytmux="lsof -u $(id -u) -a -U | grep '^tmux'"
+alias mytmux='lsof -u $(id -u) -a -U | grep "^tmux"'
 
 # git aliases
 alias gt='git status'
