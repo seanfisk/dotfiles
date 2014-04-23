@@ -1,5 +1,5 @@
 diff --git a/.ssh/config b/.ssh/config
-index a838f72..0f592ad 100644
+index e6548f5..cefaaf0 100644
 --- a/.ssh/config
 +++ b/.ssh/config
 @@ -5,13 +5,6 @@
@@ -16,11 +16,52 @@ index a838f72..0f592ad 100644
  # EOS with VNC
  Host eosvnc
  HostName eos10.cis.gvsu.edu
-@@ -36,5 +29,6 @@ ControlMaster auto
+@@ -33,7 +26,8 @@ User fiskse
+ Port 43022
+ # The /usr/bin/env allows the command to find nc on the PATH, just like a hash-bang. Otherwise, SSH ignores the PATH.
+ # For some reason, only eos10 and arch01 have nc at this time of writing (2014-05-23). Since eos10 has some /etc/hosts issues, we'll just use arch01.
+-ProxyCommand ssh arch01 nc %h %p
++# We don't want to proxy if we are already on EOS.
++#ProxyCommand ssh arch01 nc %h %p
+ 
+ # --------------------------------------------------------------------------------
+ # General configurations.
+@@ -47,5 +41,6 @@ ControlMaster auto
  ControlPath /tmp/ssh_mux_%h_%p_%r
  
  # Persist connections for 2 hours.
 -ControlPersist 2h
 +# Not available on EOS.
-+# ControlPersist 2h
++#ControlPersist 2h
  
+diff --git a/patches/eos-ssh-config.patch b/patches/eos-ssh-config.patch
+index 81b7e82..e69de29 100644
+--- a/patches/eos-ssh-config.patch
++++ b/patches/eos-ssh-config.patch
+@@ -1,26 +0,0 @@
+-diff --git a/.ssh/config b/.ssh/config
+-index a838f72..0f592ad 100644
+---- a/.ssh/config
+-+++ b/.ssh/config
+-@@ -5,13 +5,6 @@
+- # Also, this file is indentation-insensitive and the `Host' directive causes all following directives to apply to it. Hence the `Host *' at the end.
+- 
+- # --------------------------------------------------------------------------------
+--# EOS
+--# Match all eos01, eos11, arch08, etc.
+--Host eos?? arch??
+--HostName %h.cis.gvsu.edu
+--User fiskse
+--
+--# --------------------------------------------------------------------------------
+- # EOS with VNC
+- Host eosvnc
+- HostName eos10.cis.gvsu.edu
+-@@ -36,5 +29,6 @@ ControlMaster auto
+- ControlPath /tmp/ssh_mux_%h_%p_%r
+- 
+- # Persist connections for 2 hours.
+--ControlPersist 2h
+-+# Not available on EOS.
+-+# ControlPersist 2h
+- 
