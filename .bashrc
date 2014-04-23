@@ -61,7 +61,18 @@ git_prompt_info() {
 }
 
 # Note the quoting: we want to run the git, pyenv, and rbenv commands each time, not just once.
-PS1="${BOLD_GREEN}\u@\h ${BOLD_BLUE}\w ${YELLOW}"'$(git_prompt_info)'"${GREEN}‹"'$(pyenv version-name)'"› ${RED}‹"'$(rbenv version-name)'"›
+PS1="${BOLD_GREEN}\u@\h ${BOLD_BLUE}\w ${YELLOW}"
+if executable_in_path git; then
+	PS1=${PS1}'$(git_prompt_info)'
+fi
+if function_or_executable_exists pyenv; then
+	PS1=${PS1}${GREEN}'‹$(pyenv version-name)› '
+fi
+if function_or_executable_exists rbenv; then
+	PS1=${PS1}${RED}'‹$(rbenv version-name)›'
+fi
+
+PS1=${PS1}"
 ${BOLD_WHITE}\$ ${RESET}"
 
 unset RED
