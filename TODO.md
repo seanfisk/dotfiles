@@ -1,6 +1,7 @@
 TODO for Sean Fisk's Dotfiles
 =============================
 
+* Fix up `executable_in_path` and `function_or_executable_exists`. They basically do the same thing, and it's not clear which is preferred.
 * Fix scp (for EOS).
 * Persistent SSH connections don't work on EOS.
 * Put bash function "docstrings" within the function, because they can be seen when using `type -f`.
