@@ -60,8 +60,8 @@ for program in ps pgrep pkill htop lsof pstree; do
 		# - http://psmisc.sourceforge.net/, used on most GNU/Linux machines
 		# But they both support the -u flag!
 		#
-		# `id -u' is used since `whoami' has been obsoleted and is not POSIX.
-		alias "my$program=$program"' -u $(id -u)'
+		# `id -un' is used since `whoami' has been obsoleted and is not POSIX.
+		alias "my$program=$program"' -u $(id -un)'
 	fi
 done
 
