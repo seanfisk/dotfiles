@@ -16,6 +16,7 @@ TODO for Sean Fisk's Dotfiles
 * Write a command for updating the dotfiles and emacs repos.
 * Write a function for creating a new tmux tab and automatically naming it.
 * Check out [Powerline](https://github.com/Lokaltog/powerline) and [zpython](https://bitbucket.org/ZyX_I/zsh/src).
+* Consider moving pyenv/rbenv to .zshenv/.bash_profile. Add pyenv virtualenv init as well.
 
 * SSH
     * Get SSH keys under control. Decide which ones need to be shared.
