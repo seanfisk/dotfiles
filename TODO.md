@@ -15,6 +15,7 @@ TODO for Sean Fisk's Dotfiles
 * Write a zsh-specific version of path_utils, since it could be a lot more efficient.
 * Write a command for updating the dotfiles and emacs repos.
 * Write a function for creating a new tmux tab and automatically naming it.
+* Check out [Powerline](https://github.com/Lokaltog/powerline) and [zpython](https://bitbucket.org/ZyX_I/zsh/src).
 
 * SSH
     * Get SSH keys under control. Decide which ones need to be shared.
