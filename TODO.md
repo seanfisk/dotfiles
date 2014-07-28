@@ -1,6 +1,7 @@
 TODO for Sean Fisk's Dotfiles
 =============================
 
+* Add an option to the `e` alias to define the name of the buffer in Emacs when piped. Maybe it could be automatically named somehow?
 * Fix up `executable_in_path` and `function_or_executable_exists`. They basically do the same thing, and it's not clear which is preferred.
 * Fix scp (for EOS).
 * Persistent SSH connections don't work on EOS.
