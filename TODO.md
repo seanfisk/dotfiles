@@ -18,6 +18,7 @@ TODO for Sean Fisk's Dotfiles
 * Write a function for creating a new tmux tab and automatically naming it.
 * Check out [Powerline](https://github.com/Lokaltog/powerline) and [zpython](https://bitbucket.org/ZyX_I/zsh/src).
 * Consider moving pyenv/rbenv to .zshenv/.bash_profile. Add pyenv virtualenv init as well.
+* Check out [vcsh](https://github.com/RichiH/vcsh) or [rcm](https://github.com/thoughtbot/rcm) for dotfiles management.
 
 * SSH
     * Get SSH keys under control. Decide which ones need to be shared.
