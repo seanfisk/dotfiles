@@ -1,5 +1,8 @@
 # Mac OS X specific code
 
+# On Mac OS X, find the emacsclient executable (and other Emacs utilities) included with the Emacs app bundle.
+export PATH=/Applications/Emacs.app/Contents/MacOS/bin-x86_64-10.9:$PATH
+
 # show ls colors
 export CLICOLOR=1
 # force show ls colors, even when not going to terminal
