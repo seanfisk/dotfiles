@@ -3,7 +3,8 @@ TODO for Sean Fisk's Dotfiles
 
 * Set up a tmuxinator config which opens up emacs, dotfiles, and chef (at least).
 * Consider moving pyenv/rbenv to .zshenv/.bash_profile. Add pyenv virtualenv init as well.
-* Check out [vcsh](https://github.com/RichiH/vcsh) or [rcm](https://github.com/thoughtbot/rcm) for dotfiles management.
+* Use Waf for installation of dotfiles. I have checked out some other dotfiles managers, but they don't offer the level of customization I desire. Most of them also do not support Windows. Using Waf gives us Windows support, and furthermore, allows us to build dotfiles as if they were any other piece of software. We can use templating, detect configurations at compile time, etc. It will be awesome.
+* Consider [z](https://github.com/rupa/z/) over autojump.
 * Check out [Powerline](https://github.com/Lokaltog/powerline) and [zpython](https://bitbucket.org/ZyX_I/zsh/src).
 * Write a function for creating a new tmux tab and automatically naming it.
 * Consider [e-sink](https://github.com/lewang/e-sink) for `e` alias.
@@ -17,6 +18,7 @@ TODO for Sean Fisk's Dotfiles
 * Try to get rid of eval hackery in path utils.
 * Write a zsh-specific version of path_utils, since it could be a lot more efficient.
 * Write a command for updating the dotfiles and emacs repos.
+* Include some things from http://mths.be/dotfiles.
 
 * SSH
     * Get SSH keys under control. Decide which ones need to be shared.
