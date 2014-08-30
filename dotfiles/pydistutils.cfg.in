@@ -1,0 +1,3 @@
+# Install by default from the locally running devpi server.
+[easy_install]
+index_url = @DEVPI_PYPI_URL@

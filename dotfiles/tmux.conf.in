@@ -1,5 +1,5 @@
 # use zsh as the default shell
-set-option -g default-command zsh
+set-option -g default-command @DEFAULT_COMMAND@
 
 # change prefix key to C-t, I use C-b for backward-char (emacs)
 set-option -g prefix C-t

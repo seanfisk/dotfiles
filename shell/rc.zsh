@@ -1,0 +1,37 @@
+# Version check
+MIN_ZSH_VERSION=5
+if [[ $ZSH_VERSION[0,1] -lt $MIN_ZSH_VERSION ]]; then
+	echo >&2 "This configuration is compatible only with Zsh version $MIN_ZSH_VERSION and upwards. Please update your Zsh version."
+	return
+fi
+unset MIN_ZSH_VERSION
+
+# Oh My Zsh configuration
+#
+# Path to your oh-my-zsh configuration.
+ZSH=~/.oh-my-zsh
+# Set name of the theme to load. Look in ~/.oh-my-zsh/themes/
+ZSH_THEME=bira-simple
+# Set to this to use case-sensitive completion
+CASE_SENSITIVE=true
+# Comment this out to disable weekly auto-update checks
+DISABLE_AUTO_UPDATE=true
+# Disable autosetting terminal title.
+DISABLE_AUTO_TITLE=true
+# Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
+# Example format: plugins=(rails git textmate ruby lighthouse)
+#
+# In general, avoid aliases and go for more completions
+#
+# Although I use pip a lot, the pip plugin has one annoyance: it
+# prevents completion of `requirements.txt' or `requirements-dev.txt'
+# when using the `-r' flag. Disable it until that is fixed.
+plugins=(brew gem git-flow svn vagrant)
+
+source $ZSH/oh-my-zsh.sh
+
+# ZSH-specific aliases
+alias rl='source ~/.zshrc'
+
+# ZSH options
+setopt INTERACTIVE_COMMENTS

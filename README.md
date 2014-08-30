@@ -46,6 +46,18 @@ The two most annoying things to deal with are *environment variables* and *shell
 * http://stackoverflow.com/questions/135688/setting-environment-variables-in-os-x/5444960
 * https://github.com/sstephenson/rbenv/wiki/Unix-shell-initialization
 
+Why generate dotfiles?
+----------------------
+
+For 90% of people who use shells, generating dotfiles would be overkill. However, for people like me who require many external tools and would like their dotfiles to work on different system, generation offers some key benefits:
+
++ Shell scripts have no module system that they can use to require certain features, so they typically depend on external executables. For example, if I wanted to download a file in Python, I could make my Python module depend on [Requests][requests]. However, a shell script would typically use `wget` or `curl`. Well-behaved scripts typically do checks for these executables and warn the script user that they are missing. However, these checks can be tedious and are frequently omitted, leaving the presence of these executables to pure assumption.
++ Because shell scripting languages are interpreted, they are only able to do checks like this at runtime. For blocks of code that run frequently (like the rc file or the prompt), these checks can start to take up precious time.
+
+By treating the shell configuration files as just another piece of compiled software, we can generate optimized configuration files based on the utilities found on the system at compile-time.
+
+[requests]: https://github.com/kennethreitz/requests
+
 Recommended Software
 --------------------
 

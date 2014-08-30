@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+# Count lines of code in git repository
+filenames=()
+git ls-files -z | while read -r -d$'\0' filename; do
+	filenames+=("$filename")
+done
+ohcount "${filenames[@]}"
