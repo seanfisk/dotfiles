@@ -13,6 +13,7 @@ from pipes import quote as shquote
 from collections import OrderedDict
 
 import six
+import waflib
 from waflib.Configure import conf
 
 # Waf constants
@@ -719,5 +720,7 @@ def build(ctx):
         ctx.install_as(join(ctx.env.PREFIX, '.' + relative_path), node)
 
     # Install scripts
-    ctx.install_files(join(ctx.env.PREFIX, 'bin'), [
-            join('scripts', basename) for basename in scripts])
+    ctx.install_files(
+        join(ctx.env.PREFIX, 'bin'),
+        [join('scripts', basename) for basename in scripts],
+        chmod=waflib.Utils.O755)
