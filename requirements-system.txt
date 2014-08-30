@@ -1,0 +1,17 @@
+# Requirements for the system Python. On Mac OS X, run:
+#
+#     brew install libgit2
+#
+# Then run the following. pygit2 requires cffi to be installed first.
+#
+#     system_python_pip="$(/usr/bin/python -m site --user-base)/bin/pip"
+#     "$system_python_pip" install --user cffi
+#     "$system_python_pip" install --user -r requirements-system.txt
+#
+Powerline==beta
+psutil==2.1.1
+bzr==2.6.0
+pycparser==2.10
+pygit2==0.21.2
+cffi==0.8.6
+mercurial==3.1

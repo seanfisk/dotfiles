@@ -300,6 +300,10 @@ def configure(ctx):
 
     # Other utilities
     ctx.find_clipboard_programs()
+    ctx.find_program('powerline-daemon', var='POWERLINE_DAEMON',
+                     mandatory=False)
+    ctx.find_program('powerline-config', var='POWERLINE_CONFIG',
+                     mandatory=False)
     ctx.find_program('fasd', mandatory=False)
     ctx.find_program('ssh', mandatory=False)
     ctx.find_program('devpi-ctl', var='DEVPI_CTL', mandatory=False)
@@ -376,6 +380,14 @@ def make_fasd_cache(tsk):
             [tsk.env.FASD, '--init'] + init_args,
             stdout=output_file)
     return ret
+
+
+def get_powerline_path(ctx, relpath):
+    return subprocess.check_output([
+        ctx.env.SYSTEM_PYTHON, '-c',
+        'from pkg_resources import resource_filename; '
+        "print(resource_filename('powerline', {0}))".\
+        format(repr(relpath))]).decode('utf-8').rstrip()
 
 
 def build(ctx):
@@ -505,6 +517,42 @@ def build(ctx):
             '| copy')
 
     # Various utilities
+    if ctx.env.SYSTEM_PYTHON and ctx.env.POWERLINE_DAEMON:
+        # We assume that Powerline is installed under the system Python. We
+        # don't allow Waf to look in pyenv paths, so that's a decent
+        # assumption.
+        bash_powerline_node = ctx.path.find_or_declare('powerline.bash')
+        rc_nodes['bash'].append(bash_powerline_node)
+        @ctx.rule(target=bash_powerline_node, always=True)
+        def make_bash_powerline(tsk):
+            bash_powerline_file = get_powerline_path(
+                ctx, join('bindings', 'bash', 'powerline.sh'))
+            contents = '''{powerline_daemon} --quiet
+POWERLINE_BASH_CONTINUATION=1
+POWERLINE_BASH_SELECT=1
+source {bash_powerline_file}
+'''.format(
+    powerline_daemon=shquote(tsk.env.POWERLINE_DAEMON),
+    bash_powerline_file=shquote(bash_powerline_file),
+)
+            with open(tsk.outputs[0].abspath(), 'w') as output_file:
+                output_file.write(contents)
+
+        zsh_powerline_node = ctx.path.find_or_declare('powerline.zsh')
+        rc_nodes['zsh'].append(zsh_powerline_node)
+        @ctx.rule(target=zsh_powerline_node, always=True)
+        def make_zsh_powerline(tsk):
+            zsh_powerline_file = get_powerline_path(
+                ctx, join('bindings', 'zsh', 'powerline.zsh'))
+            contents = '''{powerline_daemon} --quiet
+source {zsh_powerline_file}
+'''.format(
+    powerline_daemon=shquote(tsk.env.POWERLINE_DAEMON),
+    zsh_powerline_file=shquote(zsh_powerline_file),
+)
+            with open(tsk.outputs[0].abspath(), 'w') as output_file:
+                output_file.write(contents)
+
     if ctx.env.FASD:
         # See here for all the options: https://github.com/clvv/fasd#install
         for shell in SHELLS:
@@ -546,10 +594,23 @@ def build(ctx):
             else default_shell)
         in_node = ctx.path.find_resource(['dotfiles', 'tmux.conf.in'])
         out_node = ctx.path.find_or_declare('tmux.conf')
+
+        powerline_commands = ''
+        if ctx.env.POWERLINE_DAEMON and ctx.env.POWERLINE_CONFIG:
+            tmux_powerline_file = get_powerline_path(
+                ctx, join('bindings', 'tmux', 'powerline.conf'))
+            powerline_commands = '''run-shell "{powerline_daemon} --quiet"
+source "{tmux_powerline_file}"
+'''.format(
+    powerline_daemon=shquote(ctx.env.POWERLINE_DAEMON),
+    tmux_powerline_file=tmux_powerline_file,
+)
+
         ctx(features='subst',
             source=in_node,
             target=out_node,
-            DEFAULT_COMMAND=default_command)
+            DEFAULT_COMMAND=default_command,
+            POWERLINE_COMMANDS=powerline_commands)
         dotfile_nodes.append(out_node)
 
         if ctx.env.LSOF:

@@ -15,3 +15,5 @@ set-option -g update-environment "DISPLAY SSH_ASKPASS SSH_AUTH_SOCK SSH_AGENT_PI
 unbind %
 bind | split-window -h
 bind - split-window -v
+
+@POWERLINE_COMMANDS@
