@@ -28,6 +28,7 @@ LINUX = SYSTEM == 'Linux'
 DEVPI_PYPI_URL = 'http://localhost:4040/root/pypi/+simple/'
 PATH_VARS = ['PATH', 'MANPATH', 'INFOPATH']
 PROCESS_PROGRAMS = ['ps', 'pgrep', 'pkill', 'htop', 'lsof', 'pstree']
+SHELLS = ['bash', 'zsh']
 # I couldn't come up with a good name for this variable, but you'll get the
 # point.
 SHELL_FILE_NAMES = {
@@ -341,23 +342,23 @@ def make_rbenv_pyenv_file(tsk):
     # example, `pyenv shell' is only available when this `eval' command is run
     # *within the shell*.
     output_node = tsk.outputs[0]
-    # The shell will be determined by the output file's extension. suffix()
-    # returns the extension with a preceding dot, so strip it off.
-    shell = output_node.suffix()[1:]
+    # The tool is determined by the basename without the extension.
+    # The shell is determined by the output file's extension. suffix() returns
+    # the extension with a preceding dot, so strip it off.
+    tool, ext = os.path.splitext(output_node.name)
+    shell = ext[1:]
+    path = tsk.env[tool.upper()]
     with open(output_node.abspath(), 'w') as output_file:
-        for prefix in ['rb', 'py']:
-            tool = prefix + 'env'
-            path = tsk.env[tool.upper()]
-            if path:
-                # It helps to tell rbenv and pyenv the shell that they are
-                # using. Otherwise, they determine it through ps. This is ugly,
-                # and wastes time because we already know the shell at
-                # compile-time. If it can't be determined through ps, they use
-                # $SHELL, which is *wrong*. That is the login shell, which is
-                # not necessarily the shell that is running.
-                six.print_('eval "$({tool} init - {shell})"'.format(
-                    tool=shquote(tool), shell=shell),
-                file=output_file)
+        # Instead of running pyenv and rbenv to generate code and eval'ing it
+        # every time, just generate it now and source it. Because we aren't
+        # running it from within a shell, we need to tell rbenv and pyenv what
+        # shell for which to generate the code. Otherwise, they determine it
+        # through ps or $SHELL, $SHELL is just plain wrong, because that is the
+        # login shell, which is not necessarily the shell that is running.
+        ret = tsk.exec_command(
+            [path, 'init', '-', shell], stdout=output_file)
+
+    return ret
 
 
 def build(ctx):
@@ -373,12 +374,19 @@ def build(ctx):
     # which will be shell-quoted when written out. Don't forget to
     # pre-shell-quote any paths from the configure step.
     aliases = OrderedDict()
-    # A list of shell file nodes to include in the compiled .bashrc and .zshrc
+    # A mapping of shell to shell file nodes to include in the compiled rc
     # files.
-    rc_nodes = []
-    # A list of shell file nodes to include in the compiler .bash_profile and
-    # .zprofile files.
-    profile_nodes = []
+    rc_nodes = dict(
+        sh=[],
+        bash=[],
+        zsh=[],
+    )
+    # A mapping of shell to shell file nodes to include in the compiled profile files.
+    profile_nodes = dict(
+        sh=[],
+        bash=[],
+        zsh=[],
+    )
     # A list of scripts in the script/ directory to install to ~/bin.
     scripts = []
     # Shell key bindings
@@ -417,6 +425,19 @@ def build(ctx):
         shenv[var] = '\\\n{}\n'.format((os.pathsep + '\\\n').join(
             shquote(path) for path in ctx.env[var]))
 
+    # Build files that load rbenv and pyenv
+    for shell in SHELLS:
+        for prefix in ['rb', 'py']:
+            tool = prefix + 'env'
+            path = ctx.env[tool.upper()]
+            if path:
+                out_node = ctx.path.find_or_declare(
+                    '{0}.{1}'.format(tool, shell))
+                rc_nodes[shell].append(out_node)
+                ctx(rule=make_rbenv_pyenv_file,
+                    target=out_node,
+                    always=True)
+
     # Platform-specific configuration
     if MACOSX:
         # Human readable file sizes, classify, and color
@@ -435,7 +456,8 @@ def build(ctx):
         aliases['ls'] = 'ls --color=always -hF'
         if ctx.env.GNOME_OPEN:
             aliases['open'] = shquote(ctx.env.GNOME_OPEN)
-        rc_nodes.append(ctx.path.find_resource(['shell', 'gnu-linux.bash']))
+        rc_nodes['sh'].append(
+            ctx.path.find_resource(['shell', 'gnu-linux.bash']))
 
         # Swap Caps Lock and Control under X11
         dotfile_nodes.append(ctx.path.find_resource(['dotfiles', 'Xkbmap']))
@@ -489,7 +511,7 @@ def build(ctx):
             ['dotfiles', 'ssh', 'config']))
 
     if ctx.env.TMUX:
-        rc_nodes.append(ctx.path.find_resource(['shell', 'tmux.sh']))
+        rc_nodes['sh'].append(ctx.path.find_resource(['shell', 'tmux.sh']))
 
         default_shell = 'zsh'
         # Workaround for Mac OS X pasteboard, see
@@ -538,7 +560,7 @@ def build(ctx):
             # awk '{total+=$1} END {print total}
 
         if ctx.env.HUB:
-            rc_nodes.append(ctx.path.find_resource(['shell', 'hub.sh']))
+            rc_nodes['sh'].append(ctx.path.find_resource(['shell', 'hub.sh']))
 
     if ctx.env.HG:
         dotfile_nodes.append(ctx.path.find_resource(['dotfiles', 'hgrc']))
@@ -581,17 +603,9 @@ def build(ctx):
         prog_path = ctx.env[prog.upper()]
         aliases['my' + prog] = shquote(prog_path) + ' -u "$(id -un)"'
 
-    # Local configurations
-    local_rc_path = join(LOCAL_DIR, 'rc.sh')
-    if os.path.isfile(local_rc_path):
-        rc_nodes.append(ctx.path.find_resource(local_rc_path))
-
-    local_profile_path = join(LOCAL_DIR, 'profile.sh')
-    if os.path.isfile(local_profile_path):
-        profile_nodes.append(ctx.path.find_resource(local_profile_path))
-
     # Build shell environment
     shenv_node = ctx.path.find_or_declare('env.sh')
+    profile_nodes['sh'].append(shenv_node)
     # Always build this file, since it depends values in the build script.
     @ctx.rule(target=shenv_node, always=True)
     def mkshenv(tsk):
@@ -600,16 +614,19 @@ def build(ctx):
             for name, value in six.iteritems(shenv):
                 six.print_('export {0}={1}'.format(name, value), file=out_file)
 
-    # Build files that load rbenv and pyenv
-    rbenv_pyenv_bash_node = ctx.path.find_or_declare('rbenv-pyenv.bash')
-    ctx(rule=make_rbenv_pyenv_file, target=rbenv_pyenv_bash_node, always=True)
-    rbenv_pyenv_zsh_node = ctx.path.find_or_declare('rbenv-pyenv.zsh')
-    ctx(rule=make_rbenv_pyenv_file, target=rbenv_pyenv_zsh_node, always=True)
+    # Local configurations
+    local_rc_path = join(LOCAL_DIR, 'rc.sh')
+    if os.path.isfile(local_rc_path):
+        rc_nodes['sh'].append(ctx.path.find_resource(local_rc_path))
+
+    local_profile_path = join(LOCAL_DIR, 'profile.sh')
+    if os.path.isfile(local_profile_path):
+        profile_nodes['sh'].append(ctx.path.find_resource(local_profile_path))
 
     # Build aliases
     aliases_in_node = ctx.path.find_resource(['shell', 'aliases.sh'])
     aliases_out_node = ctx.path.find_or_declare('aliases.sh')
-    rc_nodes.append(aliases_out_node)
+    rc_nodes['sh'].append(aliases_out_node)
     # Always build this file, since it depends on the build script.
     @ctx.rule(target=aliases_out_node, source=aliases_in_node, always=True)
     def mkaliases(tsk):
@@ -624,10 +641,7 @@ def build(ctx):
                     file=out_file)
 
     # Build keybindings
-    keys_bash_node = ctx.path.find_or_declare('keys.bash')
-    # Always build this file, since it depends on the build script.
-    @ctx.rule(target=keys_bash_node, always=True)
-    def mkbashkeys(tsk):
+    def make_bash_keys(tsk):
         with open(tsk.outputs[0].abspath(), 'w') as out_file:
             for key, binding in six.iteritems(keybindings):
                 # It is supposed to turn out like this:
@@ -636,16 +650,20 @@ def build(ctx):
                     'bind ' + shquote('"{0}": "{1}"'.format(key, binding)),
                     file=out_file)
 
-    keys_zsh_node = ctx.path.find_or_declare('keys.zsh')
-    # Always build this file, since it depends on the build script.
-    @ctx.rule(target=keys_zsh_node, always=True)
-    def mkzshkeys(tsk):
+    def make_zsh_keys(tsk):
         with open(tsk.outputs[0].abspath(), 'w') as out_file:
             for key, binding in six.iteritems(keybindings):
                 six.print_(
                     'bindkey -s {0} {1}'.format(
                         shquote(key), shquote(binding)),
                     file=out_file)
+
+    for shell in SHELLS:
+        out_node = ctx.path.find_or_declare('keys.{}'.format(shell))
+        rc_nodes[shell].append(out_node)
+        # Always build this file, since it depends on the build script.
+        rule = locals()['make_{}_keys'.format(shell)]
+        ctx(rule=rule, target=out_node, always=True)
 
     # Finally, build shell files
 
@@ -655,39 +673,24 @@ def build(ctx):
     exit_if_nonint_node = ctx.path.find_resource(
         ['shell', 'exit-if-noninteractive.sh'])
 
-    rc_bash_in_node = ctx.path.find_resource(['shell', 'rc.bash'])
-    rc_bash_out_node = ctx.path.find_or_declare('rc.bash')
-    ctx(rule=concatenate,
-        target=rc_bash_out_node,
-        source=[
-            exit_if_nonint_node,
-            rc_bash_in_node,
-            keys_bash_node,
-            rbenv_pyenv_bash_node
-        ] + rc_nodes)
-
-    rc_zsh_in_node = ctx.path.find_resource(['shell', 'rc.zsh'])
-    rc_zsh_out_node = ctx.path.find_or_declare('rc.zsh')
-    ctx(rule=concatenate,
-        target=rc_zsh_out_node,
-        source=[
-            exit_if_nonint_node,
-            rc_zsh_in_node,
-            keys_zsh_node,
-            rbenv_pyenv_zsh_node
-        ] + rc_nodes)
-
-    profile_zsh_in_node = ctx.path.find_resource(['shell', 'profile.zsh'])
-    profile_zsh_out_node = ctx.path.find_or_declare('profile.zsh')
-    ctx(rule=concatenate,
-        target=profile_zsh_out_node,
-        source=[shenv_node, profile_zsh_in_node] + profile_nodes)
-
-    profile_bash_in_node = ctx.path.find_resource(['shell', 'profile.bash'])
-    profile_bash_out_node = ctx.path.find_or_declare('profile.bash')
-    ctx(rule=concatenate,
-        target=profile_bash_out_node,
-        source=[shenv_node, profile_bash_in_node] + profile_nodes)
+    shell_nodes = []
+    for shell in SHELLS:
+        for filetype in ['rc', 'profile']:
+            name = '{0}.{1}'.format(filetype, shell)
+            in_nodes = []
+            if filetype == 'rc':
+                in_nodes.append(exit_if_nonint_node)
+            elif filetype == 'profile':
+                in_nodes.append(shenv_node)
+            in_nodes.append(ctx.path.find_resource(['shell', name]))
+            filetype_node_list = locals()[filetype + '_nodes']
+            in_nodes += filetype_node_list[shell]
+            in_nodes += filetype_node_list['sh']
+            out_node = ctx.path.find_or_declare(name)
+            shell_nodes.append(out_node)
+            ctx(rule=concatenate,
+                target=out_node,
+                source=in_nodes)
 
     # Install files
     #
@@ -695,12 +698,7 @@ def build(ctx):
     # 'install' or 'uninstall'.
 
     # Install shell files
-    for node in [
-            rc_bash_out_node,
-            rc_zsh_out_node,
-            profile_bash_out_node,
-            profile_zsh_out_node
-    ]:
+    for node in shell_nodes:
         ctx.install_as(join(ctx.env.PREFIX, SHELL_FILE_NAMES[node.name]), node)
 
     logout_zsh_name = 'logout.zsh'
