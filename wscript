@@ -130,6 +130,19 @@ def setup_default_paths(ctx):
     ctx.add_path_hierarchy(os.path.expanduser('~/.pyenv'))
     ctx.add_path_hierarchy(os.path.expanduser('~/.rbenv'))
 
+    # System Python and Python user base.
+    system_python = ctx.find_program(
+        'python',
+        var='SYSTEM_PYTHON',
+        path_list=['/usr/bin', '/usr/local/bin'],
+        mandatory=False)
+    if system_python:
+        # Just assume UTF-8. Should cover most cases.
+        user_base = subprocess.check_output([
+            system_python, '-m', 'site', '--user-base']).\
+            decode('utf-8').rstrip()
+        ctx.add_path_hierarchy(user_base)
+
     # Emacs.app on Mac OS X contains some paths in some weird places.
     if MACOSX:
         emacs_app_contents = '/Applications/Emacs.app/Contents'
@@ -164,9 +177,6 @@ def setup_default_paths(ctx):
     # <http://unix.stackexchange.com/questions/22329/gnu-texinfo-directory-search-method>
 
     # Add hierarchies.
-    # pip install --user XXX installs to here on newer Mac OS X
-    if MACOSX:
-        ctx.add_path_hierarchy(os.path.expanduser('~/Library/Python/2.7'))
     ctx.add_path_hierarchy(os.path.expanduser('~/.local'))
     ctx.add_path_hierarchy('/usr/local')
     # It is helpful to add /usr so that INFOPATH gets correctly populated.
@@ -179,16 +189,6 @@ def setup_default_paths(ctx):
     # configuration uses these paths to find utilities (mostly important for
     # PATH, of course).
     ctx.write_paths_to_env()
-
-
-@conf
-def convert_path_vars(ctx):
-    # Waf can't serialize custom classes (even if they're pickleable,
-    # c'mon...). Therefore, we need to convert each of the path variables to
-    # plain lists. That's OK, because during the build they shouldn't be
-    # modified anyway.
-    for var in PATH_VARS:
-        ctx.env[var] = list(ctx.env[var])
 
 
 ## Shells
@@ -321,7 +321,6 @@ def configure(ctx):
 
     # After configuration, do some maintenance on the paths.
     ctx.check_path_for_issues()
-    ctx.convert_path_vars()
 
 
 # Build
