@@ -535,11 +535,10 @@ def build(ctx):
                 ' -u "$(id -un)" -a -U | grep \'^tmux\'')
 
     if ctx.env.GIT:
-        # Don't use the absolute path to git, as hub may re-assign git as an
-        # alias.
-        aliases['gt'] = 'git status'
-        aliases['gobuddygo'] = 'git push'
-        aliases['cometome'] = 'git pull'
+        quoted_git = shquote(ctx.env.GIT)
+        aliases['gt'] = quoted_git + ' status'
+        aliases['gobuddygo'] = quoted_git + ' push'
+        aliases['cometome'] = quoted_git + ' pull'
 
         dotfile_nodes += [ctx.path.find_resource(['dotfiles', name])
                           for name in ['gitconfig', 'gitignore_global']]
@@ -560,7 +559,9 @@ def build(ctx):
             # awk '{total+=$1} END {print total}
 
         if ctx.env.HUB:
-            rc_nodes['sh'].append(ctx.path.find_resource(['shell', 'hub.sh']))
+            # Hub's alias command `hub alias -s' produces really simple output,
+            # which is basically this.
+            aliases['git'] = 'hub'
 
     if ctx.env.HG:
         dotfile_nodes.append(ctx.path.find_resource(['dotfiles', 'hgrc']))
