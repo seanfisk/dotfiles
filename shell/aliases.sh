@@ -7,7 +7,6 @@ alias godmode='sudo -i'
 alias bash-basic='env -i bash --login --noprofile --norc'
 alias mkdate='date +%Y-%m-%d'
 
-alias s=ls
 alias l='ls -l' # list
 alias ll='ls -l' # list
 alias la='ls -al' # show hidden, list

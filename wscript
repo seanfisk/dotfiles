@@ -300,6 +300,7 @@ def configure(ctx):
 
     # Other utilities
     ctx.find_clipboard_programs()
+    ctx.find_program('fasd', mandatory=False)
     ctx.find_program('ssh', mandatory=False)
     ctx.find_program('devpi-ctl', var='DEVPI_CTL', mandatory=False)
     ctx.find_program('qpdf', mandatory=False)
@@ -359,6 +360,22 @@ def make_rbenv_pyenv_file(tsk):
         ret = tsk.exec_command(
             [path, 'init', '-', shell], stdout=output_file)
 
+    return ret
+
+
+def make_fasd_cache(tsk):
+    out_node = tsk.outputs[0]
+    shell = out_node.suffix()[1:]
+    init_args = ['posix-alias', '{}-hook'.format(shell)] + [
+        '{0}-{1}'.format(arg, shell)
+        for arg in ['ccomp', 'ccomp-install']]
+    if shell == 'zsh':
+        init_args += ['{0}-{1}'.format(arg, shell)
+                      for arg in ['wcomp', 'wcomp-install']]
+    with open(out_node.abspath(), 'w') as output_file:
+        ret = tsk.exec_command(
+            [tsk.env.FASD, '--init'] + init_args,
+            stdout=output_file)
     return ret
 
 
@@ -489,6 +506,13 @@ def build(ctx):
             '| copy')
 
     # Various utilities
+    if ctx.env.FASD:
+        # See here for all the options: https://github.com/clvv/fasd#install
+        for shell in SHELLS:
+            out_node = ctx.path.find_or_declare('fasd.{}'.format(shell))
+            rc_nodes[shell].append(out_node)
+            ctx(rule=make_fasd_cache, target=out_node, always=True)
+
     if ctx.env.QPDF:
         scripts.append('pdf-merge')
         aliases['pdf-join'] = 'pdf-merge'
