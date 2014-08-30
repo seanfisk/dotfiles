@@ -8,7 +8,7 @@
 #     "$system_python_pip" install --user cffi
 #     "$system_python_pip" install --user -r requirements-system.txt
 #
-Powerline==beta
+git+https://github.com/Lokaltog/powerline#egg=powerline
 psutil==2.1.1
 bzr==2.6.0
 pycparser==2.10

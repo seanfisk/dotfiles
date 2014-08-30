@@ -553,6 +553,13 @@ source {zsh_powerline_file}
             with open(tsk.outputs[0].abspath(), 'w') as output_file:
                 output_file.write(contents)
 
+        # Install Powerline configuration files
+        for dirpath, dirnames, filenames in os.walk(join(
+                'dotfiles', 'config', 'powerline')):
+            for filename in filenames:
+                dotfile_nodes.append(ctx.path.find_resource(
+                    join(dirpath, filename)))
+
     if ctx.env.FASD:
         # See here for all the options: https://github.com/clvv/fasd#install
         for shell in SHELLS:
