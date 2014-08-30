@@ -1,3 +1,5 @@
+# -*- mode: conf-unix; -*-
+
 # Add some more types
 --type-set
 gsp=.gsp

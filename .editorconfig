@@ -1,0 +1,30 @@
+# -*- mode: conf-unix; -*-
+
+# EditorConfig is awesome: http://EditorConfig.org
+
+# top-most EditorConfig file
+root = true
+
+# defaults
+[*]
+insert_final_newline = true
+
+# 4-space indentation
+[*.md]
+indent_style = space
+indent_size = 4
+
+# Tabbed indentation, size 2
+[*.{sh,bash,zsh}]
+indent_style = tab
+indent_size = 2
+
+# Tabbed indentation, size 4
+[{gitconfig,hgrc}]
+indent_style = tab
+indent_size = 4
+
+# Powerline prefers tabs for json
+[dotfiles/config/powerline/**.json]
+indent_style = tab
+indent_size = 4

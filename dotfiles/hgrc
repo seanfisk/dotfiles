@@ -1,2 +1,4 @@
+# -*- mode: conf-unix; -*-
+
 [ui]
 username = Sean Fisk <sean@seanfisk.com>

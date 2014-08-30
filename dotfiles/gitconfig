@@ -1,3 +1,5 @@
+# -*- mode: gitconfig; -*-
+
 [user]
 	name = Sean Fisk
 	email = sean@seanfisk.com
