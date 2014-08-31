@@ -1,6 +1,7 @@
 {
 	"common": {
-		"term_truecolor": false
+		"term_truecolor": false,
+		"paths": ["@POWERLINE_SEGMENTS_PATH@"]
 	},
 	"ext": {
 		"ipython": {

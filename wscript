@@ -598,12 +598,27 @@ source {zsh_powerline_file}
             with open(tsk.outputs[0].abspath(), 'w') as output_file:
                 output_file.write(contents)
 
+        # Template the Powerline config file with the path to the segments.
+        in_node = ctx.path.find_resource([
+            'dotfiles', 'config', 'powerline', 'config.json.in'])
+        out_node = ctx.path.find_or_declare([
+            'config', 'powerline', 'config.json'])
+        dotfile_nodes.append(out_node)
+        powerline_segments_path = join(ctx.env.PREFIX, '.config', 'powerline')
+        ctx(features='subst',
+            source=in_node,
+            target=out_node,
+            # TODO: Change this to use the Python json module.
+            POWERLINE_SEGMENTS_PATH=powerline_segments_path)
+
         # Install Powerline configuration files
         for dirpath, dirnames, filenames in os.walk(join(
                 'dotfiles', 'config', 'powerline')):
             for filename in filenames:
-                dotfile_nodes.append(ctx.path.find_resource(
-                    join(dirpath, filename)))
+                # Don't find any files that were templated.
+                if not filename.endswith('.in'):
+                    dotfile_nodes.append(ctx.path.find_resource(
+                        join(dirpath, filename)))
     else:
         # No powerline, enable basic prompt.
         zsh_theme = 'bira-simple'

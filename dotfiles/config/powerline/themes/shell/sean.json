@@ -29,6 +29,14 @@
 					{
 						"name": "branch",
 						"priority": 10
+					},
+					{
+						"module": "powerline_sean_segments",
+						"name": "pyenv"
+					},
+					{
+						"module": "powerline_sean_segments",
+						"name": "rbenv"
 					}
 				],
 				"right": [
