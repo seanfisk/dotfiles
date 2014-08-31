@@ -406,13 +406,11 @@ def build(ctx):
     # A mapping of shell to shell file nodes to include in the compiled rc
     # files.
     rc_nodes = dict(
-        sh=[],
         bash=[],
         zsh=[],
     )
     # A mapping of shell to shell file nodes to include in the compiled profile files.
     profile_nodes = dict(
-        sh=[],
         bash=[],
         zsh=[],
     )
@@ -447,12 +445,30 @@ def build(ctx):
         r'\C-xa': r' |& lolcat --animate\C-m',
     }
 
-    # Prepare path variables
+    # Include default profile nodes.
+    for shell in SHELLS:
+        profile_nodes[shell].append(ctx.path.find_resource([
+            'shell', 'profile.sh']))
+
+    # Prepare path variables.
     for var in PATH_VARS:
         # The backslashes make it a little more readable in the file
         # (at the cost of being readable here).
         shenv[var] = '\\\n{}\n'.format((os.pathsep + '\\\n').join(
             shquote(path) for path in ctx.env[var]))
+
+    # This file comes first in the rc list. We don't want Bash or Zsh scripts to
+    # load our entire configuration just to run. That would make them very
+    # slow.
+    exit_if_nonint_node = ctx.path.find_resource(
+        ['shell', 'exit-if-noninteractive.sh'])
+    for shell in SHELLS:
+        rc_nodes[shell].append(exit_if_nonint_node)
+
+    # Include default rc nodes.
+    for shell in SHELLS:
+        name = 'rc.{}'.format(shell)
+        rc_nodes[shell].append(ctx.path.find_resource(['shell', name]))
 
     # Build files that load rbenv and pyenv
     for shell in SHELLS:
@@ -485,7 +501,8 @@ def build(ctx):
         aliases['ls'] = 'ls --color=always -hF'
         if ctx.env.GNOME_OPEN:
             aliases['open'] = shquote(ctx.env.GNOME_OPEN)
-        rc_nodes['sh'].append(
+        for shell in SHELLS:
+            rc_nodes[shell].append(
             ctx.path.find_resource(['shell', 'gnu-linux.bash']))
 
         # Swap Caps Lock and Control under X11
@@ -590,7 +607,9 @@ source {zsh_powerline_file}
             ['dotfiles', 'ssh', 'config']))
 
     if ctx.env.TMUX:
-        rc_nodes['sh'].append(ctx.path.find_resource(['shell', 'tmux.sh']))
+        for shell in SHELLS:
+            rc_nodes[shell].append(ctx.path.find_resource([
+                'shell', 'tmux.sh']))
 
         default_shell = 'zsh'
         # Workaround for Mac OS X pasteboard, see
@@ -696,9 +715,11 @@ source "{tmux_powerline_file}"
         prog_path = ctx.env[prog.upper()]
         aliases['my' + prog] = shquote(prog_path) + ' -u "$(id -un)"'
 
-    # Build shell environment
+    # Build shell environment. Do it after all the tools are configured so that
+    # each tool has an opportunity to modify the environment.
     shenv_node = ctx.path.find_or_declare('env.sh')
-    profile_nodes['sh'].append(shenv_node)
+    for shell in SHELLS:
+        profile_nodes[shell].append(shenv_node)
     # Always build this file, since it depends values in the build script.
     @ctx.rule(target=shenv_node, always=True)
     def mkshenv(tsk):
@@ -707,19 +728,17 @@ source "{tmux_powerline_file}"
             for name, value in six.iteritems(shenv):
                 six.print_('export {0}={1}'.format(name, value), file=out_file)
 
-    # Local configurations
-    local_rc_path = join(LOCAL_DIR, 'rc.sh')
-    if os.path.isfile(local_rc_path):
-        rc_nodes['sh'].append(ctx.path.find_resource(local_rc_path))
+    # Source in .bashrc in the .bash_profile. Needs to happen after the shell
+    # environment.
+    profile_nodes['bash'].append(ctx.path.find_resource([
+        'shell', 'sourcebashrc.bash']))
 
-    local_profile_path = join(LOCAL_DIR, 'profile.sh')
-    if os.path.isfile(local_profile_path):
-        profile_nodes['sh'].append(ctx.path.find_resource(local_profile_path))
-
-    # Build aliases
+    # Build aliases. Do it after all the tools are configured so that each tool
+    # has an opportunity to add aliases.
     aliases_in_node = ctx.path.find_resource(['shell', 'aliases.sh'])
     aliases_out_node = ctx.path.find_or_declare('aliases.sh')
-    rc_nodes['sh'].append(aliases_out_node)
+    for shell in SHELLS:
+        rc_nodes[shell].append(aliases_out_node)
     # Always build this file, since it depends on the build script.
     @ctx.rule(target=aliases_out_node, source=aliases_in_node, always=True)
     def mkaliases(tsk):
@@ -733,7 +752,8 @@ source "{tmux_powerline_file}"
                     'alias {0}={1}'.format(alias, shquote(command)),
                     file=out_file)
 
-    # Build keybindings
+    # Build keybindings. Do it after all the tools are configured so that
+    # each tool has an opportunity to add keybindings.
     def make_bash_keys(tsk):
         with open(tsk.outputs[0].abspath(), 'w') as out_file:
             for key, binding in six.iteritems(keybindings):
@@ -758,27 +778,26 @@ source "{tmux_powerline_file}"
         rule = locals()['make_{}_keys'.format(shell)]
         ctx(rule=rule, target=out_node, always=True)
 
-    # Finally, build shell files
+    # Local profile and rc configurations.
+    local_profile_path = join(LOCAL_DIR, 'profile.sh')
+    if os.path.isfile(local_profile_path):
+        for shell in SHELLS:
+            profile_nodes[shell].append(ctx.path.find_resource(
+                local_profile_path))
 
-    # This file comes first in the list. We don't want Bash or Zsh scripts to
-    # load our entire configuration just to run. That would make them very
-    # slow.
-    exit_if_nonint_node = ctx.path.find_resource(
-        ['shell', 'exit-if-noninteractive.sh'])
+    local_rc_path = join(LOCAL_DIR, 'rc.sh')
+    if os.path.isfile(local_rc_path):
+        for shell in SHELLS:
+            rc_nodes[shell].append(ctx.path.find_resource(local_rc_path))
+
+    # Finally, build shell files
 
     shell_nodes = []
     for shell in SHELLS:
         for filetype in ['rc', 'profile']:
             name = '{0}.{1}'.format(filetype, shell)
-            in_nodes = []
-            if filetype == 'rc':
-                in_nodes.append(exit_if_nonint_node)
-            elif filetype == 'profile':
-                in_nodes.append(shenv_node)
-            in_nodes.append(ctx.path.find_resource(['shell', name]))
             filetype_node_list = locals()[filetype + '_nodes']
-            in_nodes += filetype_node_list[shell]
-            in_nodes += filetype_node_list['sh']
+            in_nodes = filetype_node_list[shell]
             out_node = ctx.path.find_or_declare(name)
             shell_nodes.append(out_node)
             ctx(rule=concatenate,
