@@ -302,7 +302,9 @@ def configure(ctx):
     ctx.find_clipboard_programs()
     ctx.find_program('powerline-daemon', var='POWERLINE_DAEMON',
                      mandatory=False)
-    ctx.find_program('powerline-config', var='POWERLINE_CONFIG',
+    # Powerline actually uses the $POWERLINE_CONFIG environment variable, which
+    # Waf will then detect. Change ours to ignore this.
+    ctx.find_program('powerline-config', var='_POWERLINE_CONFIG',
                      mandatory=False)
     ctx.find_program('fasd', mandatory=False)
     ctx.find_program('ssh', mandatory=False)
@@ -622,7 +624,11 @@ source {zsh_powerline_file}
         out_node = ctx.path.find_or_declare('tmux.conf')
 
         powerline_commands = ''
-        if ctx.env.POWERLINE_DAEMON and ctx.env.POWERLINE_CONFIG:
+        if ctx.env.POWERLINE_DAEMON and ctx.env._POWERLINE_CONFIG:
+            # Powerline should be able to find this on the PATH. But just in
+            # case it's not, and maybe to save a little bit on execution, tell
+            # Powerline where it is with this environment variable.
+            shenv['POWERLINE_CONFIG_COMMAND'] = ctx.env._POWERLINE_CONFIG
             tmux_powerline_file = get_powerline_path(
                 ctx, join('bindings', 'tmux', 'powerline.conf'))
             powerline_commands = '''run-shell "{powerline_daemon} --quiet"
