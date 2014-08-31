@@ -117,30 +117,40 @@ def write_paths_to_env(ctx):
 
 @conf
 def setup_default_paths(ctx):
+    # Set up paths to check for "system" tools, like Python. The '.local' path
+    # allows us to override the "system" tools as a user.
+    system_hierarchies = [
+        join(ctx.env.PREFIX, '.local'),
+        '/usr/local',
+        '/usr',
+    ]
+
+    ctx.env.SYSTEM_PATHS = [join(hier, 'bin') for hier in system_hierarchies]
+
     # Initialize paths. Higher-priority paths come first.
     for var in PATH_VARS:
         ctx.env[var] = []
 
     # Add script directory.
-    ctx.add_to_path_var('PATH', os.path.expanduser('~/bin'))
+    ctx.add_to_path_var('PATH', join(ctx.env.PREFIX, 'bin'))
 
     # If rbenv and pyenv are installed to the home directory,
     # add_path_hierarchy will find their directories. If they are installed
     # using Homebrew, they will be found in /usr/local/.
-    ctx.add_path_hierarchy(os.path.expanduser('~/.pyenv'))
-    ctx.add_path_hierarchy(os.path.expanduser('~/.rbenv'))
+    ctx.add_path_hierarchy(join(ctx.env.PREFIX, '.pyenv'))
+    ctx.add_path_hierarchy(join(ctx.env.PREFIX, '.rbenv'))
 
     # System Python and Python user base.
-    system_python = ctx.find_program(
+    ctx.find_program(
         'python',
         var='SYSTEM_PYTHON',
-        path_list=['/usr/bin', '/usr/local/bin'],
+        path_list=ctx.env.SYSTEM_PATHS,
         mandatory=False)
-    if system_python:
-        # Just assume UTF-8. Should cover most cases.
-        user_base = subprocess.check_output([
-            system_python, '-m', 'site', '--user-base']).\
-            decode('utf-8').rstrip()
+    if ctx.env.SYSTEM_PYTHON:
+        # Just assume ascii; should be fine. This needs to be a string for Waf.
+        user_base = str(subprocess.check_output([
+            ctx.env.SYSTEM_PYTHON, '-m', 'site', '--user-base']).\
+            decode('ascii').rstrip())
         ctx.add_path_hierarchy(user_base)
 
     # Emacs.app on Mac OS X contains some paths in some weird places.
@@ -177,10 +187,10 @@ def setup_default_paths(ctx):
     # <http://unix.stackexchange.com/questions/22329/gnu-texinfo-directory-search-method>
 
     # Add hierarchies.
-    ctx.add_path_hierarchy(os.path.expanduser('~/.local'))
-    ctx.add_path_hierarchy('/usr/local')
-    # It is helpful to add /usr so that INFOPATH gets correctly populated.
-    ctx.add_path_hierarchy('/usr')
+    # Even though /usr/bin is probably already in the PATH, it is helpful to
+    # add /usr so that INFOPATH gets correctly populated.
+    for hier in system_hierarchies:
+        ctx.add_path_hierarchy(hier)
 
     # Finally, add system-default paths.
     ctx.add_system_default_paths()
@@ -273,6 +283,26 @@ def find_gnu_util(ctx, exe_name):
         ('g' if MACOSX else '') + exe_name, var=exe_name.upper())
 
 
+@conf
+def find_powerline(ctx):
+    # We assume that Powerline is installed under the system Python. We
+    # don't allow Waf to look in pyenv paths, so that's a decent
+    # assumption.
+    if not ctx.env.SYSTEM_PYTHON:
+        ctx.fatal('Powerline must be installed under the system Python.')
+
+    ctx.find_program('powerline-daemon', var='POWERLINE_DAEMON',
+                     mandatory=False)
+    # Powerline actually uses the $POWERLINE_CONFIG environment variable, which
+    # Waf will then detect. Change ours to avoid this.
+    ctx.find_program('powerline-config', var='_POWERLINE_CONFIG',
+                     mandatory=False)
+
+    # Set this variable to give us an easy way to tell if we have Powerline.
+    ctx.env.POWERLINE = (
+        bool(ctx.env.POWERLINE_DAEMON) and bool(ctx.env._POWERLINE_CONFIG))
+
+
 def configure(ctx):
     # Paths (further sections can modify paths too)
     ctx.setup_default_paths()
@@ -298,14 +328,11 @@ def configure(ctx):
     ctx.find_program('aria2c', mandatory=False)
     ctx.find_program('wget')  # Wget is mandatory!!!
 
+    # Powerline
+    ctx.find_powerline(mandatory=False)
+
     # Other utilities
     ctx.find_clipboard_programs()
-    ctx.find_program('powerline-daemon', var='POWERLINE_DAEMON',
-                     mandatory=False)
-    # Powerline actually uses the $POWERLINE_CONFIG environment variable, which
-    # Waf will then detect. Change ours to ignore this.
-    ctx.find_program('powerline-config', var='_POWERLINE_CONFIG',
-                     mandatory=False)
     ctx.find_program('fasd', mandatory=False)
     ctx.find_program('ssh', mandatory=False)
     ctx.find_program('devpi-ctl', var='DEVPI_CTL', mandatory=False)
@@ -385,11 +412,12 @@ def make_fasd_cache(tsk):
 
 
 def get_powerline_path(ctx, relpath):
-    return subprocess.check_output([
+    # Just assume ascii; should be fine. This needs to be a str for Waf.
+    return str(subprocess.check_output([
         ctx.env.SYSTEM_PYTHON, '-c',
         'from pkg_resources import resource_filename; '
         "print(resource_filename('powerline', {0}))".\
-        format(repr(relpath))]).decode('utf-8').rstrip()
+        format(repr(relpath))]).decode('ascii').rstrip())
 
 
 def build(ctx):
@@ -416,7 +444,7 @@ def build(ctx):
         bash=[],
         zsh=[],
     )
-    # A list of scripts in the script/ directory to install to ~/bin.
+    # A list of scripts in the script/ directory to install to $PREFIX/bin.
     scripts = []
     # Shell key bindings
     #
@@ -536,10 +564,8 @@ def build(ctx):
             '| copy')
 
     # Various utilities
-    if ctx.env.SYSTEM_PYTHON and ctx.env.POWERLINE_DAEMON:
-        # We assume that Powerline is installed under the system Python. We
-        # don't allow Waf to look in pyenv paths, so that's a decent
-        # assumption.
+    zsh_theme = ''
+    if ctx.env.POWERLINE:
         bash_powerline_node = ctx.path.find_or_declare('powerline.bash')
         rc_nodes['bash'].append(bash_powerline_node)
         @ctx.rule(target=bash_powerline_node, always=True)
@@ -578,6 +604,12 @@ source {zsh_powerline_file}
             for filename in filenames:
                 dotfile_nodes.append(ctx.path.find_resource(
                     join(dirpath, filename)))
+    else:
+        # No powerline, enable basic prompt.
+        zsh_theme = 'bira-simple'
+        for shell in SHELLS:
+            rc_nodes[shell].append(ctx.path.find_resource([
+                'shell', 'prompt.{}'.format(shell)]))
 
     if ctx.env.FASD:
         # See here for all the options: https://github.com/clvv/fasd#install
@@ -624,7 +656,7 @@ source {zsh_powerline_file}
         out_node = ctx.path.find_or_declare('tmux.conf')
 
         powerline_commands = ''
-        if ctx.env.POWERLINE_DAEMON and ctx.env._POWERLINE_CONFIG:
+        if ctx.env.POWERLINE:
             # Powerline should be able to find this on the PATH. But just in
             # case it's not, and maybe to save a little bit on execution, tell
             # Powerline where it is with this environment variable.
@@ -808,7 +840,8 @@ source "{tmux_powerline_file}"
             shell_nodes.append(out_node)
             ctx(rule=concatenate,
                 target=out_node,
-                source=in_nodes)
+                source=in_nodes,
+                always=True)
 
     # Install files
     #

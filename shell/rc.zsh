@@ -11,7 +11,8 @@ unset MIN_ZSH_VERSION
 # Path to your oh-my-zsh configuration.
 ZSH=~/.oh-my-zsh
 # Set name of the theme to load. Look in ~/.oh-my-zsh/themes/
-ZSH_THEME=bira-simple
+# The default is no theme because we may have Powerline. If not, the theme will be set later.
+ZSH_THEME=''
 # Set to this to use case-sensitive completion
 CASE_SENSITIVE=true
 # Comment this out to disable weekly auto-update checks
