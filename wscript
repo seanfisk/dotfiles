@@ -119,13 +119,14 @@ def write_paths_to_env(ctx):
 def setup_default_paths(ctx):
     # Set up paths to check for "system" tools, like Python. The '.local' path
     # allows us to override the "system" tools as a user.
-    system_hierarchies = [
+    ctx.env.SYSTEM_HIERARCHIES = [
         join(ctx.env.PREFIX, '.local'),
         '/usr/local',
         '/usr',
     ]
 
-    ctx.env.SYSTEM_PATHS = [join(hier, 'bin') for hier in system_hierarchies]
+    ctx.env.SYSTEM_PATHS = [
+        join(hier, 'bin') for hier in ctx.env.SYSTEM_HIERARCHIES]
 
     # Initialize paths. Higher-priority paths come first.
     for var in PATH_VARS:
@@ -189,7 +190,7 @@ def setup_default_paths(ctx):
     # Add hierarchies.
     # Even though /usr/bin is probably already in the PATH, it is helpful to
     # add /usr so that INFOPATH gets correctly populated.
-    for hier in system_hierarchies:
+    for hier in ctx.env.SYSTEM_HIERARCHIES:
         ctx.add_path_hierarchy(hier)
 
     # Finally, add system-default paths.
@@ -252,6 +253,26 @@ def check_zsh(ctx):
         ctx.fatal('This configuration requires Zsh {0}.'.format(
             required_major_version))
 
+    # Load zpython from Homebrew if available. We have programmed this
+    # detection specifically for Homebrew because Homebrew apparently installs
+    # zpython in a somewhat nonstandard way (it doesn't use 'make install').
+    if ctx.env.BREW:
+            # Just assume ascii; should be fine. This needs to be a string for Waf.
+            proc = subprocess.Popen(
+                [ctx.env.BREW, '--prefix', 'zpython'],
+                stdout=subprocess.PIPE)
+            out, err = proc.communicate()
+            if proc.returncode == 0:
+                zpython_brew_prefix = str(out.decode('ascii').rstrip())
+            zpython_module_path = join(zpython_brew_prefix, 'lib', 'zpython')
+            zpython_lib = join(zpython_module_path, 'zsh', 'zpython.so')
+            ctx.start_msg('Checking for zpython library')
+            if os.path.isfile(zpython_lib):
+                ctx.env.ZPYTHON_MODULE_PATH = zpython_module_path
+                ctx.end_msg(zpython_lib)
+            else:
+                ctx.end_msg(False)
+
 
 @conf
 def check_path_for_issues(ctx):
@@ -306,6 +327,10 @@ def find_powerline(ctx):
 def configure(ctx):
     # Paths (further sections can modify paths too)
     ctx.setup_default_paths()
+
+    # Check for Homebrew on Mac OS X.
+    if MACOSX:
+        ctx.find_program('brew', mandatory=False)
 
     # Shells
     ctx.check_bash(mandatory=False)
@@ -494,6 +519,16 @@ def build(ctx):
         ['shell', 'exit-if-noninteractive.sh'])
     for shell in SHELLS:
         rc_nodes[shell].append(exit_if_nonint_node)
+
+    # Include zpython for zsh, if available.
+    if ctx.env.ZPYTHON_MODULE_PATH:
+        in_node = ctx.path.find_resource(['shell', 'zpython.zsh.in'])
+        out_node = ctx.path.find_or_declare('zpython.zsh')
+        rc_nodes['zsh'].append(out_node)
+        ctx(features='subst',
+            target=out_node,
+            source=in_node,
+            ZPYTHON_MODULE_PATH=shquote(ctx.env.ZPYTHON_MODULE_PATH))
 
     # Include default rc nodes.
     for shell in SHELLS:
