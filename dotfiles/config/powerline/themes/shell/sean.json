@@ -32,11 +32,13 @@
 					},
 					{
 						"module": "powerline_sean_segments",
-						"name": "pyenv"
+						"name": "pyenv",
+						"before": "🐍  "
 					},
 					{
 						"module": "powerline_sean_segments",
-						"name": "rbenv"
+						"name": "rbenv",
+						"before": "💎  "
 					}
 				],
 				"right": [
