@@ -47,13 +47,6 @@
 						// This value is a Unicode GEM STONE followed by two spaces.
 						"before": "💎  "
 					}
-				],
-				"right": [
-					{
-						"module": "powerline.segments.shell",
-						"name": "last_pipe_status",
-						"priority": 10
-					}
 				]
 			}
 		],
@@ -64,6 +57,19 @@
 				"highlight_group": ["cwd"]
 			}
 		],
-		"right": []
+		"right": [
+			{
+				// last_pipe_status is way cooler than the normal
+				// last_status. If any of the pipe commands fail, it
+				// will show the exit status for each of them. For
+				// example, try running:
+				//
+				//     true | false | true
+				//
+				"module": "powerline.segments.shell",
+				"name": "last_pipe_status",
+				"priority": 10
+			}
+		]
 	}
 }
