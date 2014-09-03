@@ -33,7 +33,11 @@
 					},
 					{
 						"name": "branch",
-						"priority": 10
+						"priority": 10,
+						"args": {
+							// Show whether the branch is dirty.
+							"status_colors": true
+						}
 					},
 					{
 						"module": "powerline_sean_segments",
