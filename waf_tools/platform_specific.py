@@ -1,0 +1,43 @@
+"""Detect the system type and set variables."""
+
+import platform
+from pipes import quote as shquote
+
+
+SYSTEM_OS_MAPPING = {
+    'Linux': 'LINUX',
+    'Darwin': 'MACOSX',
+}
+
+
+def configure(ctx):
+    try:
+        ctx.env[SYSTEM_OS_MAPPING[platform.system()]] = True
+    except KeyError:
+        ctx.fatal('Unrecognized system.')
+
+    if ctx.env.LINUX:
+        ctx.find_program('gnome-open', var='GNOME_OPEN', mandatory=False)
+
+
+def build(ctx):
+    if ctx.env.MACOSX:
+        # Human readable file sizes, classify, and color
+        ctx.env.SHELL_ALIASES['ls'] = 'ls -hFG'
+
+        # ssh-agent handling code is not needed in Mac OS X because it is
+        # handled by the operating system.
+
+        # Open Xcode project.
+        ctx.env.SHELL_ALIASES['openx'] = 'env -i open *.xcodeproj'
+    elif ctx.env.LINUX:
+        # Colorize, human readable file sizes, classify
+        ctx.env.SHELL_ALIASES['ls'] = 'ls --color=always -hF'
+        if ctx.env.GNOME_OPEN:
+            ctx.env.SHELL_ALIASES['open'] = shquote(ctx.env.GNOME_OPEN)
+        ctx.add_shell_rc_node(
+            ctx.path.find_resource(['shell', 'gnu-linux.bash']))
+
+        # Swap Caps Lock and Control under X11
+        ctx.env.DOTFILE_NODES.append(
+            ctx.path.find_resource(['dotfiles', 'Xkbmap']))
