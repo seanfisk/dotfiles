@@ -6,7 +6,17 @@ from pipes import quote as shquote
 import waflib
 
 
+def options(ctx):
+    # Add a command-line option to explicity disable Powerline.
+    ctx.add_option('--disable-powerline', action='store_true', default=False,
+                   help='Explicitly disable Powerline')
+
+
 def configure(ctx):
+    if ctx.options.disable_powerline:
+        ctx.msg('Checking for Powerline', 'disabled', color='YELLOW')
+        return
+
     # We assume that Powerline is installed under the system Python. We
     # don't allow Waf to look in pyenv paths, so that's a decent
     # assumption.

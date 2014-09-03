@@ -194,8 +194,9 @@ def setup_shell_defaults(ctx):
         r'\C-xa': r' |& lolcat --animate\C-m',
     }
 
-    # Include default profile nodes.
-    ctx.add_shell_profile_node(ctx.path.find_resource(['shell', 'profile.sh']))
+    # Include base profile nodes.
+    ctx.add_shell_profile_node(ctx.path.find_resource([
+        'shell', 'profile-base.sh']))
 
     # Prepare path variables.
     for var in ctx.env.PATH_VARS:
@@ -221,17 +222,30 @@ def setup_shell_defaults(ctx):
             source=in_node,
             ZPYTHON_MODULE_PATH=shquote(ctx.env.ZPYTHON_MODULE_PATH))
 
-    # Include default rc nodes.
-    for shell in ctx.env.SHELLS:
-        name = 'rc.{}'.format(shell)
-        ctx.env.SHELL_RC_NODES[shell].append(
-            ctx.path.find_resource(['shell', name]))
-
     if not ctx.env.POWERLINE:
         # No powerline; enable basic prompt.
-        for shell in ctx.env.SHELLS:
-            ctx.env.SHELL_RC_NODES[shell].append(ctx.path.find_resource([
-                'shell', 'prompt.{}'.format(shell)]))
+
+        # Include the prompt file for Bash.
+        ctx.env.SHELL_RC_NODES['bash'].append(ctx.path.find_resource([
+            'shell', 'prompt.bash']))
+
+        # Turn on our Oh My Zsh theme for Zsh.
+        zsh_theme = 'bira-simple'
+    else:
+        # No Oh My Zsh theme needed if we are using Powerline.
+        zsh_theme = ''
+
+    # Include default rc nodes.
+    ctx.env.SHELL_RC_NODES['bash'].append(
+        ctx.path.find_resource(['shell', 'rc-base.bash']))
+
+    in_node = ctx.path.find_resource(['shell', 'rc-base.zsh.in'])
+    out_node = ctx.path.find_or_declare('rc-base.zsh')
+    ctx.env.SHELL_RC_NODES['zsh'].append(out_node)
+    ctx(features='subst',
+        target=out_node,
+        source=in_node,
+        ZSH_THEME=shquote(zsh_theme))
 
 
 @conf
