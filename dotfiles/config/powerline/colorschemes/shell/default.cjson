@@ -1,0 +1,18 @@
+// -*- mode: js; coding: utf-8; -*-
+//
+// We name this file 'colorschemes/shell/default.json' so that it
+// overrides the Powerline 'colorschemes/shell/default.json', but
+// still inherits from 'colorschemes/default.json'.
+{
+	"name": "Sean's color scheme for shell prompts",
+	"groups": {
+		"pyenv":          { "fg": "lightyellow", "bg": "mediumgreen", "attr": [] },
+		"rbenv":          { "fg": "brightestorange", "bg": "darkestred", "attr": [] },
+		"hostname":       { "fg": "brightyellow", "bg": "mediumorange", "attr": [] },
+		"jobnum":         { "fg": "brightyellow", "bg": "mediumorange", "attr": [] },
+		"exit_fail":      { "fg": "white", "bg": "darkestred", "attr": [] },
+		"exit_success":   { "fg": "white", "bg": "darkestgreen", "attr": [] },
+		"environment":    { "fg": "white", "bg": "darkestgreen", "attr": [] },
+		"mode":           { "fg": "darkestgreen", "bg": "brightgreen", "attr": ["bold"] }
+	}
+}

@@ -20,7 +20,7 @@ def make_tool_segment(tool):
         version_name = version_name_unicode.rstrip()
         return [{
             'contents': version_name,
-            'highlight_group': ['cwd'],
+            'highlight_group': [tool],
         }]
 
     return tool_segment
