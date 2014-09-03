@@ -1,13 +1,14 @@
-# Ignore local configuration
-/.shell_common.d/localrc.bash
-
 # pyenv version file
 /.python-version
+
+# Python Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
 
 # Waf
 
 ## Build directory
-/build
+/build/
 
 ## Unpackaged waflib
 ## It's dot-hidden on Unix-like system, but on Windows it is just
