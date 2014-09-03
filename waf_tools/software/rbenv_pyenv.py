@@ -19,7 +19,7 @@ def _make_rbenv_pyenv_file(tsk):
     # the extension with a preceding dot, so strip it off.
     tool, ext = os.path.splitext(output_node.name)
     shell = ext[1:]
-    path = tsk.env[tool.upper()]
+    tool_path = tsk.env[tool.upper()]
     with open(output_node.abspath(), 'w') as output_file:
         # Instead of running pyenv and rbenv to generate code and eval'ing it
         # every time, just generate it now and source it. Because we aren't
@@ -28,7 +28,7 @@ def _make_rbenv_pyenv_file(tsk):
         # through ps or $SHELL, $SHELL is just plain wrong, because that is the
         # login shell, which is not necessarily the shell that is running.
         ret = tsk.exec_command(
-            [path, 'init', '-', shell], stdout=output_file)
+            [tool_path, 'init', '-', shell], stdout=output_file)
 
     return ret
 
@@ -42,5 +42,6 @@ def build(ctx):
             if path:
                 out_node = ctx.path.find_or_declare(
                     '{0}.{1}'.format(tool, shell))
-                ctx.env.SHELL_RC_NODES[shell].append(out_node)
-                ctx(rule=_make_rbenv_pyenv_file, target=out_node, always=True)
+                ctx.env['{}_RC_NODES'.format(shell.upper())].append(out_node)
+                ctx(rule=_make_rbenv_pyenv_file, target=out_node,
+                    vars=[tool.upper()])

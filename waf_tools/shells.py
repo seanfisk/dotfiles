@@ -25,10 +25,10 @@ LOCAL_DIR = join('shell', 'local')
 
 def configure(ctx):
     # Check for each shell.
-    configurable_shells = ['bash', 'zsh']
+    ctx.env.CONFIGURABLE_SHELLS = ['bash', 'zsh']
 
     # Set the SHELLS variable to all available shells.
-    ctx.env.SHELLS = [shell for shell in configurable_shells if
+    ctx.env.SHELLS = [shell for shell in ctx.env.CONFIGURABLE_SHELLS if
                       getattr(ctx, 'find_{}'.format(shell))(mandatory=False)]
 
 
@@ -113,13 +113,13 @@ def find_zsh(ctx):
 @conf
 def add_shell_rc_node(ctx, node):
     for shell in ctx.env.SHELLS:
-        ctx.env.SHELL_RC_NODES[shell].append(node)
+        ctx.env['{}_RC_NODES'.format(shell.upper())].append(node)
 
 
 @conf
 def add_shell_profile_node(ctx, node):
     for shell in ctx.env.SHELLS:
-        ctx.env.SHELL_PROFILE_NODES[shell].append(node)
+        ctx.env['{}_PROFILE_NODES'.format(shell.upper())].append(node)
 
 
 def _concatenate(tsk):
@@ -152,18 +152,16 @@ def setup_shell_defaults(ctx):
     # to keep related aliases together in the generated file -- the order
     # should not really matter, though.
     ctx.env.SHELL_ALIASES = OrderedDict()
-    # A mapping of shell to shell file nodes to include in the compiled rc
-    # files.
-    ctx.env.SHELL_RC_NODES = dict(
-        bash=[],
-        zsh=[],
-    )
-    # A mapping of shell to shell file nodes to include in the compiled profile
-    # files.
-    ctx.env.SHELL_PROFILE_NODES = dict(
-        bash=[],
-        zsh=[],
-    )
+    # Use the list of configurable shells so that other tasks can add to
+    # specific shells without getting errors.
+    for shell in ctx.env.CONFIGURABLE_SHELLS:
+        shell_up = shell.upper()
+        # A mapping of shell to shell file nodes to include in the compiled rc
+        # files.
+        ctx.env['{}_RC_NODES'.format(shell_up)] = []
+        # A mapping of shell to shell file nodes to include in the compiled
+        # profile files.
+        ctx.env['{}_PROFILE_NODES'.format(shell_up)] = []
 
     # Key bindings
     #
@@ -173,26 +171,28 @@ def setup_shell_defaults(ctx):
     # quoting. However, now that we have the superb data structures of Python,
     # and the ablility to change what goes in to them via configuration
     # options, we opted for the Python data structure.
-    ctx.env.SHELL_KEYBINDINGS = {
+    #
+    # We use an OrderedDict to guarantee a stable order for the build.
+    ctx.env.SHELL_KEYBINDINGS = OrderedDict([
         # Paging
         # Note: `|&' is Bash 4 and Zsh only.
-        r'\C-j': r' |& less\C-m',
+        (r'\C-j', r' |& less\C-m'),
         # Executing last command.
         # This is equivalent to pressing C-p or the up arrow, then Enter.
-        r'\C-xp': r'\C-p\C-m',
+        (r'\C-xp', r'\C-p\C-m'),
         # Up a directory, aliased to `u' for me. Note: `\ej' means `ESC+' then
         # `j' as opposed to `\M-j', which means `Meta' then `j'. I have both
         # Option keys on my Mac configured to send `ESC+' in iTerm2. Actually
         # sending Meta is apparently a relic of the past, and ESC+ should be
         # used now.
-        r'\ej': r'u\C-m',
+        (r'\ej', r'u\C-m'),
         # Lolcat keybindings. This would be nice to make part of the
         # configuration, but lolcat is an rbenv-managed gem, and that makes it
         # hard to do.
-        r'\C-xl': r' |& lolcat\C-m',
-        r'\C-x\C-l': r' |& lolcat --force |& less -R\C-m',
-        r'\C-xa': r' |& lolcat --animate\C-m',
-    }
+        (r'\C-xl', r' |& lolcat\C-m'),
+        (r'\C-x\C-l', r' |& lolcat --force |& less -R\C-m'),
+        (r'\C-xa', r' |& lolcat --animate\C-m'),
+    ])
 
     # Include base profile nodes.
     ctx.add_shell_profile_node(ctx.path.find_resource([
@@ -216,7 +216,7 @@ def setup_shell_defaults(ctx):
     if ctx.env.ZPYTHON_MODULE_PATH:
         in_node = ctx.path.find_resource(['shell', 'zpython.zsh.in'])
         out_node = ctx.path.find_or_declare('zpython.zsh')
-        ctx.env.SHELL_RC_NODES['zsh'].append(out_node)
+        ctx.env.ZSH_RC_NODES.append(out_node)
         ctx(features='subst',
             target=out_node,
             source=in_node,
@@ -226,7 +226,7 @@ def setup_shell_defaults(ctx):
         # No powerline; enable basic prompt.
 
         # Include the prompt file for Bash.
-        ctx.env.SHELL_RC_NODES['bash'].append(ctx.path.find_resource([
+        ctx.env.BASH_RC_NODES.append(ctx.path.find_resource([
             'shell', 'prompt.bash']))
 
         # Turn on our Oh My Zsh theme for Zsh.
@@ -236,12 +236,12 @@ def setup_shell_defaults(ctx):
         zsh_theme = ''
 
     # Include default rc nodes.
-    ctx.env.SHELL_RC_NODES['bash'].append(
+    ctx.env.BASH_RC_NODES.append(
         ctx.path.find_resource(['shell', 'rc-base.bash']))
 
     in_node = ctx.path.find_resource(['shell', 'rc-base.zsh.in'])
     out_node = ctx.path.find_or_declare('rc-base.zsh')
-    ctx.env.SHELL_RC_NODES['zsh'].append(out_node)
+    ctx.env.ZSH_RC_NODES.append(out_node)
     ctx(features='subst',
         target=out_node,
         source=in_node,
@@ -255,8 +255,7 @@ def build_shell_env(ctx):
     out_node = ctx.path.find_or_declare('env.sh')
     ctx.add_shell_profile_node(out_node)
 
-    # Always build this file, since it depends values in the build script.
-    @ctx.rule(target=out_node, always=True)
+    @ctx.rule(target=out_node, vars=['SHELL_ENV'])
     def make_shell_env(tsk):
         with open(tsk.outputs[0].abspath(), 'w') as out_file:
             six.print_('# Shell environment\n', file=out_file)
@@ -272,8 +271,7 @@ def build_shell_aliases(ctx):
     out_node = ctx.path.find_or_declare('aliases.sh')
     ctx.add_shell_rc_node(out_node)
 
-    # Always build this file, since it depends on the build script.
-    @ctx.rule(target=out_node, source=in_node, always=True)
+    @ctx.rule(target=out_node, source=in_node, vars=['SHELL_ALIASES'])
     def make_aliases(tsk):
         with open(tsk.outputs[0].abspath(), 'w') as out_file:
             with open(tsk.inputs[0].abspath()) as in_file:
@@ -309,10 +307,9 @@ def build_shell_keybindings(ctx):
 
     for shell in ctx.env.SHELLS:
         out_node = ctx.path.find_or_declare('keys.{}'.format(shell))
-        ctx.env.SHELL_RC_NODES[shell].append(out_node)
-        # Always build this file, since it depends on the build script.
+        ctx.env['{}_RC_NODES'.format(shell.upper())].append(out_node)
         rule = locals()['make_{}_keys'.format(shell)]
-        ctx(rule=rule, target=out_node, always=True)
+        ctx(rule=rule, target=out_node, vars=['SHELL_KEYBINDINGS'])
 
 
 @conf
@@ -321,13 +318,13 @@ def build_shell_locals(ctx):
     local_profile_path = join(LOCAL_DIR, 'profile.sh')
     if os.path.isfile(local_profile_path):
         for shell in ctx.env.SHELLS:
-            ctx.env.SHELL_PROFILE_NODES[shell].append(ctx.path.find_resource(
-                local_profile_path))
+            ctx.env['{}_PROFILE_NODES'.format(shell.upper())].append(
+                ctx.path.find_resource(local_profile_path))
 
     local_rc_path = join(LOCAL_DIR, 'rc.sh')
     if os.path.isfile(local_rc_path):
         for shell in ctx.env.SHELLS:
-            ctx.env.SHELL_RC_NODES[shell].append(
+            ctx.env['{}_RC_NODES'.format(shell.upper())].append(
                 ctx.path.find_resource(local_rc_path))
 
 
@@ -336,7 +333,7 @@ def build(ctx):
 
     # Source in .bashrc in the .bash_profile. Needs to happen after the shell
     # environment.
-    ctx.env.SHELL_PROFILE_NODES['bash'].append(ctx.path.find_resource([
+    ctx.env.BASH_PROFILE_NODES.append(ctx.path.find_resource([
         'shell', 'sourcebashrc.bash']))
 
     ctx.build_shell_aliases()
@@ -348,16 +345,16 @@ def build(ctx):
     shell_nodes = []
     for shell in ctx.env.SHELLS:
         for filetype in ['rc', 'profile']:
-            name = '{0}.{1}'.format(filetype, shell)
-            filetype_node_list = ctx.env[
-                'SHELL_{}_NODES'.format(filetype.upper())]
-            in_nodes = filetype_node_list[shell]
-            out_node = ctx.path.find_or_declare(name)
+            filename = '{0}.{1}'.format(filetype, shell)
+            env_var_name = '{0}_{1}_NODES'.format(
+                shell.upper(), filetype.upper())
+            in_nodes = ctx.env[env_var_name]
+            out_node = ctx.path.find_or_declare(filename)
             shell_nodes.append(out_node)
             ctx(rule=_concatenate,
                 target=out_node,
                 source=in_nodes,
-                always=True)
+                vars=[env_var_name])
 
     # Install files
     #

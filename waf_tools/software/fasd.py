@@ -27,5 +27,5 @@ def build(ctx):
     # See here for all the options: https://github.com/clvv/fasd#install
     for shell in ctx.env.SHELLS:
         out_node = ctx.path.find_or_declare('fasd.{}'.format(shell))
-        ctx.env.SHELL_RC_NODES[shell].append(out_node)
-        ctx(rule=_make_fasd_cache, target=out_node, always=True)
+        ctx.env['{}_RC_NODES'.format(shell.upper())].append(out_node)
+        ctx(rule=_make_fasd_cache, target=out_node, vars=['FASD'])

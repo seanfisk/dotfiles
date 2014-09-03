@@ -36,7 +36,10 @@ WAF_BASE_TOOLS = [
 ]
 WAF_SOFTWARE_TOOLS_DIR = join(WAF_BASE_TOOLS_DIR, 'software')
 # Here, the order should not matter. Each of the stages should be independent.
-WAF_SOFTWARE_TOOLS = _python_modules_in_dir(WAF_SOFTWARE_TOOLS_DIR)
+# However, we sort to guarantee a stable order for the build. Different orders
+# returned from os.listdir() can cause data structures to be built in different
+# ways and cause unnecessary builds.
+WAF_SOFTWARE_TOOLS = sorted(_python_modules_in_dir(WAF_SOFTWARE_TOOLS_DIR))
 
 
 # Context helpers
