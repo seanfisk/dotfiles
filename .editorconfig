@@ -24,7 +24,8 @@ indent_size = 2
 indent_style = tab
 indent_size = 4
 
-# Powerline prefers tabs for json
-[dotfiles/config/powerline/**.{json,cjson}]
+# Powerline prefers tabs for JSON. The .cjson extension is our own
+# "commented JSON".
+[dotfiles/config/powerline/**.{cjson,cjson.in}]
 indent_style = tab
 indent_size = 4
