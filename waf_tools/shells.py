@@ -372,3 +372,9 @@ def build(ctx):
     ctx.install_as(
         join(ctx.env.PREFIX, SHELL_FILE_NAMES[logout_zsh_name]),
         join('shell', logout_zsh_name))
+
+    # Symlink Oh My Zsh
+    ctx.symlink_as(os.path.abspath(join(ctx.env.PREFIX, '.oh-my-zsh')),
+                   # Make sure to abspath the source, otherwise it will create
+                   # a relative link.
+                   os.path.abspath(join('shell', 'oh-my-zsh')))
