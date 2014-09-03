@@ -8,5 +8,4 @@ def configure(ctx):
 def build(ctx):
     if not ctx.env.SSH:
         return
-    ctx.env.DOTFILE_NODES.append(ctx.path.find_resource(
-        ['dotfiles', 'ssh', 'config']))
+    ctx.install_dotfile(ctx.path.find_resource(['dotfiles', 'ssh', 'config']))

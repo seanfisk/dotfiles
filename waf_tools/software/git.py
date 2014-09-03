@@ -45,4 +45,4 @@ def build(ctx):
         ctx.env.SHELL_ALIASES['git'] = 'hub'
 
     if ctx.env.OHCOUNT:
-        ctx.env.SCRIPTS.append('git-count-lines')
+        ctx.install_script('git-count-lines')

@@ -1,6 +1,9 @@
+// -*- mode: js; coding: utf-8; -*-
 {
 	"default_module": "powerline.segments.common",
 	"segments": {
+		// The "above" key allows us to have a multiline prompt.
+		// See https://github.com/Lokaltog/powerline/issues/462#issuecomment-46806521
 		"above": [
 			{
 				"left": [
@@ -12,6 +15,7 @@
 						"name": "hostname",
 						"priority": 30,
 						"args": {
+							// Always include the hostname.
 							"only_if_ssh": false,
 							"exclude_domain": true
 						}
@@ -23,6 +27,7 @@
 					{
 						"name": "cwd",
 						"args": {
+							// Don't split the cwd into multiple Powerline segments.
 							"use_path_separator": true
 						}
 					},
@@ -33,11 +38,13 @@
 					{
 						"module": "powerline_sean_segments",
 						"name": "pyenv",
+						// This value is Unicode SNAKE followed by two spaces.
 						"before": "🐍  "
 					},
 					{
 						"module": "powerline_sean_segments",
 						"name": "rbenv",
+						// This value is a Unicode GEM STONE followed by two spaces.
 						"before": "💎  "
 					}
 				],

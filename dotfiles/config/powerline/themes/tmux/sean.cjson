@@ -1,3 +1,4 @@
+// -*- mode: js; coding: utf-8; -*-
 {
 	"default_module": "powerline.segments.common",
 	"segments": {

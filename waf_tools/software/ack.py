@@ -13,8 +13,7 @@ def build(ctx):
         # Just 'less' is fine; we don't need to pass 'less -R' to get colors to
         # work.
         ctx.env.SHELL_ALIASES['ackp'] = shquote(ctx.env.ACK) + ' --pager=less'
-        ctx.env.DOTFILE_NODES.append(
-            ctx.path.find_resource(['dotfiles', 'ackrc']))
+        ctx.install_dotfile(ctx.path.find_resource(['dotfiles', 'ackrc']))
 
         if ctx.env.GIT:
             # Note: by default `git ls-files' only shows tracked files.

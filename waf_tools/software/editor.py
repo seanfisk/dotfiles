@@ -12,7 +12,7 @@ def build(ctx):
     if ctx.env.EMACSCLIENT:
         editor = 'emacsclient --alternate-editor='
         if ctx.env.E_SINK:
-            ctx.env.SCRIPTS.append('e')
+            ctx.install_script('e')
         else:
             ctx.env.SHELL_ALIASES['e'] = 'emacsclient --no-wait'
     else:

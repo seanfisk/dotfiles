@@ -1,8 +1,9 @@
 """Detect and configure Powerline."""
 
-import os
 from os.path import join
 from pipes import quote as shquote
+
+import waflib
 
 
 def configure(ctx):
@@ -67,10 +68,8 @@ source {zsh_powerline_file}
 
     # Template the Powerline config file with the path to the segments.
     in_node = ctx.path.find_resource([
-        'dotfiles', 'config', 'powerline', 'config.json.in'])
-    out_node = ctx.path.find_or_declare([
-        'config', 'powerline', 'config.json'])
-    ctx.env.DOTFILE_NODES.append(out_node)
+        'dotfiles', 'config', 'powerline', 'config.cjson.in'])
+    out_node = in_node.change_ext(ext='.cjson', ext_in='.cjson.in')
     powerline_segments_path = join(ctx.env.PREFIX, '.config', 'powerline')
     ctx(features='subst',
         source=in_node,
@@ -78,12 +77,15 @@ source {zsh_powerline_file}
         # TODO: Change this to use the Python json module.
         POWERLINE_SEGMENTS_PATH=powerline_segments_path)
 
-    # Install Powerline configuration files
-    # TODO: Change this to ctx.ant_glob(...) or something better than os.walk()
-    for dirpath, dirnames, filenames in os.walk(join(
-            'dotfiles', 'config', 'powerline')):
-        for filename in filenames:
-            # Don't find any files that were templated.
-            if not filename.endswith('.in'):
-                ctx.env.DOTFILE_NODES.append(ctx.path.find_resource(
-                    join(dirpath, filename)))
+    ctx(source=ctx.path.ant_glob(
+        'dotfiles/config/powerline/**/*.cjson') + [out_node])
+
+    # Install segments file.
+    ctx.install_dotfile(ctx.path.find_resource([
+        'dotfiles', 'config', 'powerline', 'powerline_sean_segments.py']))
+
+
+# Install Powerline configuration files after processing.
+@waflib.TaskGen.extension('.json')
+def process_json(tsk_gen, node):
+    tsk_gen.bld.install_dotfile(node)

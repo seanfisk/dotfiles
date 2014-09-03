@@ -36,7 +36,7 @@ def build(ctx):
         'reattach-to-user-namespace {}'.format(default_shell) if ctx.env.MACOSX
         else default_shell)
     in_node = ctx.path.find_resource(['dotfiles', 'tmux.conf.in'])
-    out_node = ctx.path.find_or_declare('tmux.conf')
+    out_node = in_node.change_ext(ext='.conf', ext_in='.conf.in')
 
     powerline_commands = ''
     if ctx.env.POWERLINE:
@@ -60,7 +60,7 @@ source "{tmux_powerline_file}"
         target=out_node,
         DEFAULT_COMMAND=default_command,
         POWERLINE_COMMANDS=powerline_commands)
-    ctx.env.DOTFILE_NODES.append(out_node)
+    ctx.install_dotfile(out_node)
 
     if ctx.env.LSOF:
         # List my tmux sockets

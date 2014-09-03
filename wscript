@@ -27,7 +27,13 @@ def _python_modules_in_dir(dirpath):
 WAF_BASE_TOOLS_DIR = 'waf_tools'
 # Order matters here. All after 'platform_specific' are dependent on it. All
 # after 'paths' are dependent on it.
-WAF_BASE_TOOLS = ['platform_specific', 'paths', 'gnu_utils', 'shells']
+WAF_BASE_TOOLS = [
+    'jsminify',
+    'platform_specific',
+    'paths',
+    'gnu_utils',
+    'shells'
+]
 WAF_SOFTWARE_TOOLS_DIR = join(WAF_BASE_TOOLS_DIR, 'software')
 # Here, the order should not matter. Each of the stages should be independent.
 WAF_SOFTWARE_TOOLS = _python_modules_in_dir(WAF_SOFTWARE_TOOLS_DIR)
@@ -36,8 +42,26 @@ WAF_SOFTWARE_TOOLS = _python_modules_in_dir(WAF_SOFTWARE_TOOLS_DIR)
 # Context helpers
 @conf
 def load_tools(ctx):
+    """Load project-specific base tools and software tools."""
     ctx.load(WAF_BASE_TOOLS, tooldir=WAF_BASE_TOOLS_DIR)
     ctx.load(WAF_SOFTWARE_TOOLS, tooldir=WAF_SOFTWARE_TOOLS_DIR)
+
+
+@conf
+def install_dotfile(ctx, node):
+    """Install a dotfile node."""
+    # Strip the dotfiles/ directory (for both source and build nodes).
+    relative_path_list = waflib.Node.split_path(node.relpath())[1:]
+    relative_path_list[0] = '.' + relative_path_list[0]
+    ctx.install_as(join(ctx.env.PREFIX, *relative_path_list), node)
+
+
+@conf
+def install_script(ctx, script_basename):
+    """Install a script given the basename."""
+    ctx.install_files(join(ctx.env.PREFIX, 'bin'),
+        [join('scripts', script_basename)],
+        chmod=waflib.Utils.O755)
 
 
 # @conf
@@ -79,12 +103,6 @@ def build(ctx):
     # Write all previously-configured paths to this process' environment.
     ctx.write_paths_to_proc_env()
 
-    # Create list of dotfile nodes from the dotfiles/ directory to install.
-    ctx.env.DOTFILE_NODES = []
-    # Create list of scripts in the script/ directory to install to
-    # $PREFIX/bin.
-    ctx.env.SCRIPTS = []
-
     # Set up shell environment to be modified by other tools.
     ctx.setup_shell_defaults()
 
@@ -93,20 +111,3 @@ def build(ctx):
 
     # Build and install shell files.
     ctx.load(['shells'])
-
-    # Install other dotfiles
-    dotfiles_dir_node = ctx.path.find_dir('dotfiles')
-    for node in ctx.env.DOTFILE_NODES:
-        if node.is_src():
-            relative_path = node.path_from(dotfiles_dir_node)
-        elif node.is_bld():
-            relative_path = node.bldpath()
-        else:
-            ctx.fatal('Dotfile node is not in source nor build directory.')
-        ctx.install_as(join(ctx.env.PREFIX, '.' + relative_path), node)
-
-    # Install scripts
-    ctx.install_files(
-        join(ctx.env.PREFIX, 'bin'),
-        [join('scripts', basename) for basename in ctx.env.SCRIPTS],
-        chmod=waflib.Utils.O755)

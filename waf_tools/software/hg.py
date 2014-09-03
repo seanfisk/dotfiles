@@ -8,4 +8,4 @@ def configure(ctx):
 def build(ctx):
     if not ctx.env.HG:
         return
-    ctx.env.DOTFILE_NODES.append(ctx.path.find_resource(['dotfiles', 'hgrc']))
+    ctx.install_dotfile(ctx.path.find_resource(['dotfiles', 'hgrc']))

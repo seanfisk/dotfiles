@@ -39,5 +39,4 @@ def build(ctx):
             ctx.path.find_resource(['shell', 'gnu-linux.bash']))
 
         # Swap Caps Lock and Control under X11
-        ctx.env.DOTFILE_NODES.append(
-            ctx.path.find_resource(['dotfiles', 'Xkbmap']))
+        ctx.install_dotfile(ctx.path.find_resource(['dotfiles', 'Xkbmap']))

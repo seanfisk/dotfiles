@@ -8,5 +8,5 @@ def configure(ctx):
 def build(ctx):
     if not ctx.env.QPDF:
         return
-    ctx.env.SCRIPTS.append('pdf-merge')
+    ctx.install_script('pdf-merge')
     ctx.env.SHELL_ALIASES['pdf-join'] = 'pdf-merge'
