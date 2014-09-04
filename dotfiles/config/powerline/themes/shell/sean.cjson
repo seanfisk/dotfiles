@@ -28,7 +28,9 @@
 						"name": "cwd",
 						"args": {
 							// Don't split the cwd into multiple Powerline segments.
-							"use_path_separator": true
+							"use_path_separator": true,
+							// Don't ever shorten the cwd
+							"dir_limit_depth": null
 						}
 					},
 					{
