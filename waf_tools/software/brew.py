@@ -2,7 +2,7 @@
 
 
 def configure(ctx):
-    ctx.find_program('brew')
+    ctx.find_program('brew', mandatory=False)
 
 
 def build(ctx):
