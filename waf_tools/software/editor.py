@@ -15,6 +15,14 @@ def build(ctx):
             ctx.install_script('e')
         else:
             ctx.env.SHELL_ALIASES['e'] = 'emacsclient --no-wait'
+
+        # Add Python packages.
+        ctx.env.PYENV_VIRTUALENV_DEFAULT_PACKAGES += [
+            'elpy',
+            # Rope is not Python 3-compatible yet.
+            # 'rope',
+            'jedi',
+        ]
     else:
         editor = 'nano'
     ctx.env.SHELL_ENV['EDITOR'] = shquote(editor)

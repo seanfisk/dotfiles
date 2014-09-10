@@ -1,0 +1,3 @@
+# It'd be nice to use --requirement here, but it doesn't support
+# stdin, and is probably not worth the trouble.
+after_virtualenv 'pip install @DEFAULT_PACKAGES@'

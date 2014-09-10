@@ -32,7 +32,8 @@ WAF_BASE_TOOLS = [
     'platform_specific',
     'paths',
     'gnu_utils',
-    'shells'
+    'shells',
+    'rbenv_pyenv',
 ]
 WAF_SOFTWARE_TOOLS_DIR = join(WAF_BASE_TOOLS_DIR, 'software')
 # Here, the order should not matter. Each of the stages should be independent.
@@ -111,6 +112,9 @@ def build(ctx):
 
     # Call the build() function in each of the software tools.
     ctx.load(WAF_SOFTWARE_TOOLS, tooldir=WAF_SOFTWARE_TOOLS_DIR)
+
+    # Build and install rbenv and pyenv-related files.
+    ctx.load(['rbenv_pyenv'])
 
     # Build and install shell files.
     ctx.load(['shells'])

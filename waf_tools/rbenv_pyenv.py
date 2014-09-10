@@ -1,7 +1,9 @@
 """Detect and configure rbenv and pyenv."""
 
 import os
+from os.path import join
 import subprocess
+from pipes import quote as shquote
 
 
 try:
@@ -28,7 +30,15 @@ def configure(ctx):
         )
         ctx.env.PYENV_VIRTUALENV = ret == 0
 
+        ctx.env.PYENV_ROOT = subprocess.check_output(
+            [ctx.env.PYENV, 'root']).decode('ascii').rstrip()
+
     ctx.msg('Checking for pyenv-virtualenv', ctx.env.PYENV_VIRTUALENV)
+
+    # Set up a list of Python packages to install into a default pyenv
+    # virtualenv using pyenv hooks. Create the list regardless of the
+    # availability of pyenv so that other files don't get errors.
+    ctx.env.PYENV_VIRTUALENV_DEFAULT_PACKAGES = ['ipython']
 
 
 def _make_rbenv_pyenv_file(tsk):
@@ -69,8 +79,8 @@ def build(ctx):
                 ctx(rule=_make_rbenv_pyenv_file, target=out_node,
                     vars=[tool.upper()])
 
-        # If pyenv-virtualenv is installed, generate a file for it, too.
         if ctx.env.PYENV_VIRTUALENV:
+            # If pyenv-virtualenv is installed, generate a file for it, too.
             out_node = ctx.path.find_or_declare(
                 'pyenv-virtualenv.{}'.format(shell))
             ctx.env['{}_RC_NODES'.format(shell.upper())].append(out_node)
@@ -88,3 +98,27 @@ def build(ctx):
                         [ctx.env.PYENV, 'virtualenv-init', '-', shell],
                         stdout=output_file)
                 return ret
+
+    if ctx.env.PYENV_VIRTUALENV:
+        # Also generate the hook that installs default packages.
+
+        # See here for the location of hooks:
+        # https://github.com/yyuu/pyenv/wiki/Authoring-plugins
+        in_node = ctx.path.find_resource([
+            'dotfiles', 'pyenv', 'pyenv.d',
+            'virtualenv', 'install-default-packages.bash.in',
+        ])
+        out_node = in_node.change_ext(ext='.bash', ext_in='.bash.in')
+        ctx(features='subst',
+             target=out_node,
+             source=in_node,
+             DEFAULT_PACKAGES=' '.join(
+                 shquote(package) for package
+                 in ctx.env.PYENV_VIRTUALENV_DEFAULT_PACKAGES))
+
+        # We could probably just use ctx.install_dotfile() here. But we'll
+        # be careful and use the root that pyenv reports.
+        ctx.install_as(
+            join(ctx.env.PYENV_ROOT, out_node.path_from(
+                ctx.bldnode.find_dir(['dotfiles', 'pyenv']))),
+            out_node)
