@@ -5,6 +5,7 @@ TODO for Sean Fisk's Dotfiles
 * Add linuxbrew support.
 * Use Python json module for Powerline.
 * Make rbenv and pyenv presence in Powerline conditional to whether we have each of them.
+* Make Waf detect the reattach-to-user-namespace program.
 * Take availability of bash and zsh into account.
 * Set up a tmuxinator config which opens up emacs, dotfiles, and chef (at least).
 * Add fasd for Emacs.
