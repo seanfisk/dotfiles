@@ -46,7 +46,7 @@ def build(ctx):
     def make_bash_powerline(tsk):
         bash_powerline_file = ctx.get_powerline_path(
             join('bindings', 'bash', 'powerline.sh'))
-        contents = '''{powerline_daemon} --quiet
+        tsk.outputs[0].write('''{powerline_daemon} --quiet
 POWERLINE_BASH_CONTINUATION=1
 POWERLINE_BASH_SELECT=1
 source {bash_powerline_file}
@@ -54,10 +54,7 @@ source {bash_powerline_file}
         .format(
             powerline_daemon=shquote(tsk.env.POWERLINE_DAEMON),
             bash_powerline_file=shquote(bash_powerline_file),
-        )
-
-        with open(tsk.outputs[0].abspath(), 'w') as output_file:
-            output_file.write(contents)
+        ))
 
     zsh_powerline_node = ctx.path.find_or_declare('powerline.zsh')
     ctx.env.ZSH_RC_NODES.append(zsh_powerline_node)
@@ -66,15 +63,13 @@ source {bash_powerline_file}
     def make_zsh_powerline(tsk):
         zsh_powerline_file = ctx.get_powerline_path(
             join('bindings', 'zsh', 'powerline.zsh'))
-        contents = '''{powerline_daemon} --quiet
+        tsk.outputs[0].write('''{powerline_daemon} --quiet
 source {zsh_powerline_file}
 '''\
         .format(
             powerline_daemon=shquote(tsk.env.POWERLINE_DAEMON),
             zsh_powerline_file=shquote(zsh_powerline_file),
-        )
-        with open(tsk.outputs[0].abspath(), 'w') as output_file:
-            output_file.write(contents)
+        ))
 
     # Template the Powerline config file with the path to the segments.
     in_node = ctx.path.find_resource([
