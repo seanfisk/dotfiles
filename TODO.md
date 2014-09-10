@@ -12,7 +12,6 @@ TODO for Sean Fisk's Dotfiles
 * Write a function for creating a new tmux tab and automatically naming it.
 * Write a command for updating the dotfiles and emacs repos.
 * Make (pyenv and rbenv Powerline support) an actual Python module.
-* Consider substituting the path the powerline module into the IPython config file. This would allow powerline to be loaded from the same module no matter from what virtualenv IPython was running. Powerline would need to be single-source compatible with Python 2 and 3, and I'm not sure it is. I think it is though, so in theory it should work. Seems dirty though.
 * Write a `find-tmux` function that will find a tmux session given a list of a number of machines. Test on Yellowstone/EOS.
 * Write a function that will log in to the machine with the lightest load give a list of a number of machines. Test on Yellowstone/EOS.
 * Figure out how to restart `ssh-agent` on Mac OS X when I accidentally kill it.
