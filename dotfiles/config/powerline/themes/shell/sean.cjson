@@ -1,4 +1,8 @@
-// -*- mode: js; coding: utf-8; -*-
+// -*- mode: js -*-
+// About encoding in these files:
+// Powerline doesn't like Unicode literals in these files. So we need to use a Unicode escape.
+// See the last paragraph of section 2.5 <http://www.ietf.org/rfc/rfc4627.txt>
+// Use this <http://rishida.net/tools/conversion/>
 {
 	"default_module": "powerline.segments.common",
 	"segments": {
@@ -8,11 +12,10 @@
 			{
 				"left": [
 					{
-						"module": "powerline.segments.shell",
-						"name": "mode"
+						"function": "powerline.segments.shell.mode"
 					},
 					{
-						"name": "hostname",
+						"function": "hostname",
 						"priority": 30,
 						"args": {
 							// Always include the hostname.
@@ -21,11 +24,11 @@
 						}
 					},
 					{
-						"name": "user",
+						"function": "user",
 						"priority": 30
 					},
 					{
-						"name": "cwd",
+						"function": "cwd",
 						"args": {
 							// Don't split the cwd into multiple Powerline segments.
 							"use_path_separator": true,
@@ -34,7 +37,7 @@
 						}
 					},
 					{
-						"name": "branch",
+						"function": "branch",
 						"priority": 10,
 						"args": {
 							// Show whether the branch is dirty.
@@ -42,16 +45,14 @@
 						}
 					},
 					{
-						"module": "powerline_sean_segments",
-						"name": "pyenv",
+						"function": "powerline_sean_segments.pyenv",
 						// This value is Unicode SNAKE followed by two spaces.
-						"before": "🐍  "
+						"before": "\uD83D\uDC0D  "
 					},
 					{
-						"module": "powerline_sean_segments",
-						"name": "rbenv",
+						"function": "powerline_sean_segments.rbenv",
 						// This value is a Unicode GEM STONE followed by two spaces.
-						"before": "💎  "
+						"before": "\uD83D\uDC8E  "
 					}
 				]
 			}
@@ -72,8 +73,7 @@
 				//
 				//     true | false | true
 				//
-				"module": "powerline.segments.shell",
-				"name": "last_pipe_status",
+				"function": "powerline.segments.shell.last_pipe_status",
 				"priority": 10
 			}
 		]
