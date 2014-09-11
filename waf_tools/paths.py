@@ -85,6 +85,12 @@ def configure(ctx):
         ctx.add_to_path_var('MANPATH', join(resources_dir, 'man'))
         ctx.add_to_path_var('INFOPATH', join(resources_dir, 'info'))
 
+    # Linuxbrew
+    linuxbrew_path = os.path.expanduser('~/.linuxbrew')
+    if ctx.env.LINUX and os.path.isdir(linuxbrew_path):
+        ctx.env.LINUXBREW_PATH = linuxbrew_path
+        ctx.add_path_hierarchy(linuxbrew_path)
+
     # Add hierarchies.
     # Even though /usr/bin is probably already in the PATH, it is helpful to
     # add /usr so that INFOPATH gets correctly populated.
