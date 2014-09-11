@@ -5,6 +5,8 @@ from os.path import join
 import subprocess
 from pipes import quote as shquote
 
+import six
+
 
 try:
     from subprocess import DEVNULL  # Python 3
@@ -38,7 +40,7 @@ def configure(ctx):
     # Set up a list of Python packages to install into a default pyenv
     # virtualenv using pyenv hooks. Create the list regardless of the
     # availability of pyenv so that other files don't get errors.
-    ctx.env.PYENV_VIRTUALENV_DEFAULT_PACKAGES = ['ipython']
+    ctx.env.PYENV_VIRTUALENV_DEFAULT_PACKAGES = ['ipython==2.2.0']
 
 
 def _make_rbenv_pyenv_file(tsk):
@@ -100,25 +102,41 @@ def build(ctx):
                 return ret
 
     if ctx.env.PYENV_VIRTUALENV:
-        # Also generate the hook that installs default packages.
+        # Generate a default virtualenv requirements file.
+        requirements_base = 'default-virtualenv-requirements.txt'
+        requirements_node = ctx.path.find_or_declare([
+            'dotfiles', 'pyenv', 'pyenv.d', requirements_base])
+        @ctx.rule(target=requirements_node,
+                  vars=['PYENV_VIRTUALENV_DEFAULT_PACKAGES'])
+        def make_default_virtualenv_requirements_file(tsk):
+            with open(tsk.outputs[0].abspath(), 'w') as out_file:
+                for requirement in ctx.env.PYENV_VIRTUALENV_DEFAULT_PACKAGES:
+                    six.print_(requirement, file=out_file)
 
+        pyenv_build_node = ctx.bldnode.find_dir(['dotfiles', 'pyenv'])
+        requirements_install_path = join(
+            ctx.env.PYENV_ROOT,
+            requirements_node.path_from(pyenv_build_node))
+        # Also generate the hook that installs default packages.
         # See here for the location of hooks:
         # https://github.com/yyuu/pyenv/wiki/Authoring-plugins
-        in_node = ctx.path.find_resource([
+        hook_in_node = ctx.path.find_resource([
             'dotfiles', 'pyenv', 'pyenv.d',
             'virtualenv', 'install-default-packages.bash.in',
         ])
-        out_node = in_node.change_ext(ext='.bash', ext_in='.bash.in')
+        hook_out_node = hook_in_node.change_ext(ext='.bash', ext_in='.bash.in')
         ctx(features='subst',
-             target=out_node,
-             source=in_node,
-             DEFAULT_PACKAGES=' '.join(
-                 shquote(package) for package
-                 in ctx.env.PYENV_VIRTUALENV_DEFAULT_PACKAGES))
+            target=hook_out_node,
+            source=hook_in_node,
+            REQUIREMENTS_PATH=shquote(requirements_install_path))
 
         # We could probably just use ctx.install_dotfile() here. But we'll
         # be careful and use the root that pyenv reports.
         ctx.install_as(
-            join(ctx.env.PYENV_ROOT, out_node.path_from(
-                ctx.bldnode.find_dir(['dotfiles', 'pyenv']))),
-            out_node)
+            join(ctx.env.PYENV_ROOT,
+                 hook_out_node.path_from(pyenv_build_node)),
+            hook_out_node)
+        ctx.install_as(
+            join(ctx.env.PYENV_ROOT,
+                 requirements_node.path_from(pyenv_build_node)),
+            requirements_node)

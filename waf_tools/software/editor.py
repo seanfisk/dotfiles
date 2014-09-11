@@ -17,11 +17,14 @@ def build(ctx):
             ctx.env.SHELL_ALIASES['e'] = 'emacsclient --no-wait'
 
         # Add Python packages.
+        # Rope is not Python 3-compatible yet.
         ctx.env.PYENV_VIRTUALENV_DEFAULT_PACKAGES += [
-            'elpy',
-            # Rope is not Python 3-compatible yet.
-            # 'rope',
-            'jedi',
+            'elpy==1.5.1',
+            'jedi==0.8.1-final0',
+            'flake8==2.2.3',
+            'mccabe==0.2.1',
+            'pep8==1.5.7',
+            'pyflakes==0.8.1',
         ]
     else:
         editor = 'nano'
