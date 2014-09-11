@@ -1,8 +1,6 @@
 TODO for Sean Fisk's Dotfiles
 =============================
 
-* Fix symbols thing from `powerline-lint`.
-* Add linuxbrew support.
 * Use Python json module for Powerline.
 * Make rbenv and pyenv presence in Powerline conditional to whether we have each of them.
 * Make Waf detect the reattach-to-user-namespace program.
