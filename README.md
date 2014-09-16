@@ -69,6 +69,34 @@ By treating the shell configuration files as just another piece of compiled soft
 
 [requests]: https://github.com/kennethreitz/requests
 
+Setting up devpi
+----------------
+
+[devpi][devpi] is a caching PyPi server that I use to speed up the install of Python packages. It does a bunch of over things, too, but I haven't found a need for them yet. The Waf build system automatically detects the presence of devpi and installs proper dotfiles for it.
+
+Setting it up isn't always simple, but I've documented the steps here for posterity. Normally, you would want to install devpi to your user site in your system Python like so:
+
+    pyenv shell system
+    pip install devpi-server
+
+However, devpi depends on a recent version of Setuptools, and the user site's package will not override the system version. Platforms like Mac OS 10.9, for instance, might have an ancient Setuptools installed in the system Python that won't work with devpi. In that case, I've been doing the following:
+
+    pyenv install 3.4.1 # or latest devpi-compatible Python, if not installed already
+    pyenv virtualenv 3.4.1 devpi341
+    pyenv shell devpi341
+    pip install devpi-server
+    # Make devpi-server available on the global PATH
+    ln -s "$(pyenv which devpi-server)" ~/bin/devpi-server
+
+This solves the issue of the old Setuptools by installing devpi-server to a virtualenv. I believe that this requires the [pyenv-which-ext plugin][pyenv-which-ext] to be installed.
+
+After installing devpi, set it to run at startup [using cron][devpi-cron] or [using launchd on Mac OS X][devpi-launchd].
+
+[devpi]: http://doc.devpi.net/
+[pyenv-which-ext]: https://github.com/yyuu/pyenv-which-ext
+[devpi-cron]: http://doc.devpi.net/latest/quickstart-server.html?highlight=crontab#crontab-start-at-bootup
+[devpi-launchd]: https://github.com/seanfisk/personal-chef-repo/blob/master/cookbooks/macosx_setup/files/default/net.devpi.plist
+
 Recommended software
 --------------------
 
