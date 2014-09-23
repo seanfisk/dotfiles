@@ -19,6 +19,8 @@ alias lag='la | grep'
 alias laeg='la | egrep'
 alias lafg='la | fgrep'
 
+alias ipy=ipython
+
 # Shortcut functions
 
 cdl() { cd "$1" && ls; }
