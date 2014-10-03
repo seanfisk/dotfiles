@@ -40,7 +40,7 @@ ProxyCommand ssh eos01 -W %h:%p
 # DEN Susi
 Host susi
 HostName 148.61.31.215
-User fiskse
+User git
 Port 45022
 ProxyCommand ssh eos01 -W %h:%p
 
