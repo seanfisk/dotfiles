@@ -1,1 +1,1 @@
-after_virtualenv 'PYENV_VERSION="${VIRTUALENV_NAME}" pyenv-exec pip install --requirement $QUIET $VERBOSE @REQUIREMENTS_PATH@'
+after_virtualenv 'PYENV_VERSION="${VIRTUALENV_NAME}" pyenv-exec pip install $QUIET $VERBOSE -r @REQUIREMENTS_PATH@'
