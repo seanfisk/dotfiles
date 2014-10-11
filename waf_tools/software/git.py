@@ -20,9 +20,8 @@ def build(ctx):
     ctx.env.SHELL_ALIASES['gobuddygo'] = quoted_git + ' push'
     ctx.env.SHELL_ALIASES['cometome'] = quoted_git + ' pull'
 
-    ctx.env.DOTFILE_NODES += [
-        ctx.path.find_resource(['dotfiles', name])
-        for name in ['gitconfig', 'gitignore_global']]
+    for name in ['gitconfig', 'gitignore-global']:
+        ctx.install_dotfile(ctx.path.find_resource(['dotfiles', name]))
 
     if ctx.env.WC and ctx.env.NUMFMT:
         # Find size of the working tree in a git repo.
