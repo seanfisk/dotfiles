@@ -1,20 +1,30 @@
-# Requirements for the system Python. On Mac OS X, run:
+# List of packages that can be used with these dotfiles.
+# Intended to be installed to the system Python.
+
+# Powerline stuff
+#
+# Powerline is able to work with pygit2 -or- the plain git executable.
+# Installing pygit2 is disabled by default because it has dependencies
+# (libgit2, which depends on cmake) which are not necessarily simple
+# to install. That said, with Homebrew, installing pygit2 is rather
+# easy so we may as well. Assuming your system Python is
+# '/usr/bin/python' and that pip is installed to the user site, run:
 #
 #     brew install libgit2
 #
-# Then run the following. pygit2 requires cffi to be installed first.
+# pygit2 requires cffi to be installed first (annoyingly):
 #
 #     system_python_pip="$(/usr/bin/python -m site --user-base)/bin/pip"
-#     "$system_python_pip" install --user cffi
-#     "$system_python_pip" install --user -r requirements-system.txt
+#     "$system_python_pip" install --user cffi==0.8.6
 #
-
-# Powerline stuff
+# Finally install pygit2:
+#
+#     "$system_python_pip" install --user pygit2==0.21.2
+#
 powerline-status==1.0
 psutil==2.1.1
 bzr==2.6.0
 pycparser==2.10
-pygit2==0.21.2
 cffi==0.8.6
 mercurial==3.1
 
