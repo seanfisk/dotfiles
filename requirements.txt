@@ -1,4 +1,4 @@
 # Requirements for -this- project.
 
-six==1.7.3
+six==1.8.0
 jsmin==2.0.11

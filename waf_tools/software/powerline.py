@@ -39,7 +39,7 @@ def build(ctx):
     if not ctx.env.POWERLINE:
         return
 
-    ctx.env.PYENV_VIRTUALENV_DEFAULT_PACKAGES.append('powerline-status==1.0')
+    ctx.env.PYENV_VIRTUALENV_DEFAULT_PACKAGES.append('powerline-status==1.2')
 
     bash_powerline_node = ctx.path.find_or_declare('powerline.bash')
     ctx.env.BASH_RC_NODES.append(bash_powerline_node)
