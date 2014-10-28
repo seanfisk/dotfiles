@@ -37,6 +37,13 @@ Port 43022
 ProxyCommand ssh eos01 -W %h:%p
 
 # --------------------------------------------------------------------------------
+# DEN Seawolf
+Host seawolf
+User fiskse
+Port 44022
+ProxyCommand ssh eos01 -W %h:%p
+
+# --------------------------------------------------------------------------------
 # DEN Susi
 Host susi
 HostName 148.61.31.215
@@ -44,7 +51,6 @@ User git
 Port 45022
 ProxyCommand ssh eos01 -W %h:%p
 
-# --------------------------------------------------------------------------------
 # DEN EOS Account
 Host deneos
 HostName eos01.cis.gvsu.edu
