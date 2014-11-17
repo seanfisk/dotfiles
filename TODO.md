@@ -7,7 +7,6 @@ TODO for Sean Fisk's Dotfiles
 * Set up a tmuxinator config which opens up emacs, dotfiles, and chef (at least).
 * Add fasd for Emacs.
 * Make adding nodes to both shells a bit more elegant.
-* Write a function for creating a new tmux tab and automatically naming it.
 * Write a command for updating the dotfiles and emacs repos.
 * Make (pyenv and rbenv Powerline support) an actual Python module.
 * Write a `find-tmux` function that will find a tmux session given a list of a number of machines. Test on Yellowstone/EOS.

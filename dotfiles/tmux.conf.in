@@ -1,19 +1,18 @@
-# use zsh as the default shell
+# Use zsh as the default shell.
 set-option -g default-command @DEFAULT_COMMAND@
 
-# change prefix key to C-t, I use C-b for backward-char (emacs)
+# Change prefix key to C-t; I use C-b for backward-char (from Emacs).
 set-option -g prefix C-t
-unbind C-b
-bind C-t send-prefix
+unbind-key C-b
+bind-key C-t send-prefix
 
-# Update environment on window spawn, see the ENVIRONMENT section in `man tmux' for more information.
-#
-# This key is set to the default value according to the man page. I should just be able to not include the value, but for some reason tmux fails at startup, saying "empty value" and pointing to this line.
-set-option -g update-environment "DISPLAY SSH_ASKPASS SSH_AUTH_SOCK SSH_AGENT_PID SSH_CONNECTION WINDOWID XAUTHORITY"
+# Split pane commands
+unbind-key %
+bind-key | split-window -h
+bind-key - split-window -v
 
-# split pane commands
-unbind %
-bind | split-window -h
-bind - split-window -v
+# When creating a new window, prompt for a name.
+# Note: Use single quotes around the substitued value, else creation will fail when no value is entered. We don't want that.
+bind-key c command-prompt "new-window -n '%%'"
 
 @POWERLINE_COMMANDS@
