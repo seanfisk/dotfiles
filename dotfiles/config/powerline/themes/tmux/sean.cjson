@@ -1,10 +1,9 @@
 // -*- mode: js -*-
 {
-	"default_module": "powerline.segments.common",
 	"segments": {
 		"right": [
 			{
-				"function": "weather",
+				"function": "powerline.segments.common.wthr.weather",
 				"args": {
 					"unit": "F",
 					"location_query": "Jenison, Michigan"
@@ -12,22 +11,22 @@
 				"priority": 20
 			},
 			{
-				"function": "cpu_load_percent",
+				"function": "powerline.segments.common.sys.cpu_load_percent",
 				"priority": 10
 			},
 			{
-				"function": "external_ip",
+				"function": "powerline.segments.common.net.external_ip",
 				"args": {
 					"query_url": "http://icanhazip.com/"
 				},
 				"priority": 10
 			},
 			{
-				"function": "network_load",
+				"function": "powerline.segments.common.net.network_load",
 				"priority": 10
 			},
 			{
-				"function": "battery",
+				"function": "powerline.segments.common.bat.battery",
 				// This is Unicode BATTERY followed by a space.
 				"before": "\uD83D\uDD0B ",
 				"priority": 10

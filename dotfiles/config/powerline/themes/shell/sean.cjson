@@ -4,7 +4,6 @@
 // See the last paragraph of section 2.5 <http://www.ietf.org/rfc/rfc4627.txt>
 // Use this <http://rishida.net/tools/conversion/>
 {
-	"default_module": "powerline.segments.common",
 	"segments": {
 		// The "above" key allows us to have a multiline prompt.
 		// See https://github.com/Lokaltog/powerline/issues/462#issuecomment-46806521
@@ -15,7 +14,7 @@
 						"function": "powerline.segments.shell.mode"
 					},
 					{
-						"function": "hostname",
+						"function": "powerline.segments.common.net.hostname",
 						"priority": 30,
 						"args": {
 							// Always include the hostname.
@@ -24,11 +23,11 @@
 						}
 					},
 					{
-						"function": "user",
+						"function": "powerline.segments.common.env.user",
 						"priority": 30
 					},
 					{
-						"function": "cwd",
+						"function": "powerline.segments.shell.cwd",
 						"args": {
 							// Don't split the cwd into multiple Powerline segments.
 							"use_path_separator": true,
@@ -37,7 +36,7 @@
 						}
 					},
 					{
-						"function": "branch",
+						"function": "powerline.segments.common.vcs.branch",
 						"priority": 10,
 						"args": {
 							// Show whether the branch is dirty.
