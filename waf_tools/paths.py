@@ -43,6 +43,9 @@ def configure(ctx):
     ctx.add_path_hierarchy(join(ctx.env.PREFIX, '.pyenv'))
     ctx.add_path_hierarchy(join(ctx.env.PREFIX, '.rbenv'))
 
+    # Add tmuxifier.
+    ctx.add_path_hierarchy(join(ctx.env.PREFIX, '.tmuxifier'))
+
     # System Python and Python user base.
     ctx.find_program(
         'python',

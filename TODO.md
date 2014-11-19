@@ -4,7 +4,6 @@ TODO for Sean Fisk's Dotfiles
 * Use Python json module for Powerline.
 * Make Waf detect the reattach-to-user-namespace program.
 * Take availability of bash and zsh into account.
-* Set up a tmuxinator config which opens up emacs, dotfiles, and chef (at least).
 * Add fasd for Emacs.
 * Make adding nodes to both shells a bit more elegant.
 * Write a command for updating the dotfiles and emacs repos.
