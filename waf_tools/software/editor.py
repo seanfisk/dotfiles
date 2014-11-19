@@ -2,19 +2,20 @@
 
 from pipes import quote as shquote
 
-
 def configure(ctx):
     ctx.find_program('emacsclient', mandatory=False)
+    ctx.find_program('nano') # nano is a mandatory fallback
     ctx.find_program('e-sink', var='E_SINK', mandatory=False)
 
 
 def build(ctx):
     if ctx.env.EMACSCLIENT:
-        editor = 'emacsclient --alternate-editor='
+        editor = ctx.env.EMACSCLIENT + ['--alternate-editor=']
         if ctx.env.E_SINK:
             ctx.install_script('e')
         else:
-            ctx.env.SHELL_ALIASES['e'] = 'emacsclient --no-wait'
+            ctx.env.SHELL_ALIASES['e'] = ctx.shquote_cmd(
+                ctx.env.EMACSCLIENT + ['--no-wait'])
 
         # Add Python packages.
         # Rope is not Python 3-compatible yet.
@@ -27,5 +28,5 @@ def build(ctx):
             'pyflakes==0.8.1',
         ]
     else:
-        editor = 'nano'
-    ctx.env.SHELL_ENV['EDITOR'] = shquote(editor)
+        editor = ctx.env.NANO
+    ctx.env.SHELL_ENV['EDITOR'] = shquote(ctx.shquote_cmd(editor))

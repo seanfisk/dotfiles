@@ -8,6 +8,7 @@
 import os
 import fnmatch
 from os.path import join
+from pipes import quote as shquote
 
 import waflib
 from waflib.Configure import conf
@@ -65,6 +66,16 @@ def install_script(ctx, script_basename):
     ctx.install_files(join(ctx.env.PREFIX, 'bin'),
         [join('scripts', script_basename)],
         chmod=waflib.Utils.O755)
+
+
+@conf
+def shquote_cmd(ctx, cmd):
+    """Shell-quote a command list.
+
+    :param cmd: command list
+    :type cmd: :class:`list`
+    """
+    return ' '.join(map(shquote, cmd))
 
 
 # @conf

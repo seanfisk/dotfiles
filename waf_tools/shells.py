@@ -39,10 +39,10 @@ def find_bash(ctx):
     exe_path = ctx.find_program('bash', var='_BASH')
 
     required_major_version = '4'
-    major_version = ctx.cmd_and_log([
-        exe_path, '-c', 'echo -n ${BASH_VERSINFO[0]}'])
-    full_version = ctx.cmd_and_log([
-        exe_path, '-c', 'echo -n $BASH_VERSION'])
+    major_version = ctx.cmd_and_log(
+        exe_path + ['-c', 'echo -n ${BASH_VERSINFO[0]}'])
+    full_version = ctx.cmd_and_log(
+        exe_path + ['-c', 'echo -n $BASH_VERSION'])
     version_ok = major_version == required_major_version
 
     ctx.msg('Checking for Bash version', full_version,
@@ -67,8 +67,8 @@ def find_zsh(ctx):
     exe_path = ctx.find_program('zsh', var='_ZSH')
 
     required_major_version = '5'
-    full_version = ctx.cmd_and_log([
-        exe_path, '-c', 'echo -n $ZSH_VERSION'])
+    full_version = ctx.cmd_and_log(
+        exe_path + ['-c', 'echo -n $ZSH_VERSION'])
     version_split = full_version.split('.')
     if len(version_split) != 3:
         ctx.fatal('Unrecognized Zsh version.')
@@ -203,7 +203,7 @@ def setup_shell_defaults(ctx):
         # The backslashes make it a little more readable in the file
         # (at the cost of being readable here).
         ctx.env.SHELL_ENV[var] = '\\\n{}\n'.format((os.pathsep + '\\\n').join(
-            shquote(path) for path in ctx.env[var]))
+            map(shquote, ctx.env[var])))
 
     # This file comes first in the rc list. We don't want Bash or Zsh scripts
     # to load our entire configuration just to run. That would make them very

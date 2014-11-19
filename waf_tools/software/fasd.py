@@ -16,7 +16,7 @@ def _make_fasd_cache(tsk):
                       for arg in ['wcomp', 'wcomp-install']]
     with open(out_node.abspath(), 'w') as output_file:
         ret = tsk.exec_command(
-            [tsk.env.FASD, '--init'] + init_args,
+            tsk.env.FASD + ['--init'] + init_args,
             stdout=output_file)
     return ret
 

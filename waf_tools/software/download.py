@@ -1,8 +1,5 @@
 """Detect and configure Wget and Aria2."""
 
-from pipes import quote as shquote
-
-
 def configure(ctx):
     ctx.find_program('aria2c', mandatory=False)
     ctx.find_program('wget')  # Wget is mandatory!!!
@@ -14,5 +11,5 @@ def build(ctx):
     #
     # Use the --content-disposition flag to allow sites "to describe what the
     # name of a downloaded file should be."
-    ctx.env.SHELL_ALIASES['wget'] = shquote(
-        ctx.env.WGET) + ' --content-disposition'
+    ctx.env.SHELL_ALIASES['wget'] = ctx.shquote_cmd(
+        ctx.env.WGET + ['--content-disposition'])

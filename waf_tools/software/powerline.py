@@ -1,9 +1,22 @@
 """Detect and configure Powerline."""
 
+import subprocess
 from os.path import join
 from pipes import quote as shquote
 
 import waflib
+from waflib.Configure import conf
+
+
+@conf
+def get_powerline_path(ctx, relpath):
+    # Just assume ascii; should be fine. This needs to be a str for Waf.
+    return str(subprocess.check_output(
+        ctx.env.SYSTEM_PYTHON + [
+            '-c',
+            'from pkg_resources import resource_filename; '
+            "print(resource_filename('powerline', {0}))"
+            .format(repr(relpath))]).decode('ascii').rstrip())
 
 
 def options(ctx):
@@ -54,7 +67,7 @@ POWERLINE_BASH_SELECT=1
 source {bash_powerline_file}
 '''\
         .format(
-            powerline_daemon=shquote(tsk.env.POWERLINE_DAEMON),
+            powerline_daemon=ctx.shquote_cmd(tsk.env.POWERLINE_DAEMON),
             bash_powerline_file=shquote(bash_powerline_file),
         ))
 
@@ -69,7 +82,7 @@ source {bash_powerline_file}
 source {zsh_powerline_file}
 '''\
         .format(
-            powerline_daemon=shquote(tsk.env.POWERLINE_DAEMON),
+            powerline_daemon=ctx.shquote_cmd(tsk.env.POWERLINE_DAEMON),
             zsh_powerline_file=shquote(zsh_powerline_file),
         ))
 

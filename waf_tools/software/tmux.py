@@ -1,24 +1,11 @@
 """Detect and configure tmux."""
 
-import subprocess
 from pipes import quote as shquote
 from os.path import join
-
-from waflib.Configure import conf
 
 
 def configure(ctx):
     ctx.find_program('tmux', mandatory=False)
-
-
-@conf
-def get_powerline_path(ctx, relpath):
-    # Just assume ascii; should be fine. This needs to be a str for Waf.
-    return str(subprocess.check_output([
-        ctx.env.SYSTEM_PYTHON, '-c',
-        'from pkg_resources import resource_filename; '
-        "print(resource_filename('powerline', {0}))"
-        .format(repr(relpath))]).decode('ascii').rstrip())
 
 
 def build(ctx):
@@ -51,7 +38,7 @@ def build(ctx):
 source "{tmux_powerline_file}"
 '''\
         .format(
-            powerline_daemon=shquote(ctx.env.POWERLINE_DAEMON),
+            powerline_daemon=ctx.shquote_cmd(ctx.env.POWERLINE_DAEMON),
             tmux_powerline_file=tmux_powerline_file,
         )
 
@@ -65,5 +52,5 @@ source "{tmux_powerline_file}"
     if ctx.env.LSOF:
         # List my tmux sockets
         ctx.env.SHELL_ALIASES['mytmux'] = (
-            shquote(ctx.env.LSOF) +
+            shquote(ctx.env.LSOF[0]) +
             ' -u "$(id -un)" -a -U | grep \'^tmux\'')

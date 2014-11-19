@@ -54,8 +54,8 @@ def configure(ctx):
         mandatory=False)
     if ctx.env.SYSTEM_PYTHON:
         # Just assume ascii; should be fine. This needs to be a string for Waf.
-        user_base = str(subprocess.check_output([
-            ctx.env.SYSTEM_PYTHON, '-m', 'site', '--user-base'])
+        user_base = str(subprocess.check_output(
+            ctx.env.SYSTEM_PYTHON + ['-m', 'site', '--user-base'])
             .decode('ascii').rstrip())
         ctx.add_path_hierarchy(user_base)
 

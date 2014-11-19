@@ -1,8 +1,5 @@
 """Detect and configure Git."""
 
-from pipes import quote as shquote
-
-
 def configure(ctx):
     ctx.find_program('git', mandatory=False)
     ctx.find_program('hub', mandatory=False)
@@ -15,10 +12,10 @@ def configure(ctx):
 def build(ctx):
     if not ctx.env.GIT:
         return
-    quoted_git = shquote(ctx.env.GIT)
-    ctx.env.SHELL_ALIASES['gt'] = quoted_git + ' status'
-    ctx.env.SHELL_ALIASES['gobuddygo'] = quoted_git + ' push'
-    ctx.env.SHELL_ALIASES['cometome'] = quoted_git + ' pull'
+    ctx.env.SHELL_ALIASES['gt'] = ctx.shquote_cmd(ctx.env.GIT + ['status'])
+    ctx.env.SHELL_ALIASES['gobuddygo'] = ctx.shquote_cmd(
+        ctx.env.GIT + ['push'])
+    ctx.env.SHELL_ALIASES['cometome'] = ctx.shquote_cmd(ctx.env.GIT + ['pull'])
 
     for name in ['gitconfig', 'gitignore-global']:
         ctx.install_dotfile(ctx.path.find_resource(['dotfiles', name]))
@@ -30,8 +27,8 @@ def build(ctx):
         ctx.env.SHELL_ALIASES['git-working-tree-size'] = (
             'git ls-files -z | {wc} --bytes --files0-from=- | '
             '{numfmt} --to=iec-i --suffix=B').format(
-                wc=shquote(ctx.env.WC),
-                numfmt=shquote(ctx.env.NUMFMT))
+                wc=ctx.shquote_cmd(ctx.env.WC),
+                numfmt=ctx.shquote_cmd(ctx.env.NUMFMT))
         # Another approach, using GNU stat and awk:
         #
         # git ls-files -z | while read -d $'\0' filename;

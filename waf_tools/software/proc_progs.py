@@ -28,4 +28,4 @@ def build(ctx):
     for prog in PROCESS_PROGRAMS:
         prog_path = ctx.env[prog.upper()]
         ctx.env.SHELL_ALIASES['my' + prog] = (
-            shquote(prog_path) + ' -u "$(id -un)"')
+            shquote(prog_path[0]) + ' -u "$(id -un)"')

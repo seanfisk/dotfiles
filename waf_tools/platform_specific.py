@@ -34,7 +34,7 @@ def build(ctx):
         # Colorize, human readable file sizes, classify
         ctx.env.SHELL_ALIASES['ls'] = 'ls --color=always -hF'
         if ctx.env.GNOME_OPEN:
-            ctx.env.SHELL_ALIASES['open'] = shquote(ctx.env.GNOME_OPEN)
+            ctx.env.SHELL_ALIASES['open'] = ctx.shquote_cmd(ctx.env.GNOME_OPEN)
         ctx.add_shell_rc_node(
             ctx.path.find_resource(['shell', 'gnu-linux.bash']))
 
