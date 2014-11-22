@@ -124,5 +124,8 @@ def build(ctx):
     # Build and install rbenv and pyenv-related files.
     ctx.load(['rbenv_pyenv'])
 
+    # Add platform-specific shell environment.
+    ctx.load(['platform_specific'])
+
     # Build and install shell files.
     ctx.load(['shells'])
