@@ -1,4 +1,4 @@
-// -*- mode: js; coding: utf-8; -*-
+// -*- mode: js -*-
 //
 // We name this file 'colorschemes/shell/default.json' so that it
 // overrides the Powerline 'colorschemes/shell/default.json', but

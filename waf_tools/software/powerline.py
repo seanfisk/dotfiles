@@ -2,6 +2,7 @@
 
 from os.path import join
 from pipes import quote as shquote
+import json
 
 import waflib
 from waflib.Configure import conf
@@ -47,6 +48,9 @@ def configure(ctx):
     ctx.env.POWERLINE = (
         bool(ctx.env.POWERLINE_DAEMON) and bool(ctx.env.POWERLINE_CONFIG_))
 
+    ctx.env.POWERLINE_SEGMENTS_PATH = join(
+        ctx.env.PREFIX, '.config', 'powerline')
+
 
 def build(ctx):
     if not ctx.env.POWERLINE:
@@ -86,16 +90,29 @@ source {zsh_powerline_file}
             zsh_powerline_file=shquote(zsh_powerline_file),
         ))
 
-    # Template the Powerline config file with the path to the segments.
-    in_node = ctx.path.find_resource([
-        'dotfiles', 'config', 'powerline', 'config.cjson.in'])
-    out_node = in_node.change_ext(ext='.cjson', ext_in='.cjson.in')
-    powerline_segments_path = join(ctx.env.PREFIX, '.config', 'powerline')
-    ctx(features='subst',
-        source=in_node,
-        target=out_node,
-        # TODO: Change this to use the Python json module.
-        POWERLINE_SEGMENTS_PATH=powerline_segments_path)
+    # Instead of templating the config file and dealing with possible escaping
+    # issues, we just dump it with the json module.
+    out_node = ctx.path.find_or_declare([
+        'dotfiles', 'config', 'powerline', 'config.json'])
+
+    @ctx.rule(target=out_node, vars=['POWERLINE_SEGMENTS_PATH'])
+    def make_powerline_config(tsk):
+        with open(tsk.outputs[0].abspath(), 'w') as out_file:
+            json.dump(
+                {
+                    'common': {
+                        'paths': [tsk.env.POWERLINE_SEGMENTS_PATH],
+                    },
+                    'ext': {
+                        'shell': {'theme': 'sean'},
+                        'tmux': {'theme': 'sean'},
+                    },
+                },
+                out_file,
+                # No spaces, 'cuz that extra 10 bytes is gonna kill me...
+                separators=(',', ':'),
+                # Dammit, I just added a bunch more bytes to *this* file!
+            )
 
     ctx(source=ctx.path.ant_glob(
         'dotfiles/config/powerline/**/*.cjson') + [out_node])
