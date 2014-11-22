@@ -123,10 +123,11 @@ def configure(ctx):
             for path in path_split:
                 ctx.add_to_path_var(var, path)
 
-    # Write the paths to this current process' environment so that the
-    # configuration uses these paths to find utilities (mostly important for
-    # PATH, of course).
+    # Write the paths to the process environment *and* Waf's configuration
+    # environment so that the configuration uses these paths to find utilities
+    # (mostly important for PATH, of course).
     ctx.write_paths_to_proc_env()
+    ctx.write_paths_to_config_env()
 
 
 @conf
@@ -176,11 +177,20 @@ def add_path_hierarchy(ctx, path):
 @conf
 def write_paths_to_proc_env(ctx):
     """Write the path variables in the context to the process' actual
-    environment.
+    environment
     """
     for var in ctx.env.PATH_VARS:
         os.environ[var] = os.pathsep.join(ctx.env[var])
 
+
+@conf
+def write_paths_to_config_env(ctx):
+    """Write the paths variables to the Waf configuration context environment
+    (in Waf 1.8, the configuration context gained its own clone of the
+    environment).
+    """
+    for var in ctx.env.PATH_VARS:
+        ctx.environ[var] = os.pathsep.join(ctx.env[var])
 
 @conf
 def check_path_for_issues(ctx):
