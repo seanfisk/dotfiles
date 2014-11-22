@@ -1,9 +1,6 @@
 # -*- mode: python; coding: utf-8; -*-
 
 # Waf build file
-#
-# Keep this file and all Waf tools Python 2/3 single-source compatible (using
-# six when necessary).
 
 import os
 import fnmatch

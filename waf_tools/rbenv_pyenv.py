@@ -5,15 +5,6 @@ from os.path import join
 import subprocess
 from pipes import quote as shquote
 
-import six
-
-
-try:
-    from subprocess import DEVNULL  # Python 3
-except ImportError:
-    DEVNULL = open(os.devnull, 'wb')  # Python 2
-
-
 def configure(ctx):
     ctx.find_program('rbenv', mandatory=False)
     ctx.find_program('pyenv', mandatory=False)
@@ -27,8 +18,8 @@ def configure(ctx):
     if ctx.env.PYENV:
         ret = subprocess.call(
             ctx.env.PYENV + ['virtualenv-init', '-'],
-            stdout=DEVNULL,
-            stderr=DEVNULL,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
         )
         ctx.env.PYENV_VIRTUALENV = ret == 0
 
@@ -110,7 +101,7 @@ def build(ctx):
         def make_default_virtualenv_requirements_file(tsk):
             with open(tsk.outputs[0].abspath(), 'w') as out_file:
                 for requirement in ctx.env.PYENV_VIRTUALENV_DEFAULT_PACKAGES:
-                    six.print_(requirement, file=out_file)
+                    print(requirement, file=out_file)
 
         pyenv_build_node = ctx.bldnode.find_dir(['dotfiles', 'pyenv'])
         requirements_install_path = join(

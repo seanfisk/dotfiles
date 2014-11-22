@@ -1,8 +1,5 @@
 """Detect and configure IPython."""
 
-import six
-
-
 def _concatenate(tsk):
     with open(tsk.outputs[0].abspath(), 'w') as output_file:
         # Concatenate the first input file.
@@ -13,7 +10,7 @@ def _concatenate(tsk):
         # Concatenate the other input files, adding a blank line in between
         # each.
         for input_node in tsk.inputs[1:]:
-            six.print_(file=output_file)
+            print(file=output_file)
             with open(input_node.abspath()) as input_file:
                 for line in input_file:
                     output_file.write(line)

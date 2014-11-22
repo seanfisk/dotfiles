@@ -10,6 +10,8 @@ I don't recommend just cloning this repository and using it. Rather, I would rec
 Build and install
 -----------------
 
+*Note: This Waf configuration requires Python 3, and is typically tested and run with the latest version of Python.*
+
 First, configure the dotfiles. This will detect the software present on the current system and configure the dotfiles to adapt to them. The dotfiles are configured to install to your home directory by default.
 
     ./waf configure

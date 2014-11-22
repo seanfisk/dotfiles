@@ -6,7 +6,6 @@ from pipes import quote as shquote
 import subprocess
 from collections import OrderedDict
 
-import six
 from waflib.Configure import conf
 
 
@@ -127,9 +126,9 @@ def _concatenate(tsk):
     output_node = tsk.outputs[0]
     with open(output_node.abspath(), 'w') as output_file:
         final_filename = SHELL_FILE_NAMES[output_node.name]
-        six.print_('# ' + final_filename, file=output_file)
+        print('# ' + final_filename, file=output_file)
         for input_node in tsk.inputs:
-            six.print_(file=output_file)
+            print(file=output_file)
             with open(input_node.abspath()) as input_file:
                 for line in input_file:
                     output_file.write(line)
@@ -259,9 +258,9 @@ def build_shell_env(ctx):
     @ctx.rule(target=out_node, vars=['SHELL_ENV'])
     def make_shell_env(tsk):
         with open(tsk.outputs[0].abspath(), 'w') as out_file:
-            six.print_('# Shell environment\n', file=out_file)
-            for name, value in six.iteritems(ctx.env.SHELL_ENV):
-                six.print_('export {}={}'.format(name, value), file=out_file)
+            print('# Shell environment\n', file=out_file)
+            for name, value in ctx.env.SHELL_ENV.items():
+                print('export {}={}'.format(name, value), file=out_file)
 
 
 @conf
@@ -278,9 +277,9 @@ def build_shell_aliases(ctx):
             with open(tsk.inputs[0].abspath()) as in_file:
                 for line in in_file:
                     out_file.write(line)
-            six.print_('\n# Tool aliases\n', file=out_file)
-            for alias, command in six.iteritems(tsk.env.SHELL_ALIASES):
-                six.print_(
+            print('\n# Tool aliases\n', file=out_file)
+            for alias, command in tsk.env.SHELL_ALIASES.items():
+                print(
                     'alias {}={}'.format(alias, shquote(command)),
                     file=out_file)
 
@@ -291,17 +290,16 @@ def build_shell_keybindings(ctx):
     # each tool has an opportunity to add keybindings.
     def make_bash_keys(tsk):
         with open(tsk.outputs[0].abspath(), 'w') as out_file:
-            for key, binding in six.iteritems(tsk.env.SHELL_KEYBINDINGS):
+            for key, binding in tsk.env.SHELL_KEYBINDINGS.items():
                 # It is supposed to turn out like this:
                 # bind '"\C-j": " 2>&1 | less\C-m"'
-                six.print_(
-                    'bind ' + shquote('"{}": "{}"'.format(key, binding)),
-                    file=out_file)
+                print('bind ' + shquote('"{}": "{}"'.format(key, binding)),
+                      file=out_file)
 
     def make_zsh_keys(tsk):
         with open(tsk.outputs[0].abspath(), 'w') as out_file:
-            for key, binding in six.iteritems(tsk.env.SHELL_KEYBINDINGS):
-                six.print_(
+            for key, binding in tsk.env.SHELL_KEYBINDINGS.items():
+                print(
                     'bindkey -s {} {}'.format(shquote(key), shquote(binding)),
                     file=out_file)
 
