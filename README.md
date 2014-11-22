@@ -117,7 +117,7 @@ These are some command-line utilities that I use often. They are usually install
 * [tig][tig] - text-interface mode for git (git log viewer, mostly replaced by [magit](https://github.com/magit/magit))
 * [tmux-MacOSX-pasteboard][tmux-macosx-pasteboard] - workaround for `pbpaste` and `pbcopy` under Mac OS X
 * [tmux][tmux] - terminal multiplexer, GNU screen replacement
-* [tmuxinator][tmuxinator] - manage complex tmux sessions easily
+* [tmuxifier][tmuxifier] - manage complex tmux sessions easily
 * [xclip][xclip] - command line interface to the X11 clipboard
 
 [ack]: http://betterthangrep.com/
@@ -130,5 +130,5 @@ These are some command-line utilities that I use often. They are usually install
 [tig]: http://jonas.nitro.dk/tig/
 [tmux-macosx-pasteboard]: https://github.com/ChrisJohnsen/tmux-MacOSX-pasteboard
 [tmux]: http://tmux.sourceforge.net/
-[tmuxinator]: https://github.com/aziz/tmuxinator
+[tmuxifier]: https://github.com/jimeh/tmuxifier
 [xclip]: http://sourceforge.net/projects/xclip/
