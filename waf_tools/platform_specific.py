@@ -26,7 +26,10 @@ def build(ctx):
         ctx.env.SHELL_ALIASES['ls'] = 'ls -hFG'
 
         # ssh-agent handling code is not needed in Mac OS X because it is
-        # handled by the operating system.
+        # handled by the operating system. However, it is useful to have an
+        # alias to restart it in case it gets killed.
+        ctx.env.SHELL_ALIASES['restart-ssh-agent'] = (
+            'launchctl start org.openbsd.ssh-agent')
 
         # Open Xcode project.
         ctx.env.SHELL_ALIASES['openx'] = 'env -i open *.xcodeproj'
