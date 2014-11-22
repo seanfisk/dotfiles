@@ -15,7 +15,7 @@ def get_powerline_path(ctx, relpath):
         ctx.env.SYSTEM_PYTHON + [
             '-c',
             'from pkg_resources import resource_filename; '
-            "print(resource_filename('powerline', {0}))"
+            "print(resource_filename('powerline', {}))"
             .format(repr(relpath))]).decode('ascii').rstrip())
 
 

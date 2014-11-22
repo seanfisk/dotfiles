@@ -77,9 +77,10 @@ def configure(ctx):
             major, minor, patch = release.split('.')
         except ValueError:
             ctx.fatal("Couldn't determine Mac OS X version.")
-        bin_dir_name = 'bin-{machine}-{release_major_minor}'.format(
+        bin_dir_name = 'bin-{machine}-{major}.{minor}'.format(
             machine=machine,
-            release_major_minor='{0}.{1}'.format(major, minor))
+            major=major,
+            minor=minor)
         ctx.add_to_path_var('PATH', join(
             emacs_app_contents, 'MacOS', bin_dir_name))
 
@@ -148,7 +149,7 @@ def execute_in_clean_bash(ctx, command):
     # base paths (hopefully).
     profile_path = '/etc/profile'
     if not os.path.isfile(profile_path):
-        ctx.fatal('Could not find profile file, {}'.format(profile_path))
+        ctx.fatal('Could not find profile file: ' + profile_path)
     return ctx.cmd_and_log(
         [
             '/bin/bash', '--norc', '--noprofile', '-c',

@@ -28,8 +28,9 @@ def configure(ctx):
     ctx.env.CONFIGURABLE_SHELLS = ['bash', 'zsh']
 
     # Set the SHELLS variable to all available shells.
-    ctx.env.SHELLS = [shell for shell in ctx.env.CONFIGURABLE_SHELLS if
-                      getattr(ctx, 'find_{}'.format(shell))(mandatory=False)]
+    ctx.env.SHELLS = list(filter(
+        lambda s: getattr(ctx, 'find_' + s)(mandatory=False),
+        ctx.env.CONFIGURABLE_SHELLS))
 
 
 @conf
@@ -51,7 +52,7 @@ def find_bash(ctx):
     if version_ok:
         ctx.env.BASH = exe_path
     else:
-        ctx.fatal('This configuration requires Bash {0}.'.format(
+        ctx.fatal('This configuration requires Bash {}.'.format(
             required_major_version))
 
     return exe_path
@@ -80,7 +81,7 @@ def find_zsh(ctx):
     if version_ok:
         ctx.env.ZSH = exe_path
     else:
-        ctx.fatal('This configuration requires Zsh {0}.'.format(
+        ctx.fatal('This configuration requires Zsh {}.'.format(
             required_major_version))
 
     # Load zpython from Homebrew if available. We have programmed this
@@ -113,20 +114,20 @@ def find_zsh(ctx):
 @conf
 def add_shell_rc_node(ctx, node):
     for shell in ctx.env.SHELLS:
-        ctx.env['{}_RC_NODES'.format(shell.upper())].append(node)
+        ctx.env[shell.upper() + '_RC_NODES'].append(node)
 
 
 @conf
 def add_shell_profile_node(ctx, node):
     for shell in ctx.env.SHELLS:
-        ctx.env['{}_PROFILE_NODES'.format(shell.upper())].append(node)
+        ctx.env[shell.upper() + '_PROFILE_NODES'].append(node)
 
 
 def _concatenate(tsk):
     output_node = tsk.outputs[0]
     with open(output_node.abspath(), 'w') as output_file:
         final_filename = SHELL_FILE_NAMES[output_node.name]
-        six.print_('# {}'.format(final_filename), file=output_file)
+        six.print_('# ' + final_filename, file=output_file)
         for input_node in tsk.inputs:
             six.print_(file=output_file)
             with open(input_node.abspath()) as input_file:
@@ -158,10 +159,10 @@ def setup_shell_defaults(ctx):
         shell_up = shell.upper()
         # A mapping of shell to shell file nodes to include in the compiled rc
         # files.
-        ctx.env['{}_RC_NODES'.format(shell_up)] = []
+        ctx.env[shell_up + '_RC_NODES'] = []
         # A mapping of shell to shell file nodes to include in the compiled
         # profile files.
-        ctx.env['{}_PROFILE_NODES'.format(shell_up)] = []
+        ctx.env[shell_up + '_PROFILE_NODES'] = []
 
     # Key bindings
     #
@@ -260,7 +261,7 @@ def build_shell_env(ctx):
         with open(tsk.outputs[0].abspath(), 'w') as out_file:
             six.print_('# Shell environment\n', file=out_file)
             for name, value in six.iteritems(ctx.env.SHELL_ENV):
-                six.print_('export {0}={1}'.format(name, value), file=out_file)
+                six.print_('export {}={}'.format(name, value), file=out_file)
 
 
 @conf
@@ -280,7 +281,7 @@ def build_shell_aliases(ctx):
             six.print_('\n# Tool aliases\n', file=out_file)
             for alias, command in six.iteritems(tsk.env.SHELL_ALIASES):
                 six.print_(
-                    'alias {0}={1}'.format(alias, shquote(command)),
+                    'alias {}={}'.format(alias, shquote(command)),
                     file=out_file)
 
 
@@ -294,20 +295,19 @@ def build_shell_keybindings(ctx):
                 # It is supposed to turn out like this:
                 # bind '"\C-j": " 2>&1 | less\C-m"'
                 six.print_(
-                    'bind ' + shquote('"{0}": "{1}"'.format(key, binding)),
+                    'bind ' + shquote('"{}": "{}"'.format(key, binding)),
                     file=out_file)
 
     def make_zsh_keys(tsk):
         with open(tsk.outputs[0].abspath(), 'w') as out_file:
             for key, binding in six.iteritems(tsk.env.SHELL_KEYBINDINGS):
                 six.print_(
-                    'bindkey -s {0} {1}'.format(
-                        shquote(key), shquote(binding)),
+                    'bindkey -s {} {}'.format(shquote(key), shquote(binding)),
                     file=out_file)
 
     for shell in ctx.env.SHELLS:
-        out_node = ctx.path.find_or_declare('keys.{}'.format(shell))
-        ctx.env['{}_RC_NODES'.format(shell.upper())].append(out_node)
+        out_node = ctx.path.find_or_declare('keys.' + shell)
+        ctx.env[shell.upper() + '_RC_NODES'].append(out_node)
         rule = locals()['make_{}_keys'.format(shell)]
         ctx(rule=rule, target=out_node, vars=['SHELL_KEYBINDINGS'])
 
@@ -318,13 +318,13 @@ def build_shell_locals(ctx):
     local_profile_path = join(LOCAL_DIR, 'profile.sh')
     if os.path.isfile(local_profile_path):
         for shell in ctx.env.SHELLS:
-            ctx.env['{}_PROFILE_NODES'.format(shell.upper())].append(
+            ctx.env[shell.upper() + '_PROFILE_NODES'].append(
                 ctx.path.find_resource(local_profile_path))
 
     local_rc_path = join(LOCAL_DIR, 'rc.sh')
     if os.path.isfile(local_rc_path):
         for shell in ctx.env.SHELLS:
-            ctx.env['{}_RC_NODES'.format(shell.upper())].append(
+            ctx.env[shell.upper() + '_RC_NODES'].append(
                 ctx.path.find_resource(local_rc_path))
 
 
@@ -345,8 +345,8 @@ def build(ctx):
     shell_nodes = []
     for shell in ctx.env.SHELLS:
         for filetype in ['rc', 'profile']:
-            filename = '{0}.{1}'.format(filetype, shell)
-            env_var_name = '{0}_{1}_NODES'.format(
+            filename = '{}.{}'.format(filetype, shell)
+            env_var_name = '{}_{}_NODES'.format(
                 shell.upper(), filetype.upper())
             in_nodes = ctx.env[env_var_name]
             out_node = ctx.path.find_or_declare(filename)

@@ -76,16 +76,15 @@ def build(ctx):
             path = ctx.env[tool.upper()]
             if path:
                 out_node = ctx.path.find_or_declare(
-                    '{0}.{1}'.format(tool, shell))
+                    '{}.{}'.format(tool, shell))
                 ctx.env['{}_RC_NODES'.format(shell.upper())].append(out_node)
                 ctx(rule=_make_rbenv_pyenv_file, target=out_node,
                     vars=[tool.upper()])
 
         if ctx.env.PYENV_VIRTUALENV:
             # If pyenv-virtualenv is installed, generate a file for it, too.
-            out_node = ctx.path.find_or_declare(
-                'pyenv-virtualenv.{}'.format(shell))
-            ctx.env['{}_RC_NODES'.format(shell.upper())].append(out_node)
+            out_node = ctx.path.find_or_declare('pyenv-virtualenv.' + shell)
+            ctx.env[shell.upper() + '_RC_NODES'].append(out_node)
 
             @ctx.rule(target=out_node, vars=['PYENV', 'PYENV_VIRTUALENV'])
             def make_pyenv_virtualenv_file(tsk):

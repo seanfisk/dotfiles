@@ -19,9 +19,8 @@ def build(ctx):
     # Workaround for Mac OS X pasteboard, see
     # https://github.com/ChrisJohnsen/tmux-MacOSX-pasteboard
     # Don't pass -l; we don't want a login shell.
-    default_command = shquote(
-        'reattach-to-user-namespace {}'.format(default_shell) if ctx.env.MACOSX
-        else default_shell)
+    default_command = (shquote('reattach-to-user-namespace ' + default_shell)
+                       if ctx.env.MACOSX else default_shell)
     in_node = ctx.path.find_resource(['dotfiles', 'tmux.conf.in'])
     out_node = in_node.change_ext(ext='.conf', ext_in='.conf.in')
 
