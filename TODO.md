@@ -1,7 +1,6 @@
 TODO for Sean Fisk's Dotfiles
 =============================
 
-* subprocess to ctx functions.
 * Use Python json module for Powerline.
 * Take availability of bash and zsh into account.
 * Add fasd for Emacs.

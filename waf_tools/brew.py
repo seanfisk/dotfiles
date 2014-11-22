@@ -1,4 +1,4 @@
-"""Detect and configure Homebrew."""
+"""Detect and configure Homebrew/Linuxbrew."""
 
 
 def configure(ctx):

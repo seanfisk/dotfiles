@@ -3,7 +3,6 @@
 import os
 from os.path import join
 from pipes import quote as shquote
-import subprocess
 from collections import OrderedDict
 
 from waflib.Configure import conf
@@ -83,29 +82,20 @@ def find_zsh(ctx):
         ctx.fatal('This configuration requires Zsh {}.'.format(
             required_major_version))
 
-    # Load zpython from Homebrew if available. We have programmed this
-    # detection specifically for Homebrew because Homebrew apparently installs
-    # zpython in a somewhat nonstandard way (it doesn't use 'make install').
-    try:
-        proc = subprocess.Popen(
-            ['brew', '--prefix', 'zpython'],
-            stdout=subprocess.PIPE)
-    except OSError:
-        pass  # No Homebrew :(
-    else:
-        out, err = proc.communicate()
-        if proc.returncode == 0:
-            # Just assume ascii; should be fine. This needs to be a string for
-            # Waf.
-            zpython_brew_prefix = str(out.decode('ascii').rstrip())
-            zpython_module_path = join(zpython_brew_prefix, 'lib', 'zpython')
-            zpython_lib = join(zpython_module_path, 'zsh', 'zpython.so')
-            ctx.start_msg('Checking for zpython library')
-            if os.path.isfile(zpython_lib):
-                ctx.env.ZPYTHON_MODULE_PATH = zpython_module_path
-                ctx.end_msg(zpython_lib)
-            else:
-                ctx.end_msg(False)
+    # Load zpython from Homebrew/Linuxbrew if available. We have programmed
+    # this detection specifically for Brew because Brew installs zpython in a
+    # somewhat nonstandard way (it doesn't use 'make install').
+    if ctx.env.BREW:
+        zpython_brew_prefix = ctx.cmd_and_log(
+            ctx.env.BREW + ['--prefix', 'zpython']).rstrip()
+        zpython_module_path = join(zpython_brew_prefix, 'lib', 'zpython')
+        zpython_lib = join(zpython_module_path, 'zsh', 'zpython.so')
+        ctx.start_msg('Checking for zpython library')
+        if os.path.isfile(zpython_lib):
+            ctx.env.ZPYTHON_MODULE_PATH = zpython_module_path
+            ctx.end_msg(zpython_lib)
+        else:
+            ctx.end_msg(False)
 
     return exe_path
 

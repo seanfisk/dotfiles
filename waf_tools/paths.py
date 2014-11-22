@@ -7,8 +7,8 @@ import os
 import platform
 from os.path import join
 from pipes import quote as shquote
-import subprocess
 
+import waflib
 from waflib.Configure import conf
 
 
@@ -53,11 +53,8 @@ def configure(ctx):
         path_list=ctx.env.SYSTEM_PATHS,
         mandatory=False)
     if ctx.env.SYSTEM_PYTHON:
-        # Just assume ascii; should be fine. This needs to be a string for Waf.
-        user_base = str(subprocess.check_output(
-            ctx.env.SYSTEM_PYTHON + ['-m', 'site', '--user-base'])
-            .decode('ascii').rstrip())
-        ctx.add_path_hierarchy(user_base)
+        ctx.add_path_hierarchy(ctx.cmd_and_log(
+            ctx.env.SYSTEM_PYTHON + ['-m', 'site', '--user-base']).rstrip())
 
     # Emacs.app on Mac OS X contains some paths in some weird places.
     if ctx.env.MACOSX:

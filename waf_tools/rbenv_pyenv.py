@@ -2,8 +2,8 @@
 
 import os
 from os.path import join
-import subprocess
 from pipes import quote as shquote
+import subprocess
 
 def configure(ctx):
     ctx.find_program('rbenv', mandatory=False)
@@ -16,15 +16,15 @@ def configure(ctx):
     # actual executable.
     ctx.env.PYENV_VIRTUALENV = False
     if ctx.env.PYENV:
-        ret = subprocess.call(
+        ret = ctx.exec_command(
             ctx.env.PYENV + ['virtualenv-init', '-'],
+            # We don't need the output, so just throw it away.
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
         )
         ctx.env.PYENV_VIRTUALENV = ret == 0
 
-        ctx.env.PYENV_ROOT = subprocess.check_output(
-            ctx.env.PYENV + ['root']).decode('ascii').rstrip()
+        ctx.env.PYENV_ROOT = ctx.cmd_and_log(ctx.env.PYENV + ['root']).rstrip()
 
     ctx.msg('Checking for pyenv-virtualenv', ctx.env.PYENV_VIRTUALENV)
 

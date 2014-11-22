@@ -23,11 +23,12 @@ def _python_modules_in_dir(dirpath):
 # Script constants
 WAF_BASE_TOOLS_DIR = 'waf_tools'
 # Order matters here. All after 'platform_specific' are dependent on it. All
-# after 'paths' are dependent on it.
+# after 'paths' are dependent on it. 'shells' is dependent upon 'brew'.
 WAF_BASE_TOOLS = [
     'jsminify',
     'platform_specific',
     'paths',
+    'brew',
     'gnu_utils',
     'shells',
     'rbenv_pyenv',
