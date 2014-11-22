@@ -31,7 +31,7 @@ def build(ctx):
         # case it's not, and maybe to save a little bit on execution, tell
         # Powerline where it is with this environment variable.
         ctx.env.SHELL_ENV['POWERLINE_CONFIG_COMMAND'] = (
-            ctx.env._POWERLINE_CONFIG)
+            ctx.env.POWERLINE_CONFIG_)
         tmux_powerline_file = ctx.get_powerline_path(
             join('bindings', 'tmux', 'powerline.conf'))
         powerline_commands = '''run-shell "{powerline_daemon} --quiet"

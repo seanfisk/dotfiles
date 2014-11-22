@@ -38,14 +38,14 @@ def configure(ctx):
 
     ctx.find_program('powerline-daemon', var='POWERLINE_DAEMON',
                      mandatory=False)
-    # Powerline actually uses the $POWERLINE_CONFIG environment variable, which
+    # Powerline actually uses the POWERLINE_CONFIG environment variable, which
     # Waf will then detect. Change ours to avoid this.
-    ctx.find_program('powerline-config', var='_POWERLINE_CONFIG',
+    ctx.find_program('powerline-config', var='POWERLINE_CONFIG_',
                      mandatory=False)
 
     # Set this variable to give us an easy way to tell if we have Powerline.
     ctx.env.POWERLINE = (
-        bool(ctx.env.POWERLINE_DAEMON) and bool(ctx.env._POWERLINE_CONFIG))
+        bool(ctx.env.POWERLINE_DAEMON) and bool(ctx.env.POWERLINE_CONFIG_))
 
 
 def build(ctx):
