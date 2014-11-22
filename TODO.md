@@ -3,7 +3,6 @@ TODO for Sean Fisk's Dotfiles
 
 * subprocess to ctx functions.
 * Use Python json module for Powerline.
-* Make Waf detect the reattach-to-user-namespace program.
 * Take availability of bash and zsh into account.
 * Add fasd for Emacs.
 * Make adding nodes to both shells a bit more elegant.

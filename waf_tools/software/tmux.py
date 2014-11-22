@@ -5,22 +5,30 @@ from os.path import join
 
 
 def configure(ctx):
-    ctx.find_program('tmux', mandatory=False)
+    # The TMUX environment variable is used by tmux.
+    ctx.find_program('tmux', var='TMUX_', mandatory=False)
+    if ctx.env.MACOSX and ctx.env.TMUX_:
+        # Workaround for Mac OS X pasteboard, see:
+        # https://github.com/ChrisJohnsen/tmux-MacOSX-pasteboard
+        # If we have tmux on Mac OS X, then reattach-to-user-namespace is
+        # mandatory.
+        ctx.find_program(
+            'reattach-to-user-namespace', var='REATTACH_TO_USER_NAMESPACE')
 
 
 def build(ctx):
-    if not ctx.env.TMUX:
+    if not ctx.env.TMUX_:
         return
-    ctx.add_shell_rc_node(ctx.path.find_resource([
-        'shell', 'tmux.sh']))
+
+    ctx.add_shell_rc_node(ctx.path.find_resource(['shell', 'tmux.sh']))
 
     # TODO: This doesn't really handle a case when zsh is not available.
-    default_shell = 'zsh'
-    # Workaround for Mac OS X pasteboard, see
-    # https://github.com/ChrisJohnsen/tmux-MacOSX-pasteboard
     # Don't pass -l; we don't want a login shell.
-    default_command = (shquote('reattach-to-user-namespace ' + default_shell)
-                       if ctx.env.MACOSX else default_shell)
+    default_command = ctx.shquote_cmd(
+        ctx.env.REATTACH_TO_USER_NAMESPACE + ctx.env.ZSH
+        if ctx.env.REATTACH_TO_USER_NAMESPACE
+        else ctx.env.ZSH)
+
     in_node = ctx.path.find_resource(['dotfiles', 'tmux.conf.in'])
     out_node = in_node.change_ext(ext='.conf', ext_in='.conf.in')
 
