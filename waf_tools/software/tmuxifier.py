@@ -22,7 +22,7 @@ def build(ctx):
 
     ctx.env.SHELL_ALIASES['mux'] = ctx.shquote_cmd(ctx.env.TMUXIFIER_)
 
-    for shell in ctx.env.SHELLS:
+    for shell in ctx.env.AVAILABLE_SHELLS:
         out_node = ctx.path.find_or_declare('tmuxifier.' + shell)
-        ctx.env[shell.upper() + '_RC_NODES'].append(out_node)
+        ctx.add_shell_rc_node(out_node, shell)
         ctx(rule=_make_tmuxifier_file, target=out_node, vars=['TMUXIFIER_'])

@@ -60,7 +60,7 @@ def _make_rbenv_pyenv_file(tsk):
 
 
 def build(ctx):
-    for shell in ctx.env.SHELLS:
+    for shell in ctx.env.AVAILABLE_SHELLS:
         # Build files that load rbenv and pyenv
         for prefix in ['rb', 'py']:
             tool = prefix + 'env'
@@ -68,14 +68,14 @@ def build(ctx):
             if path:
                 out_node = ctx.path.find_or_declare(
                     '{}.{}'.format(tool, shell))
-                ctx.env['{}_RC_NODES'.format(shell.upper())].append(out_node)
+                ctx.add_shell_rc_node(out_node, shell)
                 ctx(rule=_make_rbenv_pyenv_file, target=out_node,
                     vars=[tool.upper()])
 
         if ctx.env.PYENV_VIRTUALENV:
             # If pyenv-virtualenv is installed, generate a file for it, too.
             out_node = ctx.path.find_or_declare('pyenv-virtualenv.' + shell)
-            ctx.env[shell.upper() + '_RC_NODES'].append(out_node)
+            ctx.add_shell_rc_node(out_node, shell)
 
             @ctx.rule(target=out_node, vars=['PYENV', 'PYENV_VIRTUALENV'])
             def make_pyenv_virtualenv_file(tsk):

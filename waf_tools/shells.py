@@ -22,11 +22,8 @@ LOCAL_DIR = join('shell', 'local')
 
 
 def configure(ctx):
-    # Check for each shell.
     ctx.env.CONFIGURABLE_SHELLS = ['bash', 'zsh']
-
-    # Set the SHELLS variable to all available shells.
-    ctx.env.SHELLS = list(filter(
+    ctx.env.AVAILABLE_SHELLS = list(filter(
         lambda s: getattr(ctx, 'find_' + s)(mandatory=False),
         ctx.env.CONFIGURABLE_SHELLS))
 
@@ -101,15 +98,20 @@ def find_zsh(ctx):
 
 
 @conf
-def add_shell_rc_node(ctx, node):
-    for shell in ctx.env.SHELLS:
-        ctx.env[shell.upper() + '_RC_NODES'].append(node)
+def add_shell_rc_node(ctx, node, shell=None):
+    ctx.add_shell_node(node, 'rc', shell)
 
 
 @conf
-def add_shell_profile_node(ctx, node):
-    for shell in ctx.env.SHELLS:
-        ctx.env[shell.upper() + '_PROFILE_NODES'].append(node)
+def add_shell_profile_node(ctx, node, shell=None):
+    ctx.add_shell_node(node, 'profile', shell)
+
+
+@conf
+def add_shell_node(ctx, node, filetype, shell=None):
+    for shell in ([shell] if shell else ctx.env.AVAILABLE_SHELLS):
+        ctx.env['{}_{}_NODES'.format(shell.upper(), filetype.upper())].append(
+            node)
 
 
 def _concatenate(tsk):
@@ -293,9 +295,9 @@ def build_shell_keybindings(ctx):
                     'bindkey -s {} {}'.format(shquote(key), shquote(binding)),
                     file=out_file)
 
-    for shell in ctx.env.SHELLS:
+    for shell in ctx.env.AVAILABLE_SHELLS:
         out_node = ctx.path.find_or_declare('keys.' + shell)
-        ctx.env[shell.upper() + '_RC_NODES'].append(out_node)
+        ctx.add_shell_rc_node(out_node, shell)
         rule = locals()['make_{}_keys'.format(shell)]
         ctx(rule=rule, target=out_node, vars=['SHELL_KEYBINDINGS'])
 
@@ -303,17 +305,10 @@ def build_shell_keybindings(ctx):
 @conf
 def build_shell_locals(ctx):
     # Local profile and rc configurations.
-    local_profile_path = join(LOCAL_DIR, 'profile.sh')
-    if os.path.isfile(local_profile_path):
-        for shell in ctx.env.SHELLS:
-            ctx.env[shell.upper() + '_PROFILE_NODES'].append(
-                ctx.path.find_resource(local_profile_path))
-
-    local_rc_path = join(LOCAL_DIR, 'rc.sh')
-    if os.path.isfile(local_rc_path):
-        for shell in ctx.env.SHELLS:
-            ctx.env[shell.upper() + '_RC_NODES'].append(
-                ctx.path.find_resource(local_rc_path))
+    for filetype in ['profile', 'rc']:
+        node = ctx.path.find_resource(join(LOCAL_DIR, filetype + '.sh'))
+        if node:
+            ctx.add_shell_node(node, filetype)
 
 
 def build(ctx):
@@ -331,7 +326,7 @@ def build(ctx):
     # Finally, build shell files
 
     shell_nodes = []
-    for shell in ctx.env.SHELLS:
+    for shell in ctx.env.AVAILABLE_SHELLS:
         for filetype in ['rc', 'profile']:
             filename = '{}.{}'.format(filetype, shell)
             env_var_name = '{}_{}_NODES'.format(
