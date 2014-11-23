@@ -231,13 +231,14 @@ def setup_shell_defaults(ctx):
     ctx.env.BASH_RC_NODES.append(
         ctx.path.find_resource(['shell', 'rc-base.bash']))
 
-    in_node = ctx.path.find_resource(['shell', 'rc-base.zsh.in'])
-    out_node = ctx.path.find_or_declare('rc-base.zsh')
-    ctx.env.ZSH_RC_NODES.append(out_node)
-    ctx(features='subst',
-        target=out_node,
-        source=in_node,
-        ZSH_THEME=shquote(zsh_theme))
+    if ctx.env.ZSH:
+        in_node = ctx.path.find_resource(['shell', 'rc-base.zsh.in'])
+        out_node = ctx.path.find_or_declare('rc-base.zsh')
+        ctx.env.ZSH_RC_NODES.append(out_node)
+        ctx(features='subst',
+            target=out_node,
+            source=in_node,
+            ZSH_THEME=shquote(zsh_theme))
 
 
 @conf
