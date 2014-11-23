@@ -34,7 +34,6 @@ def build(ctx):
     in_node = ctx.path.find_resource(['dotfiles', 'tmux.conf.in'])
     out_node = in_node.change_ext(ext='.conf', ext_in='.conf.in')
 
-    powerline_commands = ''
     if ctx.env.POWERLINE:
         # Powerline should be able to find this on the PATH. But just in
         # case it's not, and maybe to save a little bit on execution, tell
@@ -43,20 +42,20 @@ def build(ctx):
             ctx.env.POWERLINE_CONFIG_)
         tmux_powerline_file = ctx.get_powerline_path(
             join('bindings', 'tmux', 'powerline.conf'))
-        powerline_commands = '''run-shell {}
-source {}
-'''\
-        .format(
+        powerline_commands = [
             # Not exactly sure about the quoting rules in this config file...
-            shquote(ctx.shquote_cmd(ctx.env.POWERLINE_DAEMON + ['--quiet'])),
-            shquote(tmux_powerline_file),
-        )
+            'run-shell ' + shquote(ctx.shquote_cmd(
+                ctx.env.POWERLINE_DAEMON + ['--quiet'])),
+            'source-file ' + shquote(tmux_powerline_file),
+        ]
+    else:
+        powerline_commands = []
 
     ctx(features='subst',
         source=in_node,
         target=out_node,
         DEFAULT_COMMAND=default_command,
-        POWERLINE_COMMANDS=powerline_commands)
+        POWERLINE_COMMANDS='\n'.join(powerline_commands))
     ctx.install_dotfile(out_node)
 
     if ctx.env.LSOF:
