@@ -39,7 +39,7 @@ def build(ctx):
         # Powerline should be able to find this on the PATH. But just in
         # case it's not, and maybe to save a little bit on execution, tell
         # Powerline where it is with this environment variable.
-        ctx.env.SHELL_ENV['POWERLINE_CONFIG_COMMAND'] = (
+        ctx.env.SHELL_ENV['POWERLINE_CONFIG_COMMAND'] = ctx.shquote_cmd(
             ctx.env.POWERLINE_CONFIG_)
         tmux_powerline_file = ctx.get_powerline_path(
             join('bindings', 'tmux', 'powerline.conf'))
