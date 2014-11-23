@@ -58,37 +58,33 @@ def build(ctx):
 
     ctx.env.PYENV_VIRTUALENV_DEFAULT_PACKAGES.append('powerline-status==1.2')
 
-    bash_powerline_node = ctx.path.find_or_declare('powerline.bash')
-    ctx.env.BASH_RC_NODES.append(bash_powerline_node)
-
-    @ctx.rule(target=bash_powerline_node, vars=['POWERLINE_DAEMON'])
     def make_bash_powerline(tsk):
-        bash_powerline_file = ctx.get_powerline_path(
-            join('bindings', 'bash', 'powerline.sh'))
         tsk.outputs[0].write('''{powerline_daemon} --quiet
 POWERLINE_BASH_CONTINUATION=1
 POWERLINE_BASH_SELECT=1
-source {bash_powerline_file}
+source {powerline_file}
 '''\
         .format(
             powerline_daemon=ctx.shquote_cmd(tsk.env.POWERLINE_DAEMON),
-            bash_powerline_file=shquote(bash_powerline_file),
+            powerline_file=shquote(ctx.get_powerline_path(join(
+                'bindings', 'bash', 'powerline.sh'))),
         ))
 
-    zsh_powerline_node = ctx.path.find_or_declare('powerline.zsh')
-    ctx.env.ZSH_RC_NODES.append(zsh_powerline_node)
-
-    @ctx.rule(target=zsh_powerline_node, vars=['POWERLINE_DAEMON'])
     def make_zsh_powerline(tsk):
-        zsh_powerline_file = ctx.get_powerline_path(
-            join('bindings', 'zsh', 'powerline.zsh'))
         tsk.outputs[0].write('''{powerline_daemon} --quiet
-source {zsh_powerline_file}
+source {powerline_file}
 '''\
         .format(
             powerline_daemon=ctx.shquote_cmd(tsk.env.POWERLINE_DAEMON),
-            zsh_powerline_file=shquote(zsh_powerline_file),
+            powerline_file=shquote(ctx.get_powerline_path(join(
+                'bindings', 'zsh', 'powerline.zsh'))),
         ))
+
+    for shell in ctx.env.AVAILABLE_SHELLS:
+        out_node = ctx.path.find_or_declare('powerline.' + shell)
+        ctx.add_shell_rc_node(out_node, shell)
+        rule = locals()['make_{}_powerline'.format(shell)]
+        ctx(rule=rule, target=out_node, vars=['POWERLINE_DAEMON'])
 
     # Instead of templating the config file and dealing with possible escaping
     # issues, we just dump it with the json module.
