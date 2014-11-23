@@ -22,12 +22,14 @@ def build(ctx):
 
     ctx.add_shell_rc_node(ctx.path.find_resource(['shell', 'tmux.sh']))
 
-    # TODO: This doesn't really handle a case when zsh is not available.
     # Don't pass -l; we don't want a login shell.
-    default_command = ctx.shquote_cmd(
-        ctx.env.REATTACH_TO_USER_NAMESPACE + ctx.env.ZSH
+    # Prefer Zsh, but go with Bash if necessary.
+    shell = ctx.env.ZSH or ctx.env.BASH
+    # Not exactly sure about the quoting rules in this config file...
+    default_command = shquote(ctx.shquote_cmd(
+        (ctx.env.REATTACH_TO_USER_NAMESPACE + shell)
         if ctx.env.REATTACH_TO_USER_NAMESPACE
-        else ctx.env.ZSH)
+        else shell))
 
     in_node = ctx.path.find_resource(['dotfiles', 'tmux.conf.in'])
     out_node = in_node.change_ext(ext='.conf', ext_in='.conf.in')
@@ -41,12 +43,13 @@ def build(ctx):
             ctx.env.POWERLINE_CONFIG_)
         tmux_powerline_file = ctx.get_powerline_path(
             join('bindings', 'tmux', 'powerline.conf'))
-        powerline_commands = '''run-shell "{powerline_daemon} --quiet"
-source "{tmux_powerline_file}"
+        powerline_commands = '''run-shell {}
+source {}
 '''\
         .format(
-            powerline_daemon=ctx.shquote_cmd(ctx.env.POWERLINE_DAEMON),
-            tmux_powerline_file=tmux_powerline_file,
+            # Not exactly sure about the quoting rules in this config file...
+            shquote(ctx.shquote_cmd(ctx.env.POWERLINE_DAEMON + ['--quiet'])),
+            shquote(tmux_powerline_file),
         )
 
     ctx(features='subst',
