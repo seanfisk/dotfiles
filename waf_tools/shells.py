@@ -23,9 +23,13 @@ LOCAL_DIR = join('shell', 'local')
 
 def configure(ctx):
     ctx.env.CONFIGURABLE_SHELLS = ['bash', 'zsh']
-    ctx.env.AVAILABLE_SHELLS = list(filter(
-        lambda s: getattr(ctx, 'find_' + s)(mandatory=False),
-        ctx.env.CONFIGURABLE_SHELLS))
+    avail_shells = []
+    # Bash is mandatory!
+    if ctx.find_bash():
+        avail_shells.append('bash')
+    if ctx.find_zsh(mandatory=False):
+        avail_shells.append('zsh')
+    ctx.env.AVAILABLE_SHELLS = avail_shells
 
 
 @conf
