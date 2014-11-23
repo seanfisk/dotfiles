@@ -23,8 +23,14 @@ def _make_fasd_cache(tsk):
 def build(ctx):
     if not ctx.env.FASD:
         return
+
     # See here for all the options: https://github.com/clvv/fasd#install
     for shell in ctx.env.AVAILABLE_SHELLS:
         out_node = ctx.path.find_or_declare('fasd.' + shell)
         ctx.add_shell_rc_node(out_node, shell)
         ctx(rule=_make_fasd_cache, target=out_node, vars=['FASD'])
+
+    # Add an alias for editor.
+    ctx.env.SHELL_ALIASES['v'] = ctx.shquote_cmd(['a', '-e', 'e'])
+    # Add an alias for opening files.
+    ctx.env.SHELL_ALIASES['o'] = ctx.shquote_cmd(['a', '-e', 'open'])
