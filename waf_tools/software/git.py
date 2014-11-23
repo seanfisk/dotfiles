@@ -16,6 +16,15 @@ def build(ctx):
     ctx.env.SHELL_ALIASES['gobuddygo'] = ctx.shquote_cmd(
         ctx.env.GIT + ['push'])
     ctx.env.SHELL_ALIASES['cometome'] = ctx.shquote_cmd(ctx.env.GIT + ['pull'])
+    # Update dotfiles alias
+    ctx.env.SHELL_ALIASES['ud'] = ' && '.join([
+        ctx.shquote_cmd(['cd', ctx.srcnode.abspath()]),
+        ctx.shquote_cmd(ctx.env.GIT + ['pull']),
+        # Distclean to avoid possible errors. A full rebuild does not take
+        # long.
+        ctx.shquote_cmd([
+            './waf', 'distclean', 'configure', 'build', 'install']),
+    ])
 
     for name in ['gitconfig', 'gitignore-global']:
         ctx.install_dotfile(ctx.path.find_resource(['dotfiles', name]))
