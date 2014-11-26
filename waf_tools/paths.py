@@ -63,18 +63,18 @@ def configure(ctx):
         # The bin directories look like this:
         #
         #     $ ls /Applications/Emacs.app/Contents/MacOS | grep bin
-        #     bin-i386-10.5/
-        #     bin-powerpc-10.4/
-        #     bin-x86_64-10.5/
-        #     bin-x86_64-10.7/
-        #     bin-x86_64-10.9/
+        #     bin-i386-10_5/
+        #     bin-powerpc-10_4/
+        #     bin-x86_64-10_5/
+        #     bin-x86_64-10_7/
+        #     bin-x86_64-10_9/
         #
         release, _, machine = platform.mac_ver()
         try:
             major, minor, patch = release.split('.')
         except ValueError:
             ctx.fatal("Couldn't determine Mac OS X version.")
-        bin_dir_name = 'bin-{machine}-{major}.{minor}'.format(
+        bin_dir_name = 'bin-{machine}-{major}_{minor}'.format(
             machine=machine,
             major=major,
             minor=minor)
