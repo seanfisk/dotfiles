@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Detect and configure Git."""
 
 def configure(ctx):
@@ -7,7 +8,6 @@ def configure(ctx):
     ctx.find_gnu_util('wc', mandatory=False)
     ctx.find_gnu_util('numfmt', mandatory=False)
     ctx.find_program('ohcount', mandatory=False)
-
 
 def build(ctx):
     if not ctx.env.GIT:

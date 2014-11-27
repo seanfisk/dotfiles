@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Detect and configure IPython."""
 
 def _concatenate(tsk):
@@ -14,7 +15,6 @@ def _concatenate(tsk):
             with open(input_node.abspath()) as input_file:
                 for line in input_file:
                     output_file.write(line)
-
 
 def build(ctx):
     # IPython is usually installed to and used from Python virtual

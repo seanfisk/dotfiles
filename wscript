@@ -1,11 +1,11 @@
 # -*- mode: python; coding: utf-8; -*-
 
-# Waf build file
+"""Waf build file"""
 
 import os
 import fnmatch
 from os.path import join
-from pipes import quote as shquote
+from shlex import quote as shquote
 
 import waflib
 from waflib.Configure import conf
@@ -13,10 +13,17 @@ from waflib.Configure import conf
 # Waf constants
 APPNAME = 'dotfiles'
 VERSION = '0.1'
-top = '.'
-out = 'build'
+top = '.' # pylint: disable=invalid-name
+out = 'build' # pylint: disable=invalid-name
 
 def _python_modules_in_dir(dirpath):
+    """Find all Python modules within a directory.
+
+    :param dirpath: path to directory
+    :type dirpath: :class:`str`
+    :return: list of Python module files
+    :rtype: :class:`list` of :class:`str`
+    """
     return [os.path.splitext(name)[0] for name in
             fnmatch.filter(os.listdir(dirpath), '*.py')]
 
@@ -25,6 +32,8 @@ WAF_BASE_TOOLS_DIR = 'waf_tools'
 # Order matters here. All after 'platform_specific' are dependent on it. All
 # after 'paths' are dependent on it. 'shells' is dependent upon 'brew'.
 WAF_BASE_TOOLS = [
+    'log',
+    'git',
     'jsminify',
     'platform_specific',
     'paths',
@@ -40,14 +49,12 @@ WAF_SOFTWARE_TOOLS_DIR = join(WAF_BASE_TOOLS_DIR, 'software')
 # ways and cause unnecessary builds.
 WAF_SOFTWARE_TOOLS = sorted(_python_modules_in_dir(WAF_SOFTWARE_TOOLS_DIR))
 
-
 # Context helpers
 @conf
 def load_tools(ctx):
     """Load project-specific base tools and software tools."""
     ctx.load(WAF_BASE_TOOLS, tooldir=WAF_BASE_TOOLS_DIR)
     ctx.load(WAF_SOFTWARE_TOOLS, tooldir=WAF_SOFTWARE_TOOLS_DIR)
-
 
 @conf
 def install_dotfile(ctx, node):
@@ -57,24 +64,24 @@ def install_dotfile(ctx, node):
     relative_path_list[0] = '.' + relative_path_list[0]
     ctx.install_as(join(ctx.env.PREFIX, *relative_path_list), node)
 
-
 @conf
 def install_script(ctx, script_basename):
     """Install a script given the basename."""
-    ctx.install_files(join(ctx.env.PREFIX, 'bin'),
+    ctx.install_files(
+        join(ctx.env.PREFIX, 'bin'),
         [join('scripts', script_basename)],
         chmod=waflib.Utils.O755)
 
-
 @conf
-def shquote_cmd(ctx, cmd):
+def shquote_cmd(_, cmd):
     """Shell-quote a command list.
 
     :param cmd: command list
     :type cmd: :class:`list`
+    :return: quoted command
+    :rtype: :class:`str`
     """
     return ' '.join(map(shquote, cmd))
-
 
 # @conf
 # def ensure_loaded(ctx, tools):
@@ -88,7 +95,6 @@ def shquote_cmd(ctx, cmd):
 #             ctx.load(
 #                 tools, tooldir=WAF_BASE_TOOLS_DIR + WAF_SOFTWARE_TOOLS_DIR)
 
-
 def options(ctx):
     # Call the options() function in each of the tools.
     load_tools(ctx)
@@ -98,8 +104,9 @@ def options(ctx):
         '--prefix', default=default_prefix,
         help='installation prefix [default: {}]'.format(repr(default_prefix)))
 
-
 def configure(ctx):
+    ctx.find_program('pylint')
+
     # Call the configure() function in each of the tools.
     ctx.load_tools()
 
@@ -108,8 +115,6 @@ def configure(ctx):
 
     # After configuration, do some maintenance on the paths.
     ctx.check_path_for_issues()
-
-
 
 def build(ctx):
     # Write all previously-configured paths to this process' environment.
@@ -129,3 +134,45 @@ def build(ctx):
 
     # Build and install shell files.
     ctx.load(['shells'])
+
+class LintContext(waflib.Build.BuildContext):
+    """Context for the lint task."""
+    cmd = 'lint'
+    fun = 'lint'
+
+def lint(ctx):
+    """runs Pylint to check style/common errors"""
+    # Pylint can take a while to run, so print a message.
+    print('Running lint...')
+
+    def _is_py_file(path):
+        base, ext = os.path.splitext(os.path.basename(path))
+        return ext == '.py' or base == 'wscript'
+
+    # Waf will take care of colors on Windows with its ansiterm module.
+    checkers_dir_path = ctx.path.find_dir('pylint-checkers').abspath()
+    retcode = ctx.exec_command(
+        ctx.env.PYLINT +
+        ['--load-plugins',
+         ','.join(_python_modules_in_dir(checkers_dir_path))] +
+        list(filter(_is_py_file, ctx.get_git_files())),
+        # Add the current directory so that we can find our checkers modules.
+        # Add the Waf modules dir so that pylint can find those modules.
+        env={
+            'PYTHONPATH': os.pathsep.join([
+                waflib.Context.waf_dir, checkers_dir_path]),
+        })
+    if retcode == 0:
+        # http://patorjk.com/software/taag/#p=display&f=Small&t=PASSED
+        ctx.log_success(r'''  ___  _   ___ ___ ___ ___
+ | _ \/_\ / __/ __| __|   \
+ |  _/ _ \\__ \__ \ _|| |) |
+ |_|/_/ \_\___/___/___|___/
+''')
+    else:
+        # http://patorjk.com/software/taag/#p=display&f=Small&t=FAILED
+        ctx.log_failure(r'''  ___ _   ___ _    ___ ___
+ | __/_\ |_ _| |  | __|   \
+ | _/ _ \ | || |__| _|| |) |
+ |_/_/ \_\___|____|___|___/
+''')

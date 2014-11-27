@@ -1,7 +1,7 @@
+# -*- coding: utf-8 -*-
 """Helpers to find GNU utilities."""
 
 from waflib.Configure import conf
-
 
 @conf
 def find_gnu_util(ctx, exe_name):

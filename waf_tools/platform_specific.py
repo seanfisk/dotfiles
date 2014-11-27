@@ -1,14 +1,12 @@
+# -*- coding: utf-8 -*-
 """Detect the system type and set variables."""
 
 import platform
-from pipes import quote as shquote
-
 
 SYSTEM_OS_MAPPING = {
     'Linux': 'LINUX',
     'Darwin': 'MACOSX',
 }
-
 
 def configure(ctx):
     try:
@@ -18,7 +16,6 @@ def configure(ctx):
 
     if ctx.env.LINUX:
         ctx.find_program('gnome-open', var='GNOME_OPEN', mandatory=False)
-
 
 def build(ctx):
     if ctx.env.MACOSX:

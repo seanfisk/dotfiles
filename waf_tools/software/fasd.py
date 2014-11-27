@@ -1,9 +1,8 @@
+# -*- coding: utf-8 -*-
 """Detect and configure fasd."""
-
 
 def configure(ctx):
     ctx.find_program('fasd', mandatory=False)
-
 
 def _make_fasd_cache(tsk):
     out_node = tsk.outputs[0]
@@ -18,7 +17,6 @@ def _make_fasd_cache(tsk):
             tsk.env.FASD + ['--init'] + init_args,
             stdout=output_file)
     return ret
-
 
 def build(ctx):
     if not ctx.env.FASD:

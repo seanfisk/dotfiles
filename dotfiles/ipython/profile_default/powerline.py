@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*- pylint: disable=invalid-name,undefined-variable
+"""IPython configuration for Powerline"""
+
 #------------------------------------------------------------------------------
 # Powerline configuration
 #------------------------------------------------------------------------------
@@ -11,5 +14,6 @@ try:
         'powerline.bindings.ipython.post_0_11')
 except ImportError:
     import IPython
-    IPython.utils.warn.warn(
+    # Pylint can't find this function for some reason...
+    IPython.utils.warn.warn( # pylint: disable=no-member
         'Could not find powerline module; Powerline not loaded.')

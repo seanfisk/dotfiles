@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Detect and configure tmuxifier."""
 
 import os

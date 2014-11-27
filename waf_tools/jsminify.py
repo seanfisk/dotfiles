@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Set up tasks for the JavaScript minifier."""
 
 # slimit is another choice which looks more full-featured than jsmin, but
@@ -6,7 +7,6 @@
 # We can't name this file jsmin.py because of this import :/
 from jsmin import jsmin
 import waflib
-
 
 def _minify_javascript(tsk):
     # Assume UTF-8. Not much else we can do besides assume. But since we
@@ -17,7 +17,6 @@ def _minify_javascript(tsk):
         jsmin(
             tsk.inputs[0].read(encoding=encoding)),
         encoding=encoding)
-
 
 waflib.TaskGen.declare_chain(
     name='jsmin',

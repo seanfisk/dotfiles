@@ -1,12 +1,12 @@
+# -*- coding: utf-8 -*-
 """Detect and configure Emacs and other editors."""
 
-from pipes import quote as shquote
+from shlex import quote as shquote
 
 def configure(ctx):
     ctx.find_program('emacsclient', mandatory=False)
     ctx.find_program('nano') # nano is a mandatory fallback
     ctx.find_program('e-sink', var='E_SINK', mandatory=False)
-
 
 def build(ctx):
     if ctx.env.EMACSCLIENT:

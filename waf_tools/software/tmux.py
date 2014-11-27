@@ -1,8 +1,8 @@
+# -*- coding: utf-8 -*-
 """Detect and configure tmux."""
 
-from pipes import quote as shquote
+from shlex import quote as shquote
 from os.path import join
-
 
 def configure(ctx):
     # The TMUX environment variable is used by tmux.
@@ -14,7 +14,6 @@ def configure(ctx):
         # mandatory.
         ctx.find_program(
             'reattach-to-user-namespace', var='REATTACH_TO_USER_NAMESPACE')
-
 
 def build(ctx):
     if not ctx.env.TMUX_:

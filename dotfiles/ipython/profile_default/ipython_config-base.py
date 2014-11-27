@@ -1,4 +1,5 @@
-# Configuration file for ipython.
+# -*- coding: utf-8 -*- pylint: disable=invalid-name,undefined-variable
+"""IPython configuration file"""
 
 c = get_config()
 
@@ -11,8 +12,8 @@ c = get_config()
 # Provides configurables for loading extensions and executing files as part of
 # configuring a Shell environment.
 #
-# The following methods should be called by the :meth:`initialize` method of the
-# subclass:
+# The following methods should be called by the :meth:`initialize` method of
+# the subclass:
 #
 #   - :meth:`init_path`
 #   - :meth:`init_shell` (to be implemented by the subclass)
@@ -90,9 +91,9 @@ c = get_config()
 # c.TerminalIPythonApp.display_banner = True
 
 # The name of the IPython directory. This directory is used for logging
-# configuration (through profiles), history storage, etc. The default is usually
-# $HOME/.ipython. This options can also be specified through the environment
-# variable IPYTHONDIR.
+# configuration (through profiles), history storage, etc. The default is
+# usually $HOME/.ipython. This options can also be specified through the
+# environment variable IPYTHONDIR.
 # c.TerminalIPythonApp.ipython_dir = ''
 
 # Start IPython quickly by skipping the loading of config files.
@@ -236,7 +237,7 @@ c = get_config()
 # c.TerminalInteractiveShell.colors = 'LightBG'
 
 # The part of the banner to be printed before the profile
-# c.TerminalInteractiveShell.banner1 = 'Python 3.4.0 (default, Mar 28 2014, 14:07:17) \nType "copyright", "credits" or "license" for more information.\n\nIPython 2.2.0 -- An enhanced Interactive Python.\n?         -> Introduction and overview of IPython\'s features.\n%quickref -> Quick reference.\nhelp      -> Python\'s own help system.\nobject?   -> Details about \'object\', use \'object??\' for extra details.\n'
+# c.TerminalInteractiveShell.banner1 = 'Python 3.4.0 (default, Mar 28 2014, 14:07:17) \nType "copyright", "credits" or "license" for more information.\n\nIPython 2.2.0 -- An enhanced Interactive Python.\n?         -> Introduction and overview of IPython\'s features.\n%quickref -> Quick reference.\nhelp      -> Python\'s own help system.\nobject?   -> Details about \'object\', use \'object??\' for extra details.\n' # pylint:disable=line-too-long
 
 # Deprecated, use PromptManager.in_template
 # c.TerminalInteractiveShell.prompt_in1 = 'In [\\#]: '
@@ -301,14 +302,14 @@ c.TerminalInteractiveShell.confirm_exit = False
 # auto editing of files with syntax errors.
 # c.TerminalInteractiveShell.autoedit_syntax = False
 
-# Number of lines of your screen, used to control printing of very long strings.
-# Strings longer than this number of lines will be sent through a pager instead
-# of directly printed.  The default value for this is 0, which means IPython
-# will auto-detect your screen size every time it needs to print certain
-# potentially long strings (this doesn't change the behavior of the 'print'
-# keyword, it's only triggered internally). If for some reason this isn't
-# working well (it needs curses support), specify it yourself. Otherwise don't
-# change the default.
+# Number of lines of your screen, used to control printing of very long
+# strings. Strings longer than this number of lines will be sent through a
+# pager instead of directly printed. The default value for this is 0, which
+# means IPython will auto-detect your screen size every time it needs to print
+# certain potentially long strings (this doesn't change the behavior of the
+# 'print' keyword, it's only triggered internally). If for some reason this
+# isn't working well (it needs curses support), specify it yourself. Otherwise
+# don't change the default.
 # c.TerminalInteractiveShell.screen_length = 0
 
 #
@@ -317,12 +318,12 @@ c.TerminalInteractiveShell.confirm_exit = False
 # Don't call post-execute functions that have failed in the past.
 # c.TerminalInteractiveShell.disable_failing_post_execute = False
 
-# Set the size of the output cache.  The default is 1000, you can change it
-# permanently in your config file.  Setting it to 0 completely disables the
+# Set the size of the output cache. The default is 1000, you can change it
+# permanently in your config file. Setting it to 0 completely disables the
 # caching system, and the minimum value accepted is 20 (if you provide a value
-# less than 20, it is reset to 0 and a warning is issued).  This limit is
-# defined because otherwise you'll spend more time re-flushing a too small cache
-# than working
+# less than 20, it is reset to 0 and a warning is issued). This limit is
+# defined because otherwise you'll spend more time re-flushing a too small
+# cache than working
 # c.TerminalInteractiveShell.cache_size = 1000
 
 #------------------------------------------------------------------------------
@@ -384,7 +385,8 @@ c.TerminalInteractiveShell.confirm_exit = False
 #
 # set enabled=False to disable the SQLite history, in which case there will be
 # no stored history, no SQLite connection, and no background saving thread.
-# This may be necessary in some threaded environments where IPython is embedded.
+# This may be necessary in some threaded environments where IPython is
+# embedded.
 # c.HistoryManager.enabled = True
 
 #------------------------------------------------------------------------------
@@ -501,14 +503,14 @@ c.TerminalInteractiveShell.confirm_exit = False
 
 # Magics for talking to scripts
 #
-# This defines a base `%%script` cell magic for running a cell with a program in
-# a subprocess, and registers a few top-level magics that call %%script with
+# This defines a base `%%script` cell magic for running a cell with a program
+# in a subprocess, and registers a few top-level magics that call %%script with
 # common interpreters.
 
 # Dict mapping short 'ruby' names to full paths, such as '/opt/secret/bin/ruby'
 #
-# Only necessary for items in script_magics where the default path will not find
-# the right interpreter.
+# Only necessary for items in script_magics where the default path will not
+# find the right interpreter.
 # c.ScriptMagics.script_paths = {}
 
 # Extra script cell magics to define

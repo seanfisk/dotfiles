@@ -1,8 +1,9 @@
+# -*- coding: utf-8 -*-
 """Detect and configure rbenv and pyenv."""
 
 import os
 from os.path import join
-from pipes import quote as shquote
+from shlex import quote as shquote
 import subprocess
 
 def configure(ctx):
@@ -33,7 +34,6 @@ def configure(ctx):
     # availability of pyenv so that other files don't get errors.
     ctx.env.PYENV_VIRTUALENV_DEFAULT_PACKAGES = ['ipython==2.3.0']
 
-
 def _make_rbenv_pyenv_file(tsk):
     # The generated code loads pyenv and rbenv into the shell session. We need
     # to load this in the rc file because it loads up shell functions. For
@@ -58,7 +58,6 @@ def _make_rbenv_pyenv_file(tsk):
 
     return ret
 
-
 def build(ctx):
     for shell in ctx.env.AVAILABLE_SHELLS:
         # Build files that load rbenv and pyenv
@@ -78,7 +77,7 @@ def build(ctx):
             ctx.add_shell_rc_node(out_node, shell)
 
             @ctx.rule(target=out_node, vars=['PYENV', 'PYENV_VIRTUALENV'])
-            def make_pyenv_virtualenv_file(tsk):
+            def _make_pyenv_virtualenv_file(tsk):
                 output_node = tsk.outputs[0]
                 # The shell is determined by the output file's extension.
                 # suffix() returns the extension with a preceding dot, so strip
@@ -98,7 +97,7 @@ def build(ctx):
             'dotfiles', 'pyenv', 'pyenv.d', requirements_base])
         @ctx.rule(target=requirements_node,
                   vars=['PYENV_VIRTUALENV_DEFAULT_PACKAGES'])
-        def make_default_virtualenv_requirements_file(tsk):
+        def _make_default_venv_reqs_file(tsk):
             with open(tsk.outputs[0].abspath(), 'w') as out_file:
                 for requirement in ctx.env.PYENV_VIRTUALENV_DEFAULT_PACKAGES:
                     print(requirement, file=out_file)

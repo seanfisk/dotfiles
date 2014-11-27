@@ -1,12 +1,9 @@
+# -*- coding: utf-8 -*-
 """Detect and configure Ack and Ag."""
-
-from pipes import quote as shquote
-
 
 def configure(ctx):
     ctx.find_program('ack', mandatory=False)
     ctx.find_program('ag', mandatory=False)
-
 
 def build(ctx):
     if ctx.env.ACK:

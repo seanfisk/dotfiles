@@ -1,5 +1,7 @@
 # -*- coding: utf-8; -*-
 
+"""Custom Powerline segments."""
+
 from __future__ import unicode_literals, absolute_import, division
 import re
 import errno
@@ -9,7 +11,8 @@ NOT_INSTALLED_RE = re.compile(
     r".*: version `(?P<version>.*)' is not installed$")
 
 def _make_tool_segment(tool):
-    def tool_segment(pl):
+    def tool_segment(pl): # pylint: disable=invalid-name
+        """Powerline segment for {}.""".format(tool)
         # Note: pl is a PowerlineLogger, and "expects to receive message in an
         # str.format() format, not in printf-like format."
 
@@ -21,8 +24,8 @@ def _make_tool_segment(tool):
         try:
             proc = subprocess.Popen(
                 command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        except OSError as e:
-            if e.errno == errno.ENOENT:
+        except OSError as exc:
+            if exc.errno == errno.ENOENT:
                 # This error probably means that the operating system couldn't
                 # find the tool's executable. In this case, don't render the
                 # segment. This is an opinionated decision, but it is useful
@@ -63,5 +66,5 @@ def _make_tool_segment(tool):
 
     return tool_segment
 
-for tool in ['rbenv', 'pyenv']:
-    globals()[tool] = _make_tool_segment(tool)
+for _tool in ['rbenv', 'pyenv']:
+    globals()[_tool] = _make_tool_segment(_tool)

@@ -1,12 +1,12 @@
+# -*- coding: utf-8 -*-
 """Detect and configure shells. Beware; this one's the most complicated :)"""
 
 import os
 from os.path import join
-from pipes import quote as shquote
+from shlex import quote as shquote
 from collections import OrderedDict
 
 from waflib.Configure import conf
-
 
 # I couldn't come up with a good name for this variable, but you'll get the
 # point.
@@ -20,7 +20,6 @@ SHELL_FILE_NAMES = {
 }
 LOCAL_DIR = join('shell', 'local')
 
-
 def configure(ctx):
     ctx.env.CONFIGURABLE_SHELLS = ['bash', 'zsh']
     avail_shells = []
@@ -31,9 +30,9 @@ def configure(ctx):
         avail_shells.append('zsh')
     ctx.env.AVAILABLE_SHELLS = avail_shells
 
-
 @conf
 def find_bash(ctx):
+    """Find the Bash shell."""
     # Make this variable hidden so that it is not defined unless the version is
     # also correct.
     exe_path = ctx.find_program('bash', var='_BASH')
@@ -56,9 +55,9 @@ def find_bash(ctx):
 
     return exe_path
 
-
 @conf
 def find_zsh(ctx):
+    """Find Z shell."""
     # Note: oh my zsh uses the 'ZSH' environment variable, and not for the path
     # to the shell. Don't let 'ZSH' get used in the find_program() call.
     #
@@ -100,23 +99,22 @@ def find_zsh(ctx):
 
     return exe_path
 
-
 @conf
 def add_shell_rc_node(ctx, node, shell=None):
+    """Add the contents of node to the shell's generated rc file."""
     ctx.add_shell_node(node, 'rc', shell)
-
 
 @conf
 def add_shell_profile_node(ctx, node, shell=None):
+    """Add the contents of node to the shell's generated profile file."""
     ctx.add_shell_node(node, 'profile', shell)
-
 
 @conf
 def add_shell_node(ctx, node, filetype, shell=None):
-    for shell in ([shell] if shell else ctx.env.AVAILABLE_SHELLS):
+    """Add the contents of node to a shell's generated file."""
+    for shell in [shell] if shell else ctx.env.AVAILABLE_SHELLS:
         ctx.env['{}_{}_NODES'.format(shell.upper(), filetype.upper())].append(
             node)
-
 
 def _concatenate(tsk):
     output_node = tsk.outputs[0]
@@ -128,7 +126,6 @@ def _concatenate(tsk):
             with open(input_node.abspath()) as input_file:
                 for line in input_file:
                     output_file.write(line)
-
 
 @conf
 def setup_shell_defaults(ctx):
@@ -244,32 +241,32 @@ def setup_shell_defaults(ctx):
             source=in_node,
             ZSH_THEME=shquote(zsh_theme))
 
-
 @conf
 def build_shell_env(ctx):
-    # Build shell environment. Do it after all the tools are configured so that
-    # each tool has an opportunity to modify the environment.
+    """Build the shell environment. Do it after all the tools are configured so
+    that each tool has an opportunity to modify the environment.
+    """
     out_node = ctx.path.find_or_declare('env.sh')
     ctx.add_shell_profile_node(out_node)
 
     @ctx.rule(target=out_node, vars=['SHELL_ENV'])
-    def make_shell_env(tsk):
+    def _make_shell_env(tsk):
         with open(tsk.outputs[0].abspath(), 'w') as out_file:
             print('# Shell environment\n', file=out_file)
             for name, value in ctx.env.SHELL_ENV.items():
                 print('export {}={}'.format(name, value), file=out_file)
 
-
 @conf
 def build_shell_aliases(ctx):
-    # Build aliases. Do it after all the tools are configured so that each tool
-    # has an opportunity to add aliases.
+    """Build shell aliases. Do it after all the tools are configured so that
+    each tool has an opportunity to add aliases.
+    """
     in_node = ctx.path.find_resource(['shell', 'aliases.sh'])
     out_node = ctx.path.find_or_declare('aliases.sh')
     ctx.add_shell_rc_node(out_node)
 
     @ctx.rule(target=out_node, source=in_node, vars=['SHELL_ALIASES'])
-    def make_aliases(tsk):
+    def _make_aliases(tsk):
         with open(tsk.outputs[0].abspath(), 'w') as out_file:
             with open(tsk.inputs[0].abspath()) as in_file:
                 for line in in_file:
@@ -280,12 +277,12 @@ def build_shell_aliases(ctx):
                     'alias {}={}'.format(alias, shquote(command)),
                     file=out_file)
 
-
 @conf
 def build_shell_keybindings(ctx):
-    # Build keybindings. Do it after all the tools are configured so that
-    # each tool has an opportunity to add keybindings.
-    def make_bash_keys(tsk):
+    """Build keybindings. Do it after all the tools are configured so that each
+    tool has an opportunity to add keybindings.
+    """
+    def _make_bash_keys(tsk):
         with open(tsk.outputs[0].abspath(), 'w') as out_file:
             for key, binding in tsk.env.SHELL_KEYBINDINGS.items():
                 # It is supposed to turn out like this:
@@ -293,7 +290,7 @@ def build_shell_keybindings(ctx):
                 print('bind ' + shquote('"{}": "{}"'.format(key, binding)),
                       file=out_file)
 
-    def make_zsh_keys(tsk):
+    def _make_zsh_keys(tsk):
         with open(tsk.outputs[0].abspath(), 'w') as out_file:
             for key, binding in tsk.env.SHELL_KEYBINDINGS.items():
                 print(
@@ -303,18 +300,16 @@ def build_shell_keybindings(ctx):
     for shell in ctx.env.AVAILABLE_SHELLS:
         out_node = ctx.path.find_or_declare('keys.' + shell)
         ctx.add_shell_rc_node(out_node, shell)
-        rule = locals()['make_{}_keys'.format(shell)]
+        rule = locals()['_make_{}_keys'.format(shell)]
         ctx(rule=rule, target=out_node, vars=['SHELL_KEYBINDINGS'])
-
 
 @conf
 def build_shell_locals(ctx):
-    # Local profile and rc configurations.
+    """Build local profile and rc configurations."""
     for filetype in ['profile', 'rc']:
         node = ctx.path.find_resource(join(LOCAL_DIR, filetype + '.sh'))
         if node:
             ctx.add_shell_node(node, filetype)
-
 
 def build(ctx):
     ctx.build_shell_env()

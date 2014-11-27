@@ -1,14 +1,10 @@
+# -*- coding: utf-8 -*-
 """Detect and configure devpi."""
-
-
-from os.path import join, splitext
 
 DEVPI_PYPI_URL = 'http://localhost:3141/root/pypi/+simple/'
 
-
 def configure(ctx):
     ctx.find_program('devpi-server', var='DEVPI_SERVER', mandatory=False)
-
 
 def build(ctx):
     if not ctx.env.DEVPI_SERVER:

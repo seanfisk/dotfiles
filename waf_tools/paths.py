@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Detect and manipulate paths.
 
 This module specifically addresses the PATH, MANPATH, and INFOPATH variables.
@@ -6,11 +7,9 @@ This module specifically addresses the PATH, MANPATH, and INFOPATH variables.
 import os
 import platform
 from os.path import join
-from pipes import quote as shquote
+from shlex import quote as shquote
 
-import waflib
 from waflib.Configure import conf
-
 
 def configure(ctx):
     """Create our setup's "default" paths. These are paths that are used
@@ -69,9 +68,11 @@ def configure(ctx):
         #     bin-x86_64-10_7/
         #     bin-x86_64-10_9/
         #
-        release, _, machine = platform.mac_ver()
+
+        # Pylint complains about this line for no good reason.
+        release, _, machine = platform.mac_ver() # pylint: disable=unpacking-non-sequence
         try:
-            major, minor, patch = release.split('.')
+            major, minor, _ = release.split('.')
         except ValueError:
             ctx.fatal("Couldn't determine Mac OS X version.")
         bin_dir_name = 'bin-{machine}-{major}_{minor}'.format(
@@ -126,7 +127,6 @@ def configure(ctx):
     ctx.write_paths_to_proc_env()
     ctx.write_paths_to_config_env()
 
-
 @conf
 def add_to_path_var(ctx, var, path):
     """Add ``path`` to the context variable specified by ``var`` if the path
@@ -138,7 +138,6 @@ def add_to_path_var(ctx, var, path):
         # too performant. For a performant way (that we used before
         # simplifying), check out orderedset on PyPi.
         ctx.env.append_unique(var, path)
-
 
 @conf
 def execute_in_clean_bash(ctx, command):
@@ -160,7 +159,6 @@ def execute_in_clean_bash(ctx, command):
         env={},
     ).rstrip('\n')
 
-
 @conf
 def add_path_hierarchy(ctx, path):
     """Detect paths under a hierarchy and add them to the path variables."""
@@ -170,7 +168,6 @@ def add_path_hierarchy(ctx, path):
     ctx.add_to_path_var('MANPATH', join(path, 'share', 'man'))
     ctx.add_to_path_var('INFOPATH', join(path, 'share', 'info'))
 
-
 @conf
 def write_paths_to_proc_env(ctx):
     """Write the path variables in the context to the process' actual
@@ -178,7 +175,6 @@ def write_paths_to_proc_env(ctx):
     """
     for var in ctx.env.PATH_VARS:
         os.environ[var] = os.pathsep.join(ctx.env[var])
-
 
 @conf
 def write_paths_to_config_env(ctx):
@@ -191,8 +187,9 @@ def write_paths_to_config_env(ctx):
 
 @conf
 def check_path_for_issues(ctx):
-    # Check to see if os.pathsep is in any of the paths; that will make them
-    # unusable.
+    """Check to see if :data:`os.pathsep` is in any of the paths; that will
+    make them unusable.
+    """
     for path in ctx.env.PATH:
         if os.pathsep in path:
             ctx.fatal('Path cannot contain os.pathsep: ' + path)

@@ -1,14 +1,13 @@
+# -*- coding: utf-8 -*-
 """Detect and configure process managment programs."""
 
-from pipes import quote as shquote
+from shlex import quote as shquote
 
 PROCESS_PROGRAMS = ['ps', 'pgrep', 'pkill', 'htop', 'lsof', 'pstree']
-
 
 def configure(ctx):
     for prog in PROCESS_PROGRAMS:
         ctx.find_program(prog, mandatory=False)
-
 
 def build(ctx):
     # Process programs

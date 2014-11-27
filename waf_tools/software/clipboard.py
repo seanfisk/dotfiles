@@ -1,7 +1,5 @@
+# -*- coding: utf-8 -*-
 """Detect and configure clipboard programs."""
-
-from pipes import quote as shquote
-
 
 def configure(ctx):
     if ctx.env.MACOSX:
@@ -19,7 +17,6 @@ def configure(ctx):
     ctx.find_gnu_util('sha256sum', mandatory=False)
     ctx.find_program('cut', mandatory=False)
 
-
 def build(ctx):
     if not (ctx.env.COPY_COMMAND and ctx.env.PASTE_COMMAND):
         return
@@ -34,7 +31,7 @@ def build(ctx):
     ctx.env.SHELL_ALIASES['dlc'] = downloader + ' "$(paste)"'
     # Download contents to stdout
     ctx.env.SHELL_ALIASES['dlo'] = (ctx.shquote_cmd(
-            ctx.env.WGET + ['--no-verbose', '--output-document=-']))
+        ctx.env.WGET + ['--no-verbose', '--output-document=-']))
     # Download URL in clipboard and send contents to stdout
     ctx.env.SHELL_ALIASES['dlco'] = 'dlo "$(paste)"'
     # Download URL in clipboard and put contents in clipboard
@@ -43,4 +40,4 @@ def build(ctx):
     if ctx.env.SHA256SUM and ctx.env.CUT:
         ctx.env.SHELL_ALIASES['dlsha'] = (
             'dlo "$(paste)" | ' + ctx.shquote_cmd(ctx.env.SHA256SUM) +
-            ' - | ' +ctx.shquote_cmd(ctx.env.CUT) + " -d' ' -f1 | copy")
+            ' - | ' + ctx.shquote_cmd(ctx.env.CUT) + " -d' ' -f1 | copy")
