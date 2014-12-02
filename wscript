@@ -33,7 +33,7 @@ WAF_BASE_TOOLS_DIR = 'waf_tools'
 # after 'paths' are dependent on it. 'shells' is dependent upon 'brew'.
 WAF_BASE_TOOLS = [
     'log',
-    'git',
+    'git_files',
     'jsminify',
     'platform_specific',
     'paths',

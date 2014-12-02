@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 
+# This can't be named 'git.py' as it will conflict with our software tool for
+# detecting Git.
+
 """Git helpers"""
 
 import waflib
