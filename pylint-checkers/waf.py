@@ -8,8 +8,6 @@ from pylint.interfaces import IAstroidChecker
 from pylint.checkers import BaseChecker
 from pylint.checkers.utils import check_messages
 
-import astroid
-
 REQUIRED_FIRST_ARG = 'self'
 """Required name of the first argument of a Waf configure method."""
 
@@ -38,11 +36,12 @@ class WafChecker(BaseChecker):
             return
 
         for decorator in node.decorators.nodes:
-            # TODO: Also handle decoration with '@waflib.Configure.conf', not
-            # just '@conf'.
-            if (isinstance(decorator, astroid.Name) and
-                    decorator.name == 'conf'):
-                self.add_message('waf-conf-arg', node=node)
+            for inferred in decorator.infer():
+                # qname is "qualified name", and yields the full name of the
+                # object. By using the qname, we avoid false positives like
+                # other decorators called 'conf'.
+                if inferred.qname() == 'waflib.Configure.conf':
+                    self.add_message('waf-conf-arg', node=node)
 
 def register(linter):
     """Method to auto-register our checkers."""
