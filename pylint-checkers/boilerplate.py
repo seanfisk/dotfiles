@@ -36,9 +36,11 @@ class BoilerplateChecker(BaseChecker):
         # it in text mode [this is basically what open(...) does]; however,
         # this apparently closes the file afterward which is a problem.
         #
-        # XXX: 'module.file_encoding' can [I think] be 'None'. We don't really
-        # handle this case.
-        encoding = module.file_encoding
+        # Following the lead of EncodingChecker in 'checkers/misc.py' in the
+        # pylint source tree, we default to ASCII. This is also specified under
+        # 'Defining the Encoding' in PEP 263. Funny enough, this is the exact
+        # problem this checker is designed to solve.
+        encoding = module.file_encoding or 'ascii'
         readline = lambda: next(stream).decode(encoding)
         try:
             first_line = readline()
