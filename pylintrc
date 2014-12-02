@@ -231,7 +231,7 @@ logging-modules=logging
 # List of note tags to take in consideration, separated by a comma.
 #
 # FIXME and TODO are fine, but issues marked XXX should be fixed immediately.
-notes=FIXME,TODO
+notes=XXX
 
 
 [SIMILARITIES]

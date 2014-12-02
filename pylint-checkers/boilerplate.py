@@ -29,7 +29,7 @@ class BoilerplateChecker(BaseChecker):
         """Ensure the module has the correct boilerplate."""
         add_msg = lambda l: self.add_message('source-encoding', line=l)
         stream = module.file_stream
-        # XXX: When astroid gets updated, change to stop seeking.
+        # TODO: When astroid gets updated, change to stop seeking.
         stream.seek(0) # Make sure we are at the beginning of the file
         # 'module.file_stream' is a 'io.BufferedReader', so any reads will be
         # in binary mode. We would like to wrap it with 'io.TextIOWrapper' read

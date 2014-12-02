@@ -38,7 +38,7 @@ class WafChecker(BaseChecker):
             return
 
         for decorator in node.decorators.nodes:
-            # XXX: Also handle decoration with '@waflib.Configure.conf', not
+            # TODO: Also handle decoration with '@waflib.Configure.conf', not
             # just '@conf'.
             if (isinstance(decorator, astroid.Name) and
                     decorator.name == 'conf'):
