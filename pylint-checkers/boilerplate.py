@@ -6,6 +6,7 @@
 
 from pylint.interfaces import IRawChecker
 from pylint.checkers import BaseChecker
+from pylint.checkers.utils import check_messages
 
 REQUIRED_CODING = 'coding: utf-8'
 """Required source encoding"""
@@ -22,19 +23,20 @@ class BoilerplateChecker(BaseChecker):
             'Used when source code encoding is missing or incorrect',
         ),
     }
-    options = ()
 
+    @check_messages('source-encoding')
     def process_module(self, module):
         """Ensure the module has the correct boilerplate."""
         add_msg = lambda l: self.add_message('source-encoding', line=l)
         stream = module.file_stream
+        # XXX: When astroid gets updated, change to stop seeking.
         stream.seek(0) # Make sure we are at the beginning of the file
         # 'module.file_stream' is a 'io.BufferedReader', so any reads will be
         # in binary mode. We would like to wrap it with 'io.TextIOWrapper' read
         # it in text mode [this is basically what open(...) does]; however,
         # this apparently closes the file afterward which is a problem.
         #
-        # Note: 'module.file_encoding' can [I think] be 'None'. We don't really
+        # XXX: 'module.file_encoding' can [I think] be 'None'. We don't really
         # handle this case.
         encoding = module.file_encoding
         readline = lambda: next(stream).decode(encoding)

@@ -128,26 +128,26 @@ def configure(ctx):
     ctx.write_paths_to_config_env()
 
 @conf
-def add_to_path_var(ctx, var, path):
+def add_to_path_var(self, var, path):
     """Add ``path`` to the context variable specified by ``var`` if the path
     exists."""
     if os.path.isdir(path):
-        ctx.msg('Adding to ' + var, path)
+        self.msg('Adding to ' + var, path)
         # append_unique is O(n) which sucks, but there aren't that many paths
         # and it's only run at configuration, so it doesn't really need to be
         # too performant. For a performant way (that we used before
         # simplifying), check out orderedset on PyPi.
-        ctx.env.append_unique(var, path)
+        self.env.append_unique(var, path)
 
 @conf
-def execute_in_clean_bash(ctx, command):
+def execute_in_clean_bash(self, command):
     """Execute a command in the system Bash in a a "clean" environment."""
     # Only source /etc/profile in a clean environment. That should get us the
     # base paths (hopefully).
     profile_path = '/etc/profile'
     if not os.path.isfile(profile_path):
-        ctx.fatal('Could not find profile file: ' + profile_path)
-    return ctx.cmd_and_log(
+        self.fatal('Could not find profile file: ' + profile_path)
+    return self.cmd_and_log(
         [
             '/bin/bash', '--norc', '--noprofile', '-c',
             'source {profile_path}; {command}'.format(
@@ -160,36 +160,36 @@ def execute_in_clean_bash(ctx, command):
     ).rstrip('\n')
 
 @conf
-def add_path_hierarchy(ctx, path):
+def add_path_hierarchy(self, path):
     """Detect paths under a hierarchy and add them to the path variables."""
-    ctx.add_to_path_var('PATH', join(path, 'bin'))
-    ctx.add_to_path_var('PATH', join(path, 'sbin'))
-    ctx.add_to_path_var('MANPATH', join(path, 'man'))
-    ctx.add_to_path_var('MANPATH', join(path, 'share', 'man'))
-    ctx.add_to_path_var('INFOPATH', join(path, 'share', 'info'))
+    self.add_to_path_var('PATH', join(path, 'bin'))
+    self.add_to_path_var('PATH', join(path, 'sbin'))
+    self.add_to_path_var('MANPATH', join(path, 'man'))
+    self.add_to_path_var('MANPATH', join(path, 'share', 'man'))
+    self.add_to_path_var('INFOPATH', join(path, 'share', 'info'))
 
 @conf
-def write_paths_to_proc_env(ctx):
+def write_paths_to_proc_env(self):
     """Write the path variables in the context to the process' actual
     environment
     """
-    for var in ctx.env.PATH_VARS:
-        os.environ[var] = os.pathsep.join(ctx.env[var])
+    for var in self.env.PATH_VARS:
+        os.environ[var] = os.pathsep.join(self.env[var])
 
 @conf
-def write_paths_to_config_env(ctx):
+def write_paths_to_config_env(self):
     """Write the paths variables to the Waf configuration context environment
     (in Waf 1.8, the configuration context gained its own clone of the
     environment).
     """
-    for var in ctx.env.PATH_VARS:
-        ctx.environ[var] = os.pathsep.join(ctx.env[var])
+    for var in self.env.PATH_VARS:
+        self.environ[var] = os.pathsep.join(self.env[var])
 
 @conf
-def check_path_for_issues(ctx):
+def check_path_for_issues(self):
     """Check to see if :data:`os.pathsep` is in any of the paths; that will
     make them unusable.
     """
-    for path in ctx.env.PATH:
+    for path in self.env.PATH:
         if os.pathsep in path:
-            ctx.fatal('Path cannot contain os.pathsep: ' + path)
+            self.fatal('Path cannot contain os.pathsep: ' + path)

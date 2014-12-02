@@ -9,12 +9,12 @@ import waflib
 from waflib.Configure import conf
 
 @conf
-def get_powerline_path(ctx, relpath):
+def get_powerline_path(self, relpath):
     """Get the absolute path to a file in the Powerline package given a
     relative path.
     """
-    return ctx.cmd_and_log(
-        ctx.env.SYSTEM_PYTHON + [
+    return self.cmd_and_log(
+        self.env.SYSTEM_PYTHON + [
             '-c',
             'from pkg_resources import resource_filename; '
             "print(resource_filename('powerline', {}))"

@@ -31,89 +31,89 @@ def configure(ctx):
     ctx.env.AVAILABLE_SHELLS = avail_shells
 
 @conf
-def find_bash(ctx):
+def find_bash(self):
     """Find the Bash shell."""
     # Make this variable hidden so that it is not defined unless the version is
     # also correct.
-    exe_path = ctx.find_program('bash', var='_BASH')
+    exe_path = self.find_program('bash', var='_BASH')
 
     required_major_version = '4'
-    major_version = ctx.cmd_and_log(
+    major_version = self.cmd_and_log(
         exe_path + ['-c', 'echo -n ${BASH_VERSINFO[0]}'])
-    full_version = ctx.cmd_and_log(
+    full_version = self.cmd_and_log(
         exe_path + ['-c', 'echo -n $BASH_VERSION'])
     version_ok = major_version == required_major_version
 
-    ctx.msg('Checking for Bash version', full_version,
-            color='GREEN' if version_ok else 'YELLOW')
+    self.msg('Checking for Bash version', full_version,
+             color='GREEN' if version_ok else 'YELLOW')
 
     if version_ok:
-        ctx.env.BASH = exe_path
+        self.env.BASH = exe_path
     else:
-        ctx.fatal('This configuration requires Bash {}.'.format(
+        self.fatal('This configuration requires Bash {}.'.format(
             required_major_version))
 
     return exe_path
 
 @conf
-def find_zsh(ctx):
+def find_zsh(self):
     """Find Z shell."""
     # Note: oh my zsh uses the 'ZSH' environment variable, and not for the path
     # to the shell. Don't let 'ZSH' get used in the find_program() call.
     #
     # Make this variable hidden so that it is not defined unless the version is
     # also correct.
-    exe_path = ctx.find_program('zsh', var='_ZSH')
+    exe_path = self.find_program('zsh', var='_ZSH')
 
     required_major_version = '5'
-    full_version = ctx.cmd_and_log(
+    full_version = self.cmd_and_log(
         exe_path + ['-c', 'echo -n $ZSH_VERSION'])
     version_split = full_version.split('.')
     if len(version_split) != 3:
-        ctx.fatal('Unrecognized Zsh version.')
+        self.fatal('Unrecognized Zsh version.')
     major_version = version_split[0]
     version_ok = major_version == required_major_version
 
-    ctx.msg('Checking for Zsh version', full_version,
-            color='GREEN' if version_ok else 'YELLOW')
+    self.msg('Checking for Zsh version', full_version,
+             color='GREEN' if version_ok else 'YELLOW')
     if version_ok:
-        ctx.env.ZSH = exe_path
+        self.env.ZSH = exe_path
     else:
-        ctx.fatal('This configuration requires Zsh {}.'.format(
+        self.fatal('This configuration requires Zsh {}.'.format(
             required_major_version))
 
     # Load zpython from Homebrew/Linuxbrew if available. We have programmed
     # this detection specifically for Brew because Brew installs zpython in a
     # somewhat nonstandard way (it doesn't use 'make install').
-    if ctx.env.BREW:
-        zpython_brew_prefix = ctx.cmd_and_log(
-            ctx.env.BREW + ['--prefix', 'zpython']).rstrip()
+    if self.env.BREW:
+        zpython_brew_prefix = self.cmd_and_log(
+            self.env.BREW + ['--prefix', 'zpython']).rstrip()
         zpython_module_path = join(zpython_brew_prefix, 'lib', 'zpython')
         zpython_lib = join(zpython_module_path, 'zsh', 'zpython.so')
-        ctx.start_msg('Checking for zpython library')
+        self.start_msg('Checking for zpython library')
         if os.path.isfile(zpython_lib):
-            ctx.env.ZPYTHON_MODULE_PATH = zpython_module_path
-            ctx.end_msg(zpython_lib)
+            self.env.ZPYTHON_MODULE_PATH = zpython_module_path
+            self.end_msg(zpython_lib)
         else:
-            ctx.end_msg(False)
+            self.end_msg(False)
 
     return exe_path
 
 @conf
-def add_shell_rc_node(ctx, node, shell=None):
+def add_shell_rc_node(self, node, shell=None):
     """Add the contents of node to the shell's generated rc file."""
-    ctx.add_shell_node(node, 'rc', shell)
+    self.add_shell_node(node, 'rc', shell)
 
 @conf
-def add_shell_profile_node(ctx, node, shell=None):
+def add_shell_profile_node(self, node, shell=None):
     """Add the contents of node to the shell's generated profile file."""
-    ctx.add_shell_node(node, 'profile', shell)
+    self.add_shell_node(node, 'profile', shell)
 
 @conf
-def add_shell_node(ctx, node, filetype, shell=None):
+def add_shell_node(self, node, filetype, shell=None):
     """Add the contents of node to a shell's generated file."""
-    for shell in [shell] if shell else ctx.env.AVAILABLE_SHELLS:
-        ctx.env['{}_{}_NODES'.format(shell.upper(), filetype.upper())].append(
+    for shell in [shell] if shell else self.env.AVAILABLE_SHELLS:
+        self.env['{}_{}_NODES'.format(shell.upper(), filetype.upper())].append(
             node)
 
 def _concatenate(tsk):
@@ -128,7 +128,7 @@ def _concatenate(tsk):
                     output_file.write(line)
 
 @conf
-def setup_shell_defaults(ctx):
+def setup_shell_defaults(self):
     """Set up shell defaults. Call this function before opening up the shell
     setups to other tools.
     """
@@ -138,23 +138,23 @@ def setup_shell_defaults(ctx):
     # i.e., they will not be shell-quoted. If that is desired, it needs to be
     # done before insertion to the data structure. The order here is important,
     # as variables may use earlier variables in their values.
-    ctx.env.SHELL_ENV = OrderedDict()
+    self.env.SHELL_ENV = OrderedDict()
     # A mapping of alias name to command. The command is a [Python] string
     # which will be shell-quoted when written out. Don't forget to
     # pre-shell-quote any paths from the configure step. This is ordered just
     # to keep related aliases together in the generated file -- the order
     # should not really matter, though.
-    ctx.env.SHELL_ALIASES = OrderedDict()
+    self.env.SHELL_ALIASES = OrderedDict()
     # Use the list of configurable shells so that other tasks can add to
     # specific shells without getting errors.
-    for shell in ctx.env.CONFIGURABLE_SHELLS:
+    for shell in self.env.CONFIGURABLE_SHELLS:
         shell_up = shell.upper()
         # A mapping of shell to shell file nodes to include in the compiled rc
         # files.
-        ctx.env[shell_up + '_RC_NODES'] = []
+        self.env[shell_up + '_RC_NODES'] = []
         # A mapping of shell to shell file nodes to include in the compiled
         # profile files.
-        ctx.env[shell_up + '_PROFILE_NODES'] = []
+        self.env[shell_up + '_PROFILE_NODES'] = []
 
     # Key bindings
     #
@@ -166,7 +166,7 @@ def setup_shell_defaults(ctx):
     # options, we opted for the Python data structure.
     #
     # We use an OrderedDict to guarantee a stable order for the build.
-    ctx.env.SHELL_KEYBINDINGS = OrderedDict([
+    self.env.SHELL_KEYBINDINGS = OrderedDict([
         # Paging
         # Note: `|&' is Bash 4 and Zsh only.
         (r'\C-j', r' |& less\C-m'),
@@ -188,38 +188,38 @@ def setup_shell_defaults(ctx):
     ])
 
     # Include base profile nodes.
-    ctx.add_shell_profile_node(ctx.path.find_resource([
+    self.add_shell_profile_node(self.path.find_resource([
         'shell', 'profile-base.sh']))
 
     # Prepare path variables.
-    for var in ctx.env.PATH_VARS:
+    for var in self.env.PATH_VARS:
         # The backslashes make it a little more readable in the file
         # (at the cost of being readable here).
-        ctx.env.SHELL_ENV[var] = '\\\n{}\n'.format((os.pathsep + '\\\n').join(
-            map(shquote, ctx.env[var])))
+        self.env.SHELL_ENV[var] = '\\\n{}\n'.format((os.pathsep + '\\\n').join(
+            map(shquote, self.env[var])))
 
     # This file comes first in the rc list. We don't want Bash or Zsh scripts
     # to load our entire configuration just to run. That would make them very
     # slow.
-    exit_if_nonint_node = ctx.path.find_resource(
+    exit_if_nonint_node = self.path.find_resource(
         ['shell', 'exit-if-noninteractive.sh'])
-    ctx.add_shell_rc_node(exit_if_nonint_node)
+    self.add_shell_rc_node(exit_if_nonint_node)
 
     # Include zpython for zsh, if available.
-    if ctx.env.ZPYTHON_MODULE_PATH:
-        in_node = ctx.path.find_resource(['shell', 'zpython.zsh.in'])
-        out_node = ctx.path.find_or_declare('zpython.zsh')
-        ctx.env.ZSH_RC_NODES.append(out_node)
-        ctx(features='subst',
-            target=out_node,
-            source=in_node,
-            ZPYTHON_MODULE_PATH=shquote(ctx.env.ZPYTHON_MODULE_PATH))
+    if self.env.ZPYTHON_MODULE_PATH:
+        in_node = self.path.find_resource(['shell', 'zpython.zsh.in'])
+        out_node = self.path.find_or_declare('zpython.zsh')
+        self.env.ZSH_RC_NODES.append(out_node)
+        self(features='subst',
+             target=out_node,
+             source=in_node,
+             ZPYTHON_MODULE_PATH=shquote(self.env.ZPYTHON_MODULE_PATH))
 
-    if not ctx.env.POWERLINE:
+    if not self.env.POWERLINE:
         # No powerline; enable basic prompt.
 
         # Include the prompt file for Bash.
-        ctx.env.BASH_RC_NODES.append(ctx.path.find_resource([
+        self.env.BASH_RC_NODES.append(self.path.find_resource([
             'shell', 'prompt.bash']))
 
         # Turn on our Oh My Zsh theme for Zsh.
@@ -229,43 +229,43 @@ def setup_shell_defaults(ctx):
         zsh_theme = ''
 
     # Include default rc nodes.
-    ctx.env.BASH_RC_NODES.append(
-        ctx.path.find_resource(['shell', 'rc-base.bash']))
+    self.env.BASH_RC_NODES.append(
+        self.path.find_resource(['shell', 'rc-base.bash']))
 
-    if ctx.env.ZSH:
-        in_node = ctx.path.find_resource(['shell', 'rc-base.zsh.in'])
-        out_node = ctx.path.find_or_declare('rc-base.zsh')
-        ctx.env.ZSH_RC_NODES.append(out_node)
-        ctx(features='subst',
-            target=out_node,
-            source=in_node,
-            ZSH_THEME=shquote(zsh_theme))
+    if self.env.ZSH:
+        in_node = self.path.find_resource(['shell', 'rc-base.zsh.in'])
+        out_node = self.path.find_or_declare('rc-base.zsh')
+        self.env.ZSH_RC_NODES.append(out_node)
+        self(features='subst',
+             target=out_node,
+             source=in_node,
+             ZSH_THEME=shquote(zsh_theme))
 
 @conf
-def build_shell_env(ctx):
+def build_shell_env(self):
     """Build the shell environment. Do it after all the tools are configured so
     that each tool has an opportunity to modify the environment.
     """
-    out_node = ctx.path.find_or_declare('env.sh')
-    ctx.add_shell_profile_node(out_node)
+    out_node = self.path.find_or_declare('env.sh')
+    self.add_shell_profile_node(out_node)
 
-    @ctx.rule(target=out_node, vars=['SHELL_ENV'])
+    @self.rule(target=out_node, vars=['SHELL_ENV'])
     def _make_shell_env(tsk):
         with open(tsk.outputs[0].abspath(), 'w') as out_file:
             print('# Shell environment\n', file=out_file)
-            for name, value in ctx.env.SHELL_ENV.items():
+            for name, value in self.env.SHELL_ENV.items():
                 print('export {}={}'.format(name, value), file=out_file)
 
 @conf
-def build_shell_aliases(ctx):
+def build_shell_aliases(self):
     """Build shell aliases. Do it after all the tools are configured so that
     each tool has an opportunity to add aliases.
     """
-    in_node = ctx.path.find_resource(['shell', 'aliases.sh'])
-    out_node = ctx.path.find_or_declare('aliases.sh')
-    ctx.add_shell_rc_node(out_node)
+    in_node = self.path.find_resource(['shell', 'aliases.sh'])
+    out_node = self.path.find_or_declare('aliases.sh')
+    self.add_shell_rc_node(out_node)
 
-    @ctx.rule(target=out_node, source=in_node, vars=['SHELL_ALIASES'])
+    @self.rule(target=out_node, source=in_node, vars=['SHELL_ALIASES'])
     def _make_aliases(tsk):
         with open(tsk.outputs[0].abspath(), 'w') as out_file:
             with open(tsk.inputs[0].abspath()) as in_file:
@@ -278,7 +278,7 @@ def build_shell_aliases(ctx):
                     file=out_file)
 
 @conf
-def build_shell_keybindings(ctx):
+def build_shell_keybindings(self):
     """Build keybindings. Do it after all the tools are configured so that each
     tool has an opportunity to add keybindings.
     """
@@ -297,19 +297,19 @@ def build_shell_keybindings(ctx):
                     'bindkey -s {} {}'.format(shquote(key), shquote(binding)),
                     file=out_file)
 
-    for shell in ctx.env.AVAILABLE_SHELLS:
-        out_node = ctx.path.find_or_declare('keys.' + shell)
-        ctx.add_shell_rc_node(out_node, shell)
+    for shell in self.env.AVAILABLE_SHELLS:
+        out_node = self.path.find_or_declare('keys.' + shell)
+        self.add_shell_rc_node(out_node, shell)
         rule = locals()['_make_{}_keys'.format(shell)]
-        ctx(rule=rule, target=out_node, vars=['SHELL_KEYBINDINGS'])
+        self(rule=rule, target=out_node, vars=['SHELL_KEYBINDINGS'])
 
 @conf
-def build_shell_locals(ctx):
+def build_shell_locals(self):
     """Build local profile and rc configurations."""
     for filetype in ['profile', 'rc']:
-        node = ctx.path.find_resource(join(LOCAL_DIR, filetype + '.sh'))
+        node = self.path.find_resource(join(LOCAL_DIR, filetype + '.sh'))
         if node:
-            ctx.add_shell_node(node, filetype)
+            self.add_shell_node(node, filetype)
 
 def build(ctx):
     ctx.build_shell_env()

@@ -51,29 +51,29 @@ WAF_SOFTWARE_TOOLS = sorted(_python_modules_in_dir(WAF_SOFTWARE_TOOLS_DIR))
 
 # Context helpers
 @conf
-def load_tools(ctx):
+def load_tools(self):
     """Load project-specific base tools and software tools."""
-    ctx.load(WAF_BASE_TOOLS, tooldir=WAF_BASE_TOOLS_DIR)
-    ctx.load(WAF_SOFTWARE_TOOLS, tooldir=WAF_SOFTWARE_TOOLS_DIR)
+    self.load(WAF_BASE_TOOLS, tooldir=WAF_BASE_TOOLS_DIR)
+    self.load(WAF_SOFTWARE_TOOLS, tooldir=WAF_SOFTWARE_TOOLS_DIR)
 
 @conf
-def install_dotfile(ctx, node):
+def install_dotfile(self, node):
     """Install a dotfile node."""
     # Strip the dotfiles/ directory (for both source and build nodes).
     relative_path_list = waflib.Node.split_path(node.relpath())[1:]
     relative_path_list[0] = '.' + relative_path_list[0]
-    ctx.install_as(join(ctx.env.PREFIX, *relative_path_list), node)
+    self.install_as(join(self.env.PREFIX, *relative_path_list), node)
 
 @conf
-def install_script(ctx, script_basename):
+def install_script(self, script_basename):
     """Install a script given the basename."""
-    ctx.install_files(
-        join(ctx.env.PREFIX, 'bin'),
+    self.install_files(
+        join(self.env.PREFIX, 'bin'),
         [join('scripts', script_basename)],
         chmod=waflib.Utils.O755)
 
 @conf
-def shquote_cmd(_, cmd):
+def shquote_cmd(self, cmd): # pylint: disable=unused-argument
     """Shell-quote a command list.
 
     :param cmd: command list
@@ -84,7 +84,7 @@ def shquote_cmd(_, cmd):
     return ' '.join(map(shquote, cmd))
 
 # @conf
-# def ensure_loaded(ctx, tools):
+# def ensure_loaded(self, tools):
 #     """Load the tools if they are not yet loaded. This allows our own tools
 #     to avoid loading tools on which they depend multiple times.
 #     """
@@ -92,7 +92,7 @@ def shquote_cmd(_, cmd):
 #         try:
 #             waflib.Context.Context.tools[tool]
 #         except KeyError:
-#             ctx.load(
+#             self.load(
 #                 tools, tooldir=WAF_BASE_TOOLS_DIR + WAF_SOFTWARE_TOOLS_DIR)
 
 def options(ctx):
