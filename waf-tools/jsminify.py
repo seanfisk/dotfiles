@@ -9,14 +9,10 @@ from jsmin import jsmin
 import waflib
 
 def _minify_javascript(tsk):
-    # Assume UTF-8. Not much else we can do besides assume. But since we
-    # control this tool and the files on which it operates, it's not a big
-    # deal.
-    encoding = 'utf-8'
-    tsk.outputs[0].write(
-        jsmin(
-            tsk.inputs[0].read(encoding=encoding)),
-        encoding=encoding)
+    # Powerline doesn't like Unicode, so this needs to be all ASCII.
+    encoding = 'ascii'
+    tsk.outputs[0].write(jsmin(tsk.inputs[0].read(encoding=encoding)),
+                         encoding=encoding)
 
 waflib.TaskGen.declare_chain(
     name='jsmin',
