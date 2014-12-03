@@ -7,7 +7,7 @@ import re
 import errno
 import subprocess
 
-from powerline.lib.encoding import get_preferred_input_encoding
+from powerline.lib.encoding import get_preferred_input_encoding # pylint: disable=import-error,no-name-in-module
 
 NOT_INSTALLED_RE = re.compile(
     r".*: version `(?P<version>.*)' is not installed$")
