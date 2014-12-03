@@ -11,6 +11,16 @@ from shlex import quote as shquote
 
 from waflib.Configure import conf
 
+@conf
+def check_paths_for_issues(self):
+    """Check to see if :data:`os.pathsep` is in any of the paths; that will
+    make them unusable.
+    """
+    for var in self.env.PATH_VARS:
+        for path in self.env[var]:
+            if os.pathsep in path:
+                self.fatal('Path cannot contain os.pathsep: ' + path)
+
 def configure(ctx):
     """Create our setup's "default" paths. These are paths that are used
     regardless of the existence of any other tools. However, these paths can
@@ -34,16 +44,16 @@ def configure(ctx):
         ctx.env[var] = []
 
     # Add script directory.
-    ctx.add_to_path_var('PATH', join(ctx.env.PREFIX, 'bin'))
+    _add_to_path_var(ctx, 'PATH', join(ctx.env.PREFIX, 'bin'))
 
     # If rbenv and pyenv are installed to the home directory,
     # add_path_hierarchy will find their directories. If they are installed
     # using Homebrew, they will be found in /usr/local/.
-    ctx.add_path_hierarchy(join(ctx.env.PREFIX, '.pyenv'))
-    ctx.add_path_hierarchy(join(ctx.env.PREFIX, '.rbenv'))
+    _add_path_hierarchy(ctx, join(ctx.env.PREFIX, '.pyenv'))
+    _add_path_hierarchy(ctx, join(ctx.env.PREFIX, '.rbenv'))
 
     # Add tmuxifier.
-    ctx.add_path_hierarchy(join(ctx.env.PREFIX, '.tmuxifier'))
+    _add_path_hierarchy(ctx, join(ctx.env.PREFIX, '.tmuxifier'))
 
     # System Python and Python user base.
     ctx.find_program(
@@ -52,7 +62,7 @@ def configure(ctx):
         path_list=ctx.env.SYSTEM_PATHS,
         mandatory=False)
     if ctx.env.SYSTEM_PYTHON:
-        ctx.add_path_hierarchy(ctx.cmd_and_log(
+        _add_path_hierarchy(ctx, ctx.cmd_and_log(
             ctx.env.SYSTEM_PYTHON + ['-m', 'site', '--user-base']).rstrip())
 
     # Emacs.app on Mac OS X contains some paths in some weird places.
@@ -79,25 +89,25 @@ def configure(ctx):
             machine=machine,
             major=major,
             minor=minor)
-        ctx.add_to_path_var('PATH', join(
+        _add_to_path_var(ctx, 'PATH', join(
             emacs_app_contents, 'MacOS', bin_dir_name))
 
         # man and info directories
         resources_dir = join(emacs_app_contents, 'Resources')
-        ctx.add_to_path_var('MANPATH', join(resources_dir, 'man'))
-        ctx.add_to_path_var('INFOPATH', join(resources_dir, 'info'))
+        _add_to_path_var(ctx, 'MANPATH', join(resources_dir, 'man'))
+        _add_to_path_var(ctx, 'INFOPATH', join(resources_dir, 'info'))
 
     # Linuxbrew
     linuxbrew_path = os.path.expanduser('~/.linuxbrew')
     if ctx.env.LINUX and os.path.isdir(linuxbrew_path):
         ctx.env.LINUXBREW_PATH = linuxbrew_path
-        ctx.add_path_hierarchy(linuxbrew_path)
+        _add_path_hierarchy(ctx, linuxbrew_path)
 
     # Add hierarchies.
     # Even though /usr/bin is probably already in the PATH, it is helpful to
     # add /usr so that INFOPATH gets correctly populated.
     for hier in ctx.env.SYSTEM_HIERARCHIES:
-        ctx.add_path_hierarchy(hier)
+        _add_path_hierarchy(ctx, hier)
 
     # Finally, add system-default paths.
     #
@@ -113,41 +123,34 @@ def configure(ctx):
     #   be detected.
     #
     for var, default_path_str in [
-            ('PATH', ctx.execute_in_clean_bash('echo $PATH')),
-            ('MANPATH', ctx.execute_in_clean_bash('man --path')),
-            ('INFOPATH', ctx.execute_in_clean_bash('echo $INFOPATH'))]:
+            ('PATH', _execute_in_clean_bash(ctx, 'echo $PATH')),
+            ('MANPATH', _execute_in_clean_bash(ctx, 'man --path')),
+            ('INFOPATH', _execute_in_clean_bash(ctx, 'echo $INFOPATH'))]:
         path_split = default_path_str.split(os.pathsep)
         if path_split != ['']:
             for path in path_split:
-                ctx.add_to_path_var(var, path)
+                _add_to_path_var(ctx, var, path)
 
-    # Write the paths to the process environment *and* Waf's configuration
-    # environment so that the configuration uses these paths to find utilities
-    # (mostly important for PATH, of course).
-    ctx.write_paths_to_proc_env()
-    ctx.write_paths_to_config_env()
+    # Write the paths to Waf's configuration environment so that the remainder
+    # of the configuration uses these paths to find utilities. This is
+    # primarily important for PATH. In Waf 1.8, the configuration context
+    # gained its own clone of the environment, so we write to that instead of
+    # the process's environment (os.environ). At this point, we have found it
+    # unnecessary to also write the the process's environment during the
+    # configuration phase (all important operations use the configuration
+    # environment, or absolute paths) and the build phase (all operations use
+    # absolute paths discovered in the configuration phase).
+    for var in ctx.env.PATH_VARS:
+        ctx.environ[var] = os.pathsep.join(ctx.env[var])
 
-@conf
-def add_to_path_var(self, var, path):
-    """Add ``path`` to the context variable specified by ``var`` if the path
-    exists."""
-    if os.path.isdir(path):
-        self.msg('Adding to ' + var, path)
-        # append_unique is O(n) which sucks, but there aren't that many paths
-        # and it's only run at configuration, so it doesn't really need to be
-        # too performant. For a performant way (that we used before
-        # simplifying), check out orderedset on PyPi.
-        self.env.append_unique(var, path)
-
-@conf
-def execute_in_clean_bash(self, command):
+def _execute_in_clean_bash(ctx, command):
     """Execute a command in the system Bash in a a "clean" environment."""
     # Only source /etc/profile in a clean environment. That should get us the
     # base paths (hopefully).
     profile_path = '/etc/profile'
     if not os.path.isfile(profile_path):
-        self.fatal('Could not find profile file: ' + profile_path)
-    return self.cmd_and_log(
+        ctx.fatal('Could not find profile file: ' + profile_path)
+    return ctx.cmd_and_log(
         [
             '/bin/bash', '--norc', '--noprofile', '-c',
             'source {profile_path}; {command}'.format(
@@ -159,37 +162,21 @@ def execute_in_clean_bash(self, command):
         env={},
     ).rstrip('\n')
 
-@conf
-def add_path_hierarchy(self, path):
+def _add_to_path_var(ctx, var, path):
+    """Add ``path`` to the context variable specified by ``var`` if the path
+    exists."""
+    if os.path.isdir(path):
+        ctx.msg('Adding to ' + var, path)
+        # append_unique is O(n) which sucks, but there aren't that many paths
+        # and it's only run at configuration, so it doesn't really need to be
+        # too performant. For a performant way (that we used before
+        # simplifying), check out orderedset on PyPi.
+        ctx.env.append_unique(var, path)
+
+def _add_path_hierarchy(ctx, path):
     """Detect paths under a hierarchy and add them to the path variables."""
-    self.add_to_path_var('PATH', join(path, 'bin'))
-    self.add_to_path_var('PATH', join(path, 'sbin'))
-    self.add_to_path_var('MANPATH', join(path, 'man'))
-    self.add_to_path_var('MANPATH', join(path, 'share', 'man'))
-    self.add_to_path_var('INFOPATH', join(path, 'share', 'info'))
-
-@conf
-def write_paths_to_proc_env(self):
-    """Write the path variables in the context to the process' actual
-    environment
-    """
-    for var in self.env.PATH_VARS:
-        os.environ[var] = os.pathsep.join(self.env[var])
-
-@conf
-def write_paths_to_config_env(self):
-    """Write the paths variables to the Waf configuration context environment
-    (in Waf 1.8, the configuration context gained its own clone of the
-    environment).
-    """
-    for var in self.env.PATH_VARS:
-        self.environ[var] = os.pathsep.join(self.env[var])
-
-@conf
-def check_path_for_issues(self):
-    """Check to see if :data:`os.pathsep` is in any of the paths; that will
-    make them unusable.
-    """
-    for path in self.env.PATH:
-        if os.pathsep in path:
-            self.fatal('Path cannot contain os.pathsep: ' + path)
+    _add_to_path_var(ctx, 'PATH', join(path, 'bin'))
+    _add_to_path_var(ctx, 'PATH', join(path, 'sbin'))
+    _add_to_path_var(ctx, 'MANPATH', join(path, 'man'))
+    _add_to_path_var(ctx, 'MANPATH', join(path, 'share', 'man'))
+    _add_to_path_var(ctx, 'INFOPATH', join(path, 'share', 'info'))

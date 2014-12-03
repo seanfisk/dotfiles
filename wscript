@@ -24,17 +24,21 @@ def _python_modules_in_dir(dirpath):
     :return: list of Python module files
     :rtype: :class:`list` of :class:`str`
     """
-    return [os.path.splitext(name)[0] for name in
-            fnmatch.filter(os.listdir(dirpath), '*.py')]
+    # Sort to guarantee a stable order for the build. Different orders returned
+    # from os.listdir() can cause data structures to be built in different ways
+    # and cause unnecessary builds.
+    return sorted(os.path.splitext(name)[0] for name
+                  in fnmatch.filter(os.listdir(dirpath), '*.py'))
 
 # Script constants
-WAF_BASE_TOOLS_DIR = 'waf-tools'
+WAF_TOOLS_DIR = 'waf-tools'
+# Each of the dev tools are independent.
+WAF_DEV_TOOLS_DIR = join(WAF_TOOLS_DIR, 'dev')
+WAF_DEV_TOOLS = _python_modules_in_dir(WAF_DEV_TOOLS_DIR)
 # Order matters here. All after 'platform_specific' are dependent on it. All
 # after 'paths' are dependent on it. 'shells' is dependent upon 'brew'.
+WAF_BASE_TOOLS_DIR = join(WAF_TOOLS_DIR, 'base')
 WAF_BASE_TOOLS = [
-    'log',
-    'git_files',
-    'jsminify',
     'platform_specific',
     'paths',
     'brew',
@@ -42,17 +46,15 @@ WAF_BASE_TOOLS = [
     'shells',
     'rbenv_pyenv',
 ]
-WAF_SOFTWARE_TOOLS_DIR = join(WAF_BASE_TOOLS_DIR, 'software')
-# Here, the order should not matter. Each of the stages should be independent.
-# However, we sort to guarantee a stable order for the build. Different orders
-# returned from os.listdir() can cause data structures to be built in different
-# ways and cause unnecessary builds.
-WAF_SOFTWARE_TOOLS = sorted(_python_modules_in_dir(WAF_SOFTWARE_TOOLS_DIR))
+WAF_SOFTWARE_TOOLS_DIR = join(WAF_TOOLS_DIR, 'software')
+# Each piece of software is independent.
+WAF_SOFTWARE_TOOLS = _python_modules_in_dir(WAF_SOFTWARE_TOOLS_DIR)
 
 # Context helpers
 @conf
 def load_tools(self):
-    """Load project-specific base tools and software tools."""
+    """Load all Waf tools."""
+    self.load(WAF_DEV_TOOLS, tooldir=WAF_DEV_TOOLS_DIR)
     self.load(WAF_BASE_TOOLS, tooldir=WAF_BASE_TOOLS_DIR)
     self.load(WAF_SOFTWARE_TOOLS, tooldir=WAF_SOFTWARE_TOOLS_DIR)
 
@@ -113,13 +115,10 @@ def configure(ctx):
     # We'd like to check for this, but it's an rbenv-managed gem.
     #ctx.find_program('lolcat', mandatory=False)
 
-    # After configuration, do some maintenance on the paths.
-    ctx.check_path_for_issues()
+    # After configuration, check for issues.
+    ctx.check_paths_for_issues()
 
 def build(ctx):
-    # Write all previously-configured paths to this process' environment.
-    ctx.write_paths_to_proc_env()
-
     # Set up shell environment to be modified by other tools.
     ctx.setup_shell_defaults()
 
