@@ -28,7 +28,7 @@ def _python_modules_in_dir(dirpath):
             fnmatch.filter(os.listdir(dirpath), '*.py')]
 
 # Script constants
-WAF_BASE_TOOLS_DIR = 'waf_tools'
+WAF_BASE_TOOLS_DIR = 'waf-tools'
 # Order matters here. All after 'platform_specific' are dependent on it. All
 # after 'paths' are dependent on it. 'shells' is dependent upon 'brew'.
 WAF_BASE_TOOLS = [
