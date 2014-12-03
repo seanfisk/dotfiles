@@ -7,8 +7,11 @@ import re
 import errno
 import subprocess
 
+from powerline.lib.encoding import get_preferred_input_encoding
+
 NOT_INSTALLED_RE = re.compile(
     r".*: version `(?P<version>.*)' is not installed$")
+"""Pattern to extract the missing version from the program's error message."""
 
 def _make_tool_segment(tool):
     def tool_segment(pl): # pylint: disable=invalid-name
@@ -38,7 +41,8 @@ def _make_tool_segment(tool):
 
         # Try to decode the output.
         try:
-            out, err = (b.decode('ascii').rstrip() for b in outs)
+            out, err = (b.decode(get_preferred_input_encoding()).rstrip()
+                        for b in outs)
         except UnicodeDecodeError:
             pl.exception('Decoding output of command failed: {0}', command_str)
 
