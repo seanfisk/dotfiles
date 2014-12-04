@@ -1,5 +1,7 @@
 # Requirements for -this- project.
 
+appdirs==1.4.0
+
 # Compilation
 jsmin==2.0.11
 

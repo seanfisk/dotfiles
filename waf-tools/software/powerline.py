@@ -7,6 +7,9 @@ import json
 
 import waflib
 from waflib.Configure import conf
+import appdirs
+
+POWERLINE_PACKAGE_NAME = 'powerline-status'
 
 @conf
 def get_powerline_path(self, relpath):
@@ -52,12 +55,18 @@ def configure(ctx):
     ctx.env.POWERLINE_SEGMENTS_PATH = join(
         ctx.env.PREFIX, '.config', 'powerline')
 
+    ctx.env.POWERLINE_LOG_PATH = join(
+        appdirs.user_log_dir(appname='powerline'),
+        # This name is pretty arbitrary. We aren't expecting any other logs
+        # in this directory.
+        'main.log')
 
 def build(ctx):
     if not ctx.env.POWERLINE:
         return
 
-    ctx.env.PYENV_VIRTUALENV_DEFAULT_PACKAGES.append('powerline-status==1.2')
+    ctx.env.PYENV_VIRTUALENV_DEFAULT_PACKAGES.append(
+        POWERLINE_PACKAGE_NAME + '==1.2')
 
     def _make_bash_powerline(tsk):
         tsk.outputs[0].write('''{powerline_daemon} --quiet
@@ -92,13 +101,15 @@ source {powerline_file}
     out_node = ctx.path.find_or_declare([
         'dotfiles', 'config', 'powerline', 'config.json'])
 
-    @ctx.rule(target=out_node, vars=['POWERLINE_SEGMENTS_PATH'])
+    @ctx.rule(target=out_node,
+              vars=['POWERLINE_SEGMENTS_PATH', 'POWERLINE_LOG_PATH'])
     def _make_powerline_config(tsk):
         with open(tsk.outputs[0].abspath(), 'w') as out_file:
             json.dump(
                 {
                     'common': {
                         'paths': [tsk.env.POWERLINE_SEGMENTS_PATH],
+                        'log_file': tsk.env.POWERLINE_LOG_PATH,
                     },
                     'ext': {
                         'shell': {'theme': 'sean'},
