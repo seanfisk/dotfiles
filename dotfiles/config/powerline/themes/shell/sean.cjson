@@ -2,6 +2,14 @@
  *
  * Note: use of the C-style comment allows further minification not
  * allowed by the C++-style comment (at least by jsmin).
+ *
+ * About encoding in these files: Powerline reads these files as
+ * UTF-8, and allows Unicode literals in these files. However,
+ * powerline-lint is not OK with Unicode literals outside of the Basic
+ * Multilingual Plane. We are using a surrogate pair the encode these.
+ * See the last paragraph of section 2.5
+ * <http://www.ietf.org/rfc/rfc4627.txt>. You can use this converter
+ * <http://rishida.net/tools/conversion/>.
  */
 {
 	"segments": {
@@ -46,12 +54,12 @@
 					{
 						"function": "powerline_sean_segments.pyenv",
 						// This value is Unicode SNAKE followed by two spaces.
-						"before": "🐍  "
+						"before": "\uD83D\uDC0D  "
 					},
 					{
 						"function": "powerline_sean_segments.rbenv",
 						// This value is a Unicode GEM STONE followed by two spaces.
-						"before": "💎  "
+						"before": "\uD83D\uDC8E  "
 					}
 				]
 			}
