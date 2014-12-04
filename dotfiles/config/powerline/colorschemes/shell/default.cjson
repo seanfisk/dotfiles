@@ -1,8 +1,9 @@
-// -*- mode: js; coding: utf-8; -*-
-//
-// We name this file 'colorschemes/shell/default.json' so that it
-// overrides the Powerline 'colorschemes/shell/default.json', but
-// still inherits from 'colorschemes/default.json'.
+/* -*- mode: js; coding: utf-8; -*-
+ *
+ * We name this file 'colorschemes/shell/default.json' so that it
+ * overrides the Powerline 'colorschemes/shell/default.json', but
+ * still inherits from 'colorschemes/default.json'.
+ */
 {
 	"name": "Sean's color scheme for shell prompts",
 	"groups": {

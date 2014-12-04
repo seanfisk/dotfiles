@@ -1,4 +1,8 @@
-// -*- mode: js; coding: utf-8; -*-
+/* -*- mode: js; coding: utf-8; -*-
+ *
+ * Note: use of the C-style comment allows further minification not
+ * allowed by the C++-style comment (at least by jsmin).
+ */
 {
 	"segments": {
 		// The "above" key allows us to have a multiline prompt.
@@ -61,13 +65,13 @@
 		],
 		"right": [
 			{
-				// last_pipe_status is way cooler than the normal
-				// last_status. If any of the pipe commands fail, it
-				// will show the exit status for each of them. For
-				// example, try running:
-				//
-				//     true | false | true
-				//
+				/* last_pipe_status is way cooler than the normal
+				 * last_status. If any of the pipe commands fail, it
+				 * will show the exit status for each of them. For
+				 * example, try running:
+				 *
+				 *     true | false | true
+				 */
 				"function": "powerline.segments.shell.last_pipe_status",
 				"priority": 10
 			}
