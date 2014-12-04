@@ -32,7 +32,7 @@ def build(ctx):
     ]
     out_node = ctx.path.find_or_declare(parent_path + ['ipython_config.py'])
 
-    if ctx.env.POWERLINE:
+    if ctx.env.HAS_POWERLINE:
         in_nodes.append(ctx.path.find_resource(parent_path + ['powerline.py']))
 
     ctx(rule=_concatenate,

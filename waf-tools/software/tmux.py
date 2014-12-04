@@ -33,12 +33,7 @@ def build(ctx):
     in_node = ctx.path.find_resource(['dotfiles', 'tmux.conf.in'])
     out_node = in_node.change_ext(ext='.conf', ext_in='.conf.in')
 
-    if ctx.env.POWERLINE:
-        # Powerline should be able to find this on the PATH. But just in
-        # case it's not, and maybe to save a little bit on execution, tell
-        # Powerline where it is with this environment variable.
-        ctx.env.SHELL_ENV['POWERLINE_CONFIG_COMMAND'] = ctx.shquote_cmd(
-            ctx.env.POWERLINE_CONFIG_)
+    if ctx.env.HAS_POWERLINE:
         tmux_powerline_file = ctx.get_powerline_path(
             join('bindings', 'tmux', 'powerline.conf'))
         powerline_commands = [

@@ -67,14 +67,6 @@ def install_dotfile(self, node):
     self.install_as(join(self.env.PREFIX, *relative_path_list), node)
 
 @conf
-def install_script(self, script_basename):
-    """Install a script given the basename."""
-    self.install_files(
-        join(self.env.PREFIX, 'bin'),
-        [join('scripts', script_basename)],
-        chmod=waflib.Utils.O755)
-
-@conf
 def shquote_cmd(self, cmd): # pylint: disable=unused-argument
     """Shell-quote a command list.
 

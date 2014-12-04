@@ -1,5 +1,5 @@
 # List of packages that can be used with these dotfiles.
-# Intended to be installed to the system Python.
+# Intended to be installed to the default Python.
 
 # Powerline stuff
 #
@@ -7,19 +7,19 @@
 # Installing pygit2 is disabled by default because it has dependencies
 # (libgit2, which depends on cmake) which are not necessarily simple
 # to install. That said, with Homebrew, installing pygit2 is rather
-# easy so we may as well. Assuming your system Python is
-# '/usr/bin/python' and that pip is installed to the user site, run:
+# easy so we may as well. First, make sure that your default python
+# and pip come first on the PATH. Then run:
 #
 #     brew install libgit2
 #
-# pygit2 requires cffi to be installed first (annoyingly):
+# pygit2 requires cffi to be installed first (annoyingly). Only use
+# '--user' if the default Python is also the system Python.
 #
-#     system_python_pip="$(/usr/bin/python -m site --user-base)/bin/pip"
-#     "$system_python_pip" install --user cffi==0.8.6
+#     pip install --user cffi==0.8.6
 #
 # Finally install pygit2:
 #
-#     "$system_python_pip" install --user pygit2==0.21.2
+#     pip install --user pygit2==0.21.2
 #
 powerline-status==1.2
 psutil==2.1.3

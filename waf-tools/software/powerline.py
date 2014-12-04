@@ -17,7 +17,7 @@ def get_powerline_path(self, relpath):
     relative path.
     """
     return self.cmd_and_log(
-        self.env.SYSTEM_PYTHON + [
+        self.env.DEFAULT_PYTHON + [
             '-c',
             'from pkg_resources import resource_filename; '
             "print(resource_filename('powerline', {}))"
@@ -31,26 +31,45 @@ def options(ctx):
                    help='Explicitly disable Powerline')
 
 def configure(ctx):
+    def _print_disabled_msg(msg):
+        ctx.msg('Checking for Powerline', msg, color='YELLOW')
+
     if ctx.options.disable_powerline:
-        ctx.msg('Checking for Powerline', 'disabled', color='YELLOW')
+        _print_disabled_msg('disabled')
         return
 
-    # We assume that Powerline is installed under the system Python. We
-    # don't allow Waf to look in pyenv paths, so that's a decent
-    # assumption.
-    if not ctx.env.SYSTEM_PYTHON:
-        ctx.fatal('Powerline must be installed under the system Python.')
+    if not ctx.env.DEFAULT_PYTHON:
+        _print_disabled_msg('disabled, default Python not found')
+        return
 
-    ctx.find_program('powerline-daemon', var='POWERLINE_DAEMON',
-                     mandatory=False)
-    # Powerline actually uses the POWERLINE_CONFIG environment variable, which
-    # Waf will then detect. Change ours to avoid this.
-    ctx.find_program('powerline-config', var='POWERLINE_CONFIG_',
-                     mandatory=False)
+    # Using Unicode characters outside of the Basic Multilingual Plane in a
+    # UCS-2 Python with Powerline has various issues. Python 3.3 makes UCS-4
+    # mandatory. If we have a UCS-2 Python, disable Powerline. The solution to
+    # this is to install a UCS-4 Python to '.local'.
+    #
+    # References:
+    # - https://github.com/seanfisk/dotfiles/issues/8
+    # - https://github.com/Lokaltog/powerline/issues/1213
+    ret = ctx.exec_command(ctx.env.DEFAULT_PYTHON + [
+        '-c', 'import sys; sys.exit(0 if sys.maxunicode > 0xFFFF else 1)'])
+    if ret != 0:
+        _print_disabled_msg('disabled, default Python is UCS-2')
+        return
 
     # Set this variable to give us an easy way to tell if we have Powerline.
-    ctx.env.POWERLINE = (
-        bool(ctx.env.POWERLINE_DAEMON) and bool(ctx.env.POWERLINE_CONFIG_))
+    ctx.env.HAS_POWERLINE = all([
+        ctx.find_program('powerline-daemon', var='POWERLINE_DAEMON',
+                         mandatory=False),
+        # Powerline uses the POWERLINE_CONFIG environment variable, which Waf
+        # will then detect. Change ours to avoid this.
+        ctx.find_program('powerline-config', var='POWERLINE_CONFIG_',
+                         mandatory=False),
+        ctx.find_program('powerline-render', var='POWERLINE_RENDER',
+                         mandatory=False),
+    ])
+    # This is not always present, depending on the capabilities of the
+    # Python/system.
+    ctx.find_program('powerline', var='POWERLINE_CLIENT', mandatory=False)
 
     ctx.env.POWERLINE_SEGMENTS_PATH = join(
         ctx.env.PREFIX, '.config', 'powerline')
@@ -62,8 +81,33 @@ def configure(ctx):
         'main.log')
 
 def build(ctx):
-    if not ctx.env.POWERLINE:
+    if not ctx.env.HAS_POWERLINE:
         return
+
+    # These are overrides for where Powerline executables should be found.
+    # These are used in case virtualenvs have Powerline installed (most will).
+    # We want the Powerline executables from the default Python to be used.
+
+    # Used for tmux only (not really sure why).
+    ctx.env.SHELL_ENV['POWERLINE_CONFIG_COMMAND'] = ctx.shquote_cmd(
+        ctx.env.POWERLINE_CONFIG_)
+    # Used for shell and tmux.
+    ctx.env.SHELL_ENV['POWERLINE_CONFIG'] = ctx.shquote_cmd(
+        ctx.env.POWERLINE_CONFIG_)
+    if ctx.env.POWERLINE_CLIENT:
+        # Used for shell and tmux.
+        ctx.env.SHELL_ENV['POWERLINE_COMMAND'] = ctx.shquote_cmd(
+            ctx.env.POWERLINE_CLIENT)
+
+    # While overriding some executables with absolute paths in environment
+    # variables is possible, the powerline client (see 'scripts/powerline.c')
+    # uses execvp() to run 'powerline-render' if it can't connect to the daemon
+    # (with the shell and Python clients doing similar things). This means that
+    # 'powerline-render' needs to be on the PATH in some way, shape, or form.
+    # We override this by symlinking it into the scripts directory, which
+    # admittedly is kind of a hack.
+    ctx.symlink_as(join(ctx.env.SCRIPTS_DIR, 'powerline-render'),
+                   ctx.env.POWERLINE_RENDER[0])
 
     ctx.env.PYENV_VIRTUALENV_DEFAULT_PACKAGES.append(
         POWERLINE_PACKAGE_NAME + '==1.2')

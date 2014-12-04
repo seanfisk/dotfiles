@@ -9,7 +9,16 @@ import platform
 from os.path import join
 from shlex import quote as shquote
 
+import waflib
 from waflib.Configure import conf
+
+@conf
+def install_script(self, script_basename):
+    """Install a script given the basename."""
+    self.install_files(
+        self.env.SCRIPTS_DIR,
+        [join('scripts', script_basename)],
+        chmod=waflib.Utils.O755)
 
 @conf
 def check_paths_for_issues(self):
@@ -28,8 +37,8 @@ def configure(ctx):
     """
     ctx.env.PATH_VARS = ['PATH', 'MANPATH', 'INFOPATH']
 
-    # Set up paths to check for "system" tools, like Python. The '.local' path
-    # allows us to override the "system" tools as a user.
+    # Set up paths to check for "system" tools. The '.local' path allows us to
+    # override the "system" tools as a user.
     ctx.env.SYSTEM_HIERARCHIES = [
         join(ctx.env.PREFIX, '.local'),
         '/usr/local',
@@ -44,7 +53,8 @@ def configure(ctx):
         ctx.env[var] = []
 
     # Add script directory.
-    _add_to_path_var(ctx, 'PATH', join(ctx.env.PREFIX, 'bin'))
+    ctx.env.SCRIPTS_DIR = join(ctx.env.PREFIX, 'bin')
+    _add_to_path_var(ctx, 'PATH', ctx.env.SCRIPTS_DIR)
 
     # If rbenv and pyenv are installed to the home directory,
     # add_path_hierarchy will find their directories. If they are installed
@@ -55,15 +65,19 @@ def configure(ctx):
     # Add tmuxifier.
     _add_path_hierarchy(ctx, join(ctx.env.PREFIX, '.tmuxifier'))
 
-    # System Python and Python user base.
-    ctx.find_program(
+    # Find the default Python, used for installing and running various
+    # utilities.
+    python = ctx.find_program(
         'python',
-        var='SYSTEM_PYTHON',
+        var='DEFAULT_PYTHON',
         path_list=ctx.env.SYSTEM_PATHS,
         mandatory=False)
-    if ctx.env.SYSTEM_PYTHON:
+    if python:
+        # If this is the system Python, add the user base. If it is not the
+        # system Python, the user base should be '~/.local', which is already
+        # on the paths.
         _add_path_hierarchy(ctx, ctx.cmd_and_log(
-            ctx.env.SYSTEM_PYTHON + ['-m', 'site', '--user-base']).rstrip())
+            python + ['-m', 'site', '--user-base']).rstrip())
 
     # Emacs.app on Mac OS X contains some paths in some weird places.
     if ctx.env.MACOSX:
