@@ -8,11 +8,14 @@
 from jsmin import jsmin
 import waflib
 
+ENCODING = 'utf-8'
+"""Encoding to use when reading and writing JSON files. Powerline always uses
+UTF-8 for reading configuration files, hence the value here.
+"""
+
 def _minify_javascript(tsk):
-    # Powerline doesn't like Unicode, so this needs to be all ASCII.
-    encoding = 'ascii'
-    tsk.outputs[0].write(jsmin(tsk.inputs[0].read(encoding=encoding)),
-                         encoding=encoding)
+    tsk.outputs[0].write(
+        jsmin(tsk.inputs[0].read(encoding=ENCODING)), encoding=ENCODING)
 
 waflib.TaskGen.declare_chain(
     name='jsmin',

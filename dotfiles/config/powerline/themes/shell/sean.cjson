@@ -1,8 +1,4 @@
-// -*- mode: js -*-
-// About encoding in these files:
-// Powerline doesn't like Unicode literals in these files. So we need to use a Unicode escape.
-// See the last paragraph of section 2.5 <http://www.ietf.org/rfc/rfc4627.txt>
-// Use this <http://rishida.net/tools/conversion/>
+// -*- mode: js; coding: utf-8; -*-
 {
 	"segments": {
 		// The "above" key allows us to have a multiline prompt.
@@ -46,12 +42,12 @@
 					{
 						"function": "powerline_sean_segments.pyenv",
 						// This value is Unicode SNAKE followed by two spaces.
-						"before": "\uD83D\uDC0D  "
+						"before": "🐍  "
 					},
 					{
 						"function": "powerline_sean_segments.rbenv",
 						// This value is a Unicode GEM STONE followed by two spaces.
-						"before": "\uD83D\uDC8E  "
+						"before": "💎  "
 					}
 				]
 			}
