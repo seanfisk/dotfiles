@@ -6,6 +6,7 @@ import os
 import fnmatch
 from os.path import join
 from shlex import quote as shquote
+import itertools
 
 import waflib
 from waflib.Configure import conf
@@ -126,23 +127,23 @@ def build(ctx):
     # Build and install shell files.
     ctx.load(['shells'])
 
+    if ctx.cmd == 'lint':
+        ctx.add_post_fun(lint)
+
 class LintContext(waflib.Build.BuildContext):
     """Context for the lint task."""
     cmd = 'lint'
-    fun = 'lint'
 
 def lint(ctx):
-    """runs Pylint to check style/common errors"""
+    """runs Pylint and powerline-lint to check style/common errors"""
     # Pylint can take a while to run, so print a message.
-    print('Running lint...')
-
+    ctx.to_log('Running pylint...\n')
     def _is_py_file(path):
         base, ext = os.path.splitext(os.path.basename(path))
         return ext == '.py' or base == 'wscript'
-
     # Waf will take care of colors on Windows with its ansiterm module.
     checkers_dir_path = ctx.path.find_dir('pylint-checkers').abspath()
-    retcode = ctx.exec_command(
+    retcodes = ctx.exec_command(
         ctx.env.PYLINT +
         ['--load-plugins',
          ','.join(_python_modules_in_dir(checkers_dir_path))] +
@@ -153,7 +154,19 @@ def lint(ctx):
             'PYTHONPATH': os.pathsep.join([
                 waflib.Context.waf_dir, checkers_dir_path]),
         })
-    if retcode == 0:
+
+    if ctx.env.POWERLINE_LINT:
+        ctx.to_log('Running powerline-lint...\n')
+
+        retcodes += ctx.exec_command(
+            ctx.env.POWERLINE_LINT + list(itertools.chain.from_iterable(
+                ['-p', path] for path in [
+                    ctx.get_powerline_path('config_files'),
+                    ctx.bldnode.find_dir([
+                        'dotfiles', 'config', 'powerline']).abspath(),
+                ])))
+
+    if retcodes == 0:
         # http://patorjk.com/software/taag/#p=display&f=Small&t=PASSED
         ctx.log_success(r'''  ___  _   ___ ___ ___ ___
  | _ \/_\ / __/ __| __|   \

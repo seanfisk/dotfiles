@@ -66,6 +66,11 @@ def configure(ctx):
                          mandatory=False),
         ctx.find_program('powerline-render', var='POWERLINE_RENDER',
                          mandatory=False),
+        # This program is used in our 'lint' task, but it should be the
+        # powerline-lint associated with the Powerline package we are currently
+        # using (e.g., not a dev package for this repo).
+        ctx.find_program('powerline-lint', var='POWERLINE_LINT',
+                         mandatory=False)
     ])
     # This is not always present, depending on the capabilities of the
     # Python/system.
