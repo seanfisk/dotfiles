@@ -28,7 +28,7 @@
 			{
 				"function": "powerline.segments.common.bat.battery",
 				// This is Unicode BATTERY followed by a space.
-				"before": "\uD83D\uDD0B ",
+				"before": "🔋 ",
 				"priority": 10
 			}
 		]

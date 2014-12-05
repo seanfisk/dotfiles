@@ -54,12 +54,12 @@
 					{
 						"function": "powerline_sean_segments.pyenv",
 						// This value is Unicode SNAKE followed by two spaces.
-						"before": "\uD83D\uDC0D  "
+						"before": "🐍  "
 					},
 					{
 						"function": "powerline_sean_segments.rbenv",
 						// This value is a Unicode GEM STONE followed by two spaces.
-						"before": "\uD83D\uDC8E  "
+						"before": "💎  "
 					}
 				]
 			}
