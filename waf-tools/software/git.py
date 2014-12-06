@@ -12,6 +12,7 @@ def configure(ctx):
 def build(ctx):
     if not ctx.env.GIT:
         return
+    ctx.env.SHELL_ALIASES['g'] = ctx.shquote_cmd(ctx.env.GIT)
     ctx.env.SHELL_ALIASES['gt'] = ctx.shquote_cmd(ctx.env.GIT + ['status'])
     ctx.env.SHELL_ALIASES['gobuddygo'] = ctx.shquote_cmd(
         ctx.env.GIT + ['push'])
