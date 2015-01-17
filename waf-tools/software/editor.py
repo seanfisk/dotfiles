@@ -20,10 +20,10 @@ def build(ctx):
         # Add Python packages.
         # Rope is not Python 3-compatible yet.
         ctx.env.PYENV_VIRTUALENV_DEFAULT_PACKAGES += [
-            'elpy==1.5.1',
+            'elpy==1.6.0',
             'jedi==0.8.1-final0',
-            'flake8==2.2.3',
-            'mccabe==0.2.1',
+            'flake8==2.3.0',
+            'mccabe==0.3',
             'pep8==1.5.7',
             'pyflakes==0.8.1',
         ]

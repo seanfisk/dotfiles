@@ -115,7 +115,7 @@ def build(ctx):
                    ctx.env.POWERLINE_RENDER[0])
 
     ctx.env.PYENV_VIRTUALENV_DEFAULT_PACKAGES.append(
-        POWERLINE_PACKAGE_NAME + '==1.2')
+        POWERLINE_PACKAGE_NAME + '==1.3.1')
 
     def _make_bash_powerline(tsk):
         tsk.outputs[0].write('''{powerline_daemon} --quiet
