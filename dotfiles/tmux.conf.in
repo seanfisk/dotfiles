@@ -9,6 +9,7 @@ bind-key C-t send-prefix
 # Split pane commands
 unbind-key %
 bind-key | split-window -h
+unbind-key '"'
 bind-key - split-window -v
 
 # When creating a new window, prompt for a name.
