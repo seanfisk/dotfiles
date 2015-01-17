@@ -16,4 +16,7 @@ bind-key - split-window -v
 # Note: Use single quotes around the substituted value, else creation will fail when no value is entered. We don't want that.
 bind-key c command-prompt "new-window -n '%%'"
 
+# Kill the entire session
+bind-key k confirm-before kill-session
+
 @POWERLINE_COMMANDS@
