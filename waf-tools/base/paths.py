@@ -5,8 +5,8 @@ This module specifically addresses the PATH, MANPATH, and INFOPATH variables.
 """
 
 import os
-import platform
 from os.path import join
+import platform
 from shlex import quote as shquote
 
 import waflib

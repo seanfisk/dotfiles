@@ -2,14 +2,15 @@
 
 """Waf build file"""
 
+# Avoid having unnecessary public attributes in this file, else they will be
+# picked up as Waf commands.
+
 import os
 import fnmatch
-from os.path import join
-from shlex import quote as shquote
+from os.path import join as _join
 import itertools
 
 import waflib
-from waflib.Configure import conf
 
 # Waf constants
 APPNAME = 'dotfiles'
@@ -34,12 +35,13 @@ def _python_modules_in_dir(dirpath):
 # Script constants
 WAF_TOOLS_DIR = 'waf-tools'
 # Each of the dev tools are independent.
-WAF_DEV_TOOLS_DIR = join(WAF_TOOLS_DIR, 'dev')
+WAF_DEV_TOOLS_DIR = _join(WAF_TOOLS_DIR, 'dev')
 WAF_DEV_TOOLS = _python_modules_in_dir(WAF_DEV_TOOLS_DIR)
 # Order matters here. All after 'platform_specific' are dependent on it. All
 # after 'paths' are dependent on it. 'shells' is dependent upon 'brew'.
-WAF_BASE_TOOLS_DIR = join(WAF_TOOLS_DIR, 'base')
+WAF_BASE_TOOLS_DIR = _join(WAF_TOOLS_DIR, 'base')
 WAF_BASE_TOOLS = [
+    'base',
     'platform_specific',
     'paths',
     'brew',
@@ -47,52 +49,20 @@ WAF_BASE_TOOLS = [
     'shells',
     'rbenv_pyenv',
 ]
-WAF_SOFTWARE_TOOLS_DIR = join(WAF_TOOLS_DIR, 'software')
+WAF_SOFTWARE_TOOLS_DIR = _join(WAF_TOOLS_DIR, 'software')
 # Each piece of software is independent.
 WAF_SOFTWARE_TOOLS = _python_modules_in_dir(WAF_SOFTWARE_TOOLS_DIR)
 
-# Context helpers
-@conf
-def load_tools(self):
+def _load_tools(self):
     """Load all Waf tools."""
     self.load(WAF_DEV_TOOLS, tooldir=WAF_DEV_TOOLS_DIR)
     self.load(WAF_BASE_TOOLS, tooldir=WAF_BASE_TOOLS_DIR)
     self.load(WAF_SOFTWARE_TOOLS, tooldir=WAF_SOFTWARE_TOOLS_DIR)
 
-@conf
-def install_dotfile(self, node):
-    """Install a dotfile node."""
-    # Strip the dotfiles/ directory (for both source and build nodes).
-    relative_path_list = waflib.Node.split_path(node.relpath())[1:]
-    relative_path_list[0] = '.' + relative_path_list[0]
-    self.install_as(join(self.env.PREFIX, *relative_path_list), node)
-
-@conf
-def shquote_cmd(self, cmd): # pylint: disable=unused-argument
-    """Shell-quote a command list.
-
-    :param cmd: command list
-    :type cmd: :class:`list`
-    :return: quoted command
-    :rtype: :class:`str`
-    """
-    return ' '.join(map(shquote, cmd))
-
-# @conf
-# def ensure_loaded(self, tools):
-#     """Load the tools if they are not yet loaded. This allows our own tools
-#     to avoid loading tools on which they depend multiple times.
-#     """
-#     for tool in tools:
-#         try:
-#             waflib.Context.Context.tools[tool]
-#         except KeyError:
-#             self.load(
-#                 tools, tooldir=WAF_BASE_TOOLS_DIR + WAF_SOFTWARE_TOOLS_DIR)
-
+# Context helpers
 def options(ctx):
     # Call the options() function in each of the tools.
-    load_tools(ctx)
+    _load_tools(ctx)
     # Override the default prefix of '/usr/local'.
     default_prefix = os.path.expanduser('~')
     ctx.add_option(
@@ -103,7 +73,7 @@ def configure(ctx):
     ctx.find_program('pylint')
 
     # Call the configure() function in each of the tools.
-    ctx.load_tools()
+    _load_tools(ctx)
 
     # We'd like to check for this, but it's an rbenv-managed gem.
     #ctx.find_program('lolcat', mandatory=False)
