@@ -21,8 +21,6 @@ def build(ctx):
     if not ctx.env.TMUXIFIER_:
         return
 
-    ctx.env.SHELL_ALIASES['mux'] = ctx.shquote_cmd(ctx.env.TMUXIFIER_)
-
     for shell in ctx.env.AVAILABLE_SHELLS:
         out_node = ctx.path.find_or_declare('tmuxifier.' + shell)
         ctx.add_shell_rc_node(out_node, shell)

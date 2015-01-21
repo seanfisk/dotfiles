@@ -59,3 +59,11 @@ def build(ctx):
     if ctx.env.BREW:
         ctx.env.SHELL_ENV['HOMEBREW_EDITOR'] = shquote(ctx.shquote_cmd(
             editor_maybe_nonblock))
+
+    # Tmuxifier's edit-session and edit-window also use EDITOR. However,
+    # neither commands need the editor to wait. There's some nasty quoting to
+    # set the environment variable temporarily for this command.
+    ctx.env.SHELL_ALIASES['mux'] = ' '.join([
+        'EDITOR=' + shquote(ctx.shquote_cmd(editor_maybe_nonblock)),
+        shquote(ctx.env.TMUXIFIER_[0]),
+    ])
