@@ -19,6 +19,7 @@ alias lag='la | grep'
 alias laeg='la | egrep'
 alias lafg='la | fgrep'
 
+alias py=python
 alias ipy=ipython
 
 # Shortcut functions
