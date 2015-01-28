@@ -46,8 +46,9 @@ def build(ctx):
         # See here for sources of approaches:
         # http://serverfault.com/questions/351598/get-total-files-size-from-a-file-containing-a-file-list
         ctx.env.SHELL_ALIASES['git-working-tree-size'] = (
-            'git ls-files -z | {wc} --bytes --files0-from=- | '
+            '{git} ls-files -z | {wc} --bytes --files0-from=- | '
             '{numfmt} --to=iec-i --suffix=B').format(
+                git=ctx.shquote_cmd(git),
                 wc=ctx.shquote_cmd(ctx.env.WC),
                 numfmt=ctx.shquote_cmd(ctx.env.NUMFMT))
         # Another approach, using GNU stat and awk:
