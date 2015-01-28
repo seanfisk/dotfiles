@@ -12,15 +12,26 @@ def configure(ctx):
 def build(ctx):
     if not ctx.env.GIT:
         return
-    ctx.env.SHELL_ALIASES['g'] = ctx.shquote_cmd(ctx.env.GIT)
-    ctx.env.SHELL_ALIASES['gt'] = ctx.shquote_cmd(ctx.env.GIT + ['status'])
-    ctx.env.SHELL_ALIASES['gobuddygo'] = ctx.shquote_cmd(
-        ctx.env.GIT + ['push'])
-    ctx.env.SHELL_ALIASES['cometome'] = ctx.shquote_cmd(ctx.env.GIT + ['pull'])
+
+    # Hub's alias command `hub alias -s' produces really simple output:
+    #
+    #     alias git=hub
+    #
+    # Just use hub's path instead of git if we have it.
+    if ctx.env.HUB:
+        git = ctx.env.HUB
+        ctx.env.SHELL_ALIASES['git'] = ctx.shquote_cmd(git)
+    else:
+        git = ctx.env.GIT
+
+    ctx.env.SHELL_ALIASES['g'] = ctx.shquote_cmd(git)
+    ctx.env.SHELL_ALIASES['gt'] = ctx.shquote_cmd(git + ['status'])
+    ctx.env.SHELL_ALIASES['gobuddygo'] = ctx.shquote_cmd(git + ['push'])
+    ctx.env.SHELL_ALIASES['cometome'] = ctx.shquote_cmd(git + ['pull'])
     # Update dotfiles alias
     ctx.env.SHELL_ALIASES['ud'] = ' && '.join([
         ctx.shquote_cmd(['cd', ctx.srcnode.abspath()]),
-        ctx.shquote_cmd(ctx.env.GIT + ['pull']),
+        ctx.shquote_cmd(git + ['pull']),
         # Distclean to avoid possible errors. A full rebuild does not take
         # long.
         ctx.shquote_cmd([
@@ -44,11 +55,6 @@ def build(ctx):
         # git ls-files -z | while read -d $'\0' filename;
         # do $STAT -c '%s' "$filename"; done |
         # awk '{total+=$1} END {print total}
-
-    if ctx.env.HUB:
-        # Hub's alias command `hub alias -s' produces really simple output,
-        # which is basically this.
-        ctx.env.SHELL_ALIASES['git'] = 'hub'
 
     if ctx.env.OHCOUNT:
         ctx.install_script('git-count-lines')
