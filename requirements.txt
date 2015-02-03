@@ -3,7 +3,7 @@
 appdirs==1.4.0
 
 # Compilation
-jsmin==2.0.11
+jsmin==2.1.0
 
 # Development
 

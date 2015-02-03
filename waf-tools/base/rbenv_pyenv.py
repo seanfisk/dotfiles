@@ -32,7 +32,7 @@ def configure(ctx):
     # Set up a list of Python packages to install into a default pyenv
     # virtualenv using pyenv hooks. Create the list regardless of the
     # availability of pyenv so that other files don't get errors.
-    ctx.env.PYENV_VIRTUALENV_DEFAULT_PACKAGES = ['ipython==2.3.1']
+    ctx.env.PYENV_VIRTUALENV_DEFAULT_PACKAGES = ['ipython==2.4.0']
 
 def _make_rbenv_pyenv_file(tsk):
     # The generated code loads pyenv and rbenv into the shell session. We need
