@@ -60,9 +60,9 @@ def configure(ctx):
     ctx.env.HAS_POWERLINE = all([
         ctx.find_program('powerline-daemon', var='POWERLINE_DAEMON',
                          mandatory=False),
-        # Powerline uses the POWERLINE_CONFIG environment variable, which Waf
-        # will then detect. Change ours to avoid this.
-        ctx.find_program('powerline-config', var='POWERLINE_CONFIG_',
+        # Since 2.0, Powerline no longer uses the POWERLINE_CONFIG environment
+        # variable.
+        ctx.find_program('powerline-config', var='POWERLINE_CONFIG',
                          mandatory=False),
         ctx.find_program('powerline-render', var='POWERLINE_RENDER',
                          mandatory=False),
@@ -93,16 +93,13 @@ def build(ctx):
     # These are used in case virtualenvs have Powerline installed (most will).
     # We want the Powerline executables from the default Python to be used.
 
-    # Used for tmux only (not really sure why).
-    ctx.env.SHELL_ENV['POWERLINE_CONFIG_COMMAND'] = ctx.shquote_cmd(
-        ctx.env.POWERLINE_CONFIG_)
-    # Used for shell and tmux.
-    ctx.env.SHELL_ENV['POWERLINE_CONFIG'] = ctx.shquote_cmd(
-        ctx.env.POWERLINE_CONFIG_)
+    # Both these environment variables specify full paths to the executables,
+    # so according to Powerline docs they should not be quoted.
+    # http://powerline.readthedocs.org/en/2.0/configuration/local.html#prompt-command
+    ctx.env.SHELL_ENV['POWERLINE_CONFIG_COMMAND'] = ctx.env.POWERLINE_CONFIG[0]
     if ctx.env.POWERLINE_CLIENT:
         # Used for shell and tmux.
-        ctx.env.SHELL_ENV['POWERLINE_COMMAND'] = ctx.shquote_cmd(
-            ctx.env.POWERLINE_CLIENT)
+        ctx.env.SHELL_ENV['POWERLINE_COMMAND'] = ctx.env.POWERLINE_CLIENT[0]
 
     # While overriding some executables with absolute paths in environment
     # variables is possible, the powerline client (see 'scripts/powerline.c')
@@ -115,7 +112,7 @@ def build(ctx):
                    ctx.env.POWERLINE_RENDER[0])
 
     ctx.env.PYENV_VIRTUALENV_DEFAULT_PACKAGES.append(
-        POWERLINE_PACKAGE_NAME + '==1.3.1')
+        POWERLINE_PACKAGE_NAME + '==2.0')
 
     def _make_bash_powerline(tsk):
         tsk.outputs[0].write('''{powerline_daemon} --quiet

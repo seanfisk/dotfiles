@@ -68,7 +68,7 @@
 			{
 				"type": "string",
 				"contents": "$",
-				"highlight_group": ["cwd"]
+				"highlight_groups": ["cwd"]
 			}
 		],
 		"right": [

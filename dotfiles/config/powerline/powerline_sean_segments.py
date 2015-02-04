@@ -65,7 +65,7 @@ def _make_tool_segment(tool):
 
         return [{
             'contents': contents,
-            'highlight_group': [tool],
+            'highlight_groups': [tool],
         }]
 
     return tool_segment
