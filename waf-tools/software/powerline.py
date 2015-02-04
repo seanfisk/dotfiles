@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Detect and configure Powerline."""
 
+import os
 from os.path import join
 from shlex import quote as shquote
 import json
@@ -56,6 +57,11 @@ def configure(ctx):
         _print_disabled_msg('disabled, default Python is UCS-2')
         return
 
+    # Don't look in the directory to which the script is going to be symlinked.
+    # (see the build phase for justification on why this is done).
+    powerline_render_paths = ctx.environ['PATH'].split(os.pathsep)
+    powerline_render_paths.remove(ctx.env.SCRIPTS_DIR)
+
     # Set this variable to give us an easy way to tell if we have Powerline.
     ctx.env.HAS_POWERLINE = all([
         ctx.find_program('powerline-daemon', var='POWERLINE_DAEMON',
@@ -64,8 +70,10 @@ def configure(ctx):
         # variable.
         ctx.find_program('powerline-config', var='POWERLINE_CONFIG',
                          mandatory=False),
-        ctx.find_program('powerline-render', var='POWERLINE_RENDER',
-                         mandatory=False),
+        ctx.find_program(
+            'powerline-render', var='POWERLINE_RENDER', mandatory=False,
+            path_list=powerline_render_paths,
+        ),
         # This program is used in our 'lint' task, but it should be the
         # powerline-lint associated with the Powerline package we are currently
         # using (e.g., not a dev package for this repo).
