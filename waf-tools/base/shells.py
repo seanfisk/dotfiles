@@ -82,21 +82,6 @@ def find_zsh(self):
         self.fatal('This configuration requires Zsh {}.'.format(
             required_major_version))
 
-    # Load zpython from Homebrew/Linuxbrew if available. We have programmed
-    # this detection specifically for Brew because Brew installs zpython in a
-    # somewhat nonstandard way (it doesn't use 'make install').
-    if self.env.BREW:
-        zpython_brew_prefix = self.cmd_and_log(
-            self.env.BREW + ['--prefix', 'zpython']).rstrip()
-        zpython_module_path = join(zpython_brew_prefix, 'lib', 'zpython')
-        zpython_lib = join(zpython_module_path, 'zsh', 'zpython.so')
-        self.start_msg('Checking for zpython library')
-        if os.path.isfile(zpython_lib):
-            self.env.ZPYTHON_MODULE_PATH = zpython_module_path
-            self.end_msg(zpython_lib)
-        else:
-            self.end_msg(False)
-
     return exe_path
 
 @conf
