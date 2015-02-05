@@ -130,7 +130,7 @@ def lint(ctx):
 
         retcodes += ctx.exec_command(
             ctx.env.POWERLINE_LINT + list(itertools.chain.from_iterable(
-                ['-p', path] for path in [
+                ['--config-path', path] for path in [
                     ctx.get_powerline_path('config_files'),
                     ctx.bldnode.find_dir([
                         'dotfiles', 'config', 'powerline']).abspath(),
