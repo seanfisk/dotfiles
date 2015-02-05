@@ -138,6 +138,7 @@ def build(ctx):
                    ctx.env.POWERLINE_RENDER[0])
 
     ctx.env.PYENV_VIRTUALENV_DEFAULT_PACKAGES.append(
+        # See https://github.com/powerline/powerline/pull/1297
         'git+https://github.com/powerline/powerline.git'
         '@b40e45a0e72eaebe4160aa0c1b5666f698ac8ac5#egg={0}'.format(
             POWERLINE_PACKAGE_NAME))
