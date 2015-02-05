@@ -35,7 +35,7 @@ NOT_INSTALLED_RE = re.compile(
 def _make_tool_segment(tool):
     @requires_segment_info
     def tool_segment(pl, segment_info): # pylint: disable=invalid-name
-        """Powerline segment for {}.""".format(tool)
+        """Return the current {0} version name.""".format(tool)
         # Note: pl is a PowerlineLogger, and "expects to receive message in an
         # str.format() format, not in printf-like format."
 
@@ -86,10 +86,7 @@ def _make_tool_segment(tool):
 
             contents = match.group('version') + u' ⚠'
 
-        return [{
-            'contents': contents,
-            'highlight_groups': [tool],
-        }]
+        return contents
 
     return tool_segment
 

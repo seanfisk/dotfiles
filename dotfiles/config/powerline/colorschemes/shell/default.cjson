@@ -7,13 +7,7 @@
 {
 	"name": "Sean's color scheme for shell prompts",
 	"groups": {
-		"pyenv":          { "fg": "brightyellow", "bg": "mediumgreen", "attrs": [] },
-		"rbenv":          { "fg": "brightestorange", "bg": "darkestred", "attrs": [] },
-		"hostname":       { "fg": "brightyellow", "bg": "mediumorange", "attrs": [] },
-		"jobnum":         { "fg": "brightyellow", "bg": "mediumorange", "attrs": [] },
-		"exit_fail":      { "fg": "white", "bg": "darkestred", "attrs": [] },
-		"exit_success":   { "fg": "white", "bg": "darkestgreen", "attrs": [] },
-		"environment":    { "fg": "white", "bg": "darkestgreen", "attrs": [] },
-		"mode":           { "fg": "darkestgreen", "bg": "brightgreen", "attrs": ["bold"] }
+		"pyenv": { "fg": "brightyellow", "bg": "mediumgreen", "attrs": [] },
+		"rbenv": { "fg": "brightestorange", "bg": "darkestred", "attrs": [] }
 	}
 }
