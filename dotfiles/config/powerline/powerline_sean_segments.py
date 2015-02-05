@@ -5,7 +5,25 @@
 from __future__ import unicode_literals, absolute_import, division
 import re
 import errno
-import subprocess
+import sys
+
+# subprocess32 is a backport of Python 3.2's subprocess module to Python 2.
+# When using Python 2, it is required for using these segments. The reason we
+# require it is that Python 2's subprocess module attempts to encode its
+# environment dictionary using the ascii codec, while Powerline decodes it
+# using the system's preferred encoding. This causes frequent errors when there
+# are non-ASCII characters in the environment. While we could hack around this
+# for Python 2, subprocess32 includes other important bug fixes so we thought
+# it prudent to use it.
+if sys.version_info < (3,):
+    try:
+        import subprocess32 as subprocess
+    except ImportError:
+        raise NotImplementedError(
+            'rbenv/pyenv segments under Python 2 require installation of the '
+            'subprocess32 package. Please install it to use these segments.')
+else:
+    import subprocess
 
 from powerline.lib.encoding import get_preferred_input_encoding # pylint: disable=import-error,no-name-in-module
 from powerline.theme import requires_segment_info # pylint: disable=import-error,no-name-in-module
