@@ -8,13 +8,15 @@ import errno
 import subprocess
 
 from powerline.lib.encoding import get_preferred_input_encoding # pylint: disable=import-error,no-name-in-module
+from powerline.theme import requires_segment_info # pylint: disable=import-error,no-name-in-module
 
 NOT_INSTALLED_RE = re.compile(
     r".*: version `(?P<version>.*)' is not installed$")
 """Pattern to extract the missing version from the program's error message."""
 
 def _make_tool_segment(tool):
-    def tool_segment(pl): # pylint: disable=invalid-name
+    @requires_segment_info
+    def tool_segment(pl, segment_info): # pylint: disable=invalid-name
         """Powerline segment for {}.""".format(tool)
         # Note: pl is a PowerlineLogger, and "expects to receive message in an
         # str.format() format, not in printf-like format."
@@ -26,7 +28,10 @@ def _make_tool_segment(tool):
         # Run the process.
         try:
             proc = subprocess.Popen(
-                command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                command, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                # Have to specify these so that the extension works correctly
+                # with the daemon.
+                cwd=segment_info['getcwd'](), env=segment_info['environ'])
         except OSError as exc:
             if exc.errno == errno.ENOENT:
                 # This error probably means that the operating system couldn't
