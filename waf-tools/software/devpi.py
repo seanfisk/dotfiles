@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """Detect and configure devpi."""
 
-from os.path import join
-
 DEVPI_PYPI_URL = 'http://localhost:3141/root/pypi/+simple/'
 
 def configure(ctx):
@@ -30,9 +28,7 @@ def build(ctx):
         def _make_devpi_gen_config(tsk):
             return tsk.exec_command(tsk.env.DEVPI_SERVER + ['--gen-config'])
 
-        ctx.install_as(
-            join(ctx.env.LAUNCH_AGENTS_DIR, plist_node.name),
-            plist_node)
+        ctx.install_launch_agent(plist_node)
 
     # Ugh... this is ugly. Unfortunately double extensions are not fun.
     for relpath_list in [['pip', 'pip.conf'], ['pydistutils.cfg']]:

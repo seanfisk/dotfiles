@@ -128,9 +128,7 @@ def build(ctx):
                     sort_keys=False, # Keep our own order.
                 )
 
-        ctx.install_as(
-            join(ctx.env.LAUNCH_AGENTS_DIR, plist_node.name),
-            plist_node)
+        ctx.install_launch_agent(plist_node)
 
     # TODO zpython is disabled until we can figure out how to install/use it
     # properly.

@@ -4,10 +4,30 @@
 from os.path import join
 import platform
 
+from waflib.Configure import conf
+
 SYSTEM_OS_MAPPING = {
     'Linux': 'LINUX',
     'Darwin': 'MACOSX',
 }
+
+# OS X only, uses launchd
+@conf
+def install_launch_agent(self, node):
+    """Install a user-level launchd launch agent. OS X only.
+
+    :param node: a node representing a plist
+    :type node: waflib.Node.Node
+    """
+    if not self.env.MACOSX:
+        raise NotImplementedError('Launch agents are only supported on OS X.')
+    self.install_as(
+        join(self.env.LAUNCH_AGENTS_DIR, node.name),
+        node,
+        # Set the mode. The file must be writable *only by the user* otherwise
+        # launchd will not load it. Be conservative and zero the group and
+        # other permissions.
+        chmod=0o0600)
 
 def configure(ctx):
     try:
