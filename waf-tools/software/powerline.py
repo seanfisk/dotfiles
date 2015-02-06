@@ -5,6 +5,8 @@ import os
 from os.path import join
 from shlex import quote as shquote
 import json
+from collections import OrderedDict
+import plistlib
 
 import waflib
 from waflib.Configure import conf
@@ -93,9 +95,42 @@ def configure(ctx):
         # in this directory.
         'main.log')
 
+    # Under OS X, start powerline-daemon upon login using launchd.
+    ctx.env.POWERLINE_DAEMON_LAUNCHD = ctx.env.MACOSX
+
+    # Grab the default language for Powerline.
+    ctx.env.POWERLINE_LANG = ctx.environ['LANG']
+
 def build(ctx):
     if not ctx.env.HAS_POWERLINE:
         return
+
+    if ctx.env.POWERLINE_DAEMON_LAUNCHD:
+        # I made up 'net.powerline'; that's not a real domain.
+        label = 'net.powerline'
+        plist_node = ctx.path.find_or_declare(label + '.plist')
+        @ctx.rule(target=plist_node, vars=['POWERLINE_DAEMON'])
+        def _make_powerline_launch_agent(tsk):
+            with open(tsk.outputs[0].abspath(), 'wb') as out_file:
+                # plistlib.dump is Python >= 3.4
+                plistlib.dump(
+                    OrderedDict([
+                        ('Label', label),
+                        ('ProgramArguments',
+                         ctx.env.POWERLINE_DAEMON + ['--foreground']),
+                        ('RunAtLoad', True),
+                        ('EnvironmentVariables', {
+                            # Set LANG to ensure proper output encoding.
+                            'LANG': ctx.env.POWERLINE_LANG,
+                        }),
+                    ]),
+                    out_file,
+                    sort_keys=False, # Keep our own order.
+                )
+
+        ctx.install_as(
+            join(ctx.env.LAUNCH_AGENTS_DIR, plist_node.name),
+            plist_node)
 
     # TODO zpython is disabled until we can figure out how to install/use it
     # properly.
@@ -144,32 +179,33 @@ def build(ctx):
             POWERLINE_PACKAGE_NAME))
 
     def _make_bash_powerline(tsk):
-        tsk.outputs[0].write('''{powerline_daemon} --quiet
-POWERLINE_BASH_CONTINUATION=1
-POWERLINE_BASH_SELECT=1
-source {powerline_file}
-'''\
-        .format(
-            powerline_daemon=ctx.shquote_cmd(tsk.env.POWERLINE_DAEMON),
-            powerline_file=shquote(ctx.get_powerline_path(join(
-                'bindings', 'bash', 'powerline.sh'))),
-        ))
+        lines = []
+        if not tsk.env.POWERLINE_DAEMON_LAUNCHD:
+            lines.append(
+                '{} --quiet'.format(ctx.shquote_cmd(tsk.env.POWERLINE_DAEMON)))
+        lines += [
+            'POWERLINE_BASH_CONTINUATION=1',
+            'POWERLINE_BASH_SELECT=1',
+            'source {}'.format(shquote(ctx.get_powerline_path(join(
+                'bindings', 'bash', 'powerline.sh')))),
+        ]
+        tsk.outputs[0].write('\n'.join(lines) + '\n')
 
     def _make_zsh_powerline(tsk):
-        tsk.outputs[0].write('''{powerline_daemon} --quiet
-source {powerline_file}
-'''\
-        .format(
-            powerline_daemon=ctx.shquote_cmd(tsk.env.POWERLINE_DAEMON),
-            powerline_file=shquote(ctx.get_powerline_path(join(
-                'bindings', 'zsh', 'powerline.zsh'))),
-        ))
+        lines = []
+        if not tsk.env.POWERLINE_DAEMON_LAUNCHD:
+            lines.append(
+                '{} --quiet'.format(ctx.shquote_cmd(tsk.env.POWERLINE_DAEMON)))
+        lines.append('source {}'.format(shquote(ctx.get_powerline_path(join(
+            'bindings', 'zsh', 'powerline.zsh')))))
+        tsk.outputs[0].write('\n'.join(lines) + '\n')
 
     for shell in ctx.env.AVAILABLE_SHELLS:
         out_node = ctx.path.find_or_declare('powerline.' + shell)
         ctx.add_shell_rc_node(out_node, shell)
         rule = locals()['_make_{}_powerline'.format(shell)]
-        ctx(rule=rule, target=out_node, vars=['POWERLINE_DAEMON'])
+        ctx(rule=rule, target=out_node,
+            vars=['POWERLINE_DAEMON', 'POWERLINE_DAEMON_LAUNCHD'])
 
     # Instead of templating the config file and dealing with possible escaping
     # issues, we just dump it with the json module.

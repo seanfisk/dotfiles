@@ -33,17 +33,19 @@ def build(ctx):
     in_node = ctx.path.find_resource(['dotfiles', 'tmux.conf.in'])
     out_node = in_node.change_ext(ext='.conf', ext_in='.conf.in')
 
+    powerline_commands = []
     if ctx.env.HAS_POWERLINE:
         tmux_powerline_file = ctx.get_powerline_path(
             join('bindings', 'tmux', 'powerline.conf'))
-        powerline_commands = [
-            # Not exactly sure about the quoting rules in this config file...
-            'run-shell ' + shquote(ctx.shquote_cmd(
-                ctx.env.POWERLINE_DAEMON + ['--quiet'])),
-            'source-file ' + shquote(tmux_powerline_file),
-        ]
-    else:
-        powerline_commands = []
+        if not ctx.env.POWERLINE_DAEMON_LAUNCHD:
+            powerline_commands.append(
+                # Not exactly sure about the quoting rules in this config
+                # file...
+                'run-shell ' + shquote(ctx.shquote_cmd(
+                    ctx.env.POWERLINE_DAEMON + ['--quiet'])))
+
+        powerline_commands.append(
+            'source-file ' + shquote(tmux_powerline_file))
 
     ctx(features='subst',
         source=in_node,

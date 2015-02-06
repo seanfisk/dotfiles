@@ -31,7 +31,7 @@ def build(ctx):
             return tsk.exec_command(tsk.env.DEVPI_SERVER + ['--gen-config'])
 
         ctx.install_as(
-            join(ctx.env.PREFIX, 'Library', 'LaunchAgents', plist_node.name),
+            join(ctx.env.LAUNCH_AGENTS_DIR, plist_node.name),
             plist_node)
 
     # Ugh... this is ugly. Unfortunately double extensions are not fun.

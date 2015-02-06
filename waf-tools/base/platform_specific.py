@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Detect the system type and set variables."""
 
+from os.path import join
 import platform
 
 SYSTEM_OS_MAPPING = {
@@ -14,7 +15,10 @@ def configure(ctx):
     except KeyError:
         ctx.fatal('Unrecognized system.')
 
-    if ctx.env.LINUX:
+    if ctx.env.MACOSX:
+        ctx.env.LAUNCH_AGENTS_DIR = join(
+            ctx.env.PREFIX, 'Library', 'LaunchAgents')
+    elif ctx.env.LINUX:
         ctx.find_program('gnome-open', var='GNOME_OPEN', mandatory=False)
 
 def build(ctx):
