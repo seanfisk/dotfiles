@@ -12,7 +12,7 @@ import waflib
 from waflib.Configure import conf
 import appdirs
 
-POWERLINE_PACKAGE_NAME = 'powerline-status'
+PACKAGE_NAME = 'powerline-status'
 
 @conf
 def get_powerline_path(self, relpath):
@@ -27,6 +27,41 @@ def get_powerline_path(self, relpath):
             .format(repr(relpath))],
         # Don't print out the command or its output.
         quiet=waflib.Context.BOTH).rstrip()
+
+def _json_dump_node(obj, node):
+    """Dump an object's JSON representation to an output node.
+
+    :param obj: object to dump
+    :type obj: :class:`object`
+    :param node: node to which to write the JSON
+    :type node: :class:`waflib.Node.Node`
+    """
+    # Powerline reads its config files as UTF-8.
+    # https://github.com/powerline/powerline/blob/develop/powerline/lib/config.py#L16
+    with open(node.abspath(), 'w', encoding='utf-8') as out_file:
+        json.dump(
+            obj, out_file,
+            # No spaces, 'cuz that extra 10 bytes is gonna kill me...
+            separators=(',', ':'),
+            # Dammit, I just added a bunch more bytes to *this* file!
+
+            # Because Powerline reads as UTF-8, it's not necessary to escape.
+            ensure_ascii=False,
+        )
+
+def _plist_dump_node(obj, node):
+    """Dump an object's plist representation to an output node.
+
+    :param obj: object to dump
+    :type obj: :class:`object`
+    :param node: node to which to write the plist
+    :type node: :class:`waflib.Node.Node`
+    """
+    with open(node.abspath(), 'wb') as out_file:
+        plistlib.dump( # plistlib.dump is Python >= 3.4
+            obj, out_file,
+            sort_keys=False, # Keep our own order.
+        )
 
 def options(ctx):
     # Add a command-line option to explicity disable Powerline.
@@ -61,8 +96,8 @@ def configure(ctx):
 
     # Don't look in the directory to which the script is going to be symlinked.
     # (see the build phase for justification on why this is done).
-    powerline_render_paths = ctx.environ['PATH'].split(os.pathsep)
-    powerline_render_paths.remove(ctx.env.SCRIPTS_DIR)
+    render_paths = ctx.environ['PATH'].split(os.pathsep)
+    render_paths.remove(ctx.env.SCRIPTS_DIR)
 
     # Set this variable to give us an easy way to tell if we have Powerline.
     ctx.env.HAS_POWERLINE = all([
@@ -74,7 +109,7 @@ def configure(ctx):
                          mandatory=False),
         ctx.find_program(
             'powerline-render', var='POWERLINE_RENDER', mandatory=False,
-            path_list=powerline_render_paths,
+            path_list=render_paths,
         ),
         # This program is used in our 'lint' task, but it should be the
         # powerline-lint associated with the Powerline package we are currently
@@ -110,23 +145,20 @@ def build(ctx):
         label = 'net.powerline'
         plist_node = ctx.path.find_or_declare(label + '.plist')
         @ctx.rule(target=plist_node, vars=['POWERLINE_DAEMON'])
-        def _make_powerline_launch_agent(tsk):
-            with open(tsk.outputs[0].abspath(), 'wb') as out_file:
-                # plistlib.dump is Python >= 3.4
-                plistlib.dump(
-                    OrderedDict([
-                        ('Label', label),
-                        ('ProgramArguments',
-                         ctx.env.POWERLINE_DAEMON + ['--foreground']),
-                        ('RunAtLoad', True),
-                        ('EnvironmentVariables', {
-                            # Set LANG to ensure proper output encoding.
-                            'LANG': ctx.env.POWERLINE_LANG,
-                        }),
-                    ]),
-                    out_file,
-                    sort_keys=False, # Keep our own order.
-                )
+        def _make_launch_agent(tsk):
+            _plist_dump_node(
+                OrderedDict([
+                    ('Label', label),
+                    ('ProgramArguments',
+                     ctx.env.POWERLINE_DAEMON + ['--foreground']),
+                    ('RunAtLoad', True),
+                    ('EnvironmentVariables', {
+                        # Set LANG to ensure proper output encoding.
+                        'LANG': ctx.env.POWERLINE_LANG,
+                    }),
+                ]),
+                tsk.outputs[0],
+            )
 
         ctx.install_launch_agent(plist_node)
 
@@ -174,9 +206,9 @@ def build(ctx):
         # See https://github.com/powerline/powerline/pull/1297
         'git+https://github.com/powerline/powerline.git'
         '@b40e45a0e72eaebe4160aa0c1b5666f698ac8ac5#egg={0}'.format(
-            POWERLINE_PACKAGE_NAME))
+            PACKAGE_NAME))
 
-    def _make_bash_powerline(tsk):
+    def _make_bash(tsk):
         lines = []
         if not tsk.env.POWERLINE_DAEMON_LAUNCHD:
             lines.append(
@@ -189,7 +221,7 @@ def build(ctx):
         ]
         tsk.outputs[0].write('\n'.join(lines) + '\n')
 
-    def _make_zsh_powerline(tsk):
+    def _make_zsh(tsk):
         lines = []
         if not tsk.env.POWERLINE_DAEMON_LAUNCHD:
             lines.append(
@@ -201,38 +233,156 @@ def build(ctx):
     for shell in ctx.env.AVAILABLE_SHELLS:
         out_node = ctx.path.find_or_declare('powerline.' + shell)
         ctx.add_shell_rc_node(out_node, shell)
-        rule = locals()['_make_{}_powerline'.format(shell)]
+        rule = locals()['_make_{}'.format(shell)]
         ctx(rule=rule, target=out_node,
             vars=['POWERLINE_DAEMON', 'POWERLINE_DAEMON_LAUNCHD'])
 
-    # Instead of templating the config file and dealing with possible escaping
-    # issues, we just dump it with the json module.
-    out_node = ctx.path.find_or_declare([
-        'dotfiles', 'config', 'powerline', 'config.json'])
+    def _declare(base_path):
+        return ctx.path.find_or_declare(join(
+            'dotfiles', 'config', 'powerline', join(*base_path) + '.json'))
 
-    @ctx.rule(target=out_node,
+    config_node = _declare(['config'])
+
+    @ctx.rule(target=config_node,
               vars=['POWERLINE_SEGMENTS_PATH', 'POWERLINE_LOG_PATH'])
-    def _make_powerline_config(tsk):
-        with open(tsk.outputs[0].abspath(), 'w') as out_file:
-            json.dump(
-                {
-                    'common': {
-                        'paths': [tsk.env.POWERLINE_SEGMENTS_PATH],
-                        'log_file': tsk.env.POWERLINE_LOG_PATH,
-                    },
-                    'ext': {
-                        'shell': {'theme': 'sean'},
-                        'tmux': {'theme': 'sean'},
-                    },
+    def _make_config(tsk):
+        _json_dump_node(
+            {
+                'common': {
+                    'paths': [tsk.env.POWERLINE_SEGMENTS_PATH],
+                    'log_file': tsk.env.POWERLINE_LOG_PATH,
                 },
-                out_file,
-                # No spaces, 'cuz that extra 10 bytes is gonna kill me...
-                separators=(',', ':'),
-                # Dammit, I just added a bunch more bytes to *this* file!
-            )
+                'ext': {
+                    'shell': {'theme': 'sean'},
+                    'tmux': {'theme': 'sean'},
+                },
+            },
+            tsk.outputs[0],
+        )
 
-    ctx(source=ctx.path.ant_glob(
-        'dotfiles/config/powerline/**/*.cjson') + [out_node])
+    shell_theme_node = _declare(['themes', 'shell', 'sean'])
+
+    @ctx.rule(target=shell_theme_node, vars=['PYENV', 'RBENV'])
+    def _make_shell_theme(tsk):
+        # TODO: Consider moving this back to a JSON file which gets read and
+        # merged.
+        top_left = [
+            {
+                'function': 'powerline.segments.common.net.hostname',
+                'priority': 30,
+                'args': {
+                    # Always include the hostname.
+                    'only_if_ssh': False,
+                    'exclude_domain': True,
+                },
+            },
+            {
+                'function': 'powerline.segments.common.env.user',
+                'priority': 30,
+            },
+            {
+                'function': 'powerline.segments.shell.cwd',
+                'args': {
+                    # Don't split the cwd into multiple
+                    # Powerline segments.
+                    'use_path_separator': True,
+                    # Don't ever shorten the cwd.
+                    'dir_limit_depth': None,
+                }
+            },
+            {
+                'function': (
+                    'powerline.segments.common.vcs.branch'),
+                'priority': 10,
+                'args': {
+                    # Show whether the branch is dirty.
+                    'status_colors': True,
+                }
+            }
+        ]
+        if tsk.env.PYENV:
+            top_left.append({
+                'function': 'powerline_sean_segments.pyenv',
+                # This value is Unicode SNAKE followed by two spaces.
+                'before': '🐍  '
+            })
+        if tsk.env.RBENV:
+            top_left.append({
+                'function': 'powerline_sean_segments.rbenv',
+                # This value is a Unicode GEM STONE followed by two spaces.
+                'before': '💎  '
+            })
+        theme = {
+            'segments': {
+                # The 'above' key allows us to have a multiline prompt.
+                # https://github.com/Lokaltog/powerline/issues/462#issuecomment-46806521
+                'above': [
+                    {
+                        'left': top_left,
+                    }
+                ],
+                'left': [
+                    {
+                        'type': 'string',
+                        'contents': '$',
+                        'highlight_groups': ['cwd'],
+                    }
+                ],
+                'right': [
+                    {
+                        # last_pipe_status is way cooler than the normal
+                        # last_status. If any of the pipe commands fail, it
+                        # will show the exit status for each of them. For
+                        # example, try running:
+                        #
+                        #     true | false | true
+                        #
+                        'function': (
+                            'powerline.segments.shell.last_pipe_status'),
+                        'priority': 10,
+                    }
+                ]
+            }
+        }
+
+        _json_dump_node(theme, tsk.outputs[0])
+
+    # We name this file 'colorschemes/shell/default.json' so that it overrides
+    # the Powerline 'colorschemes/shell/default.json', but still inherits from
+    # 'colorschemes/default.json'.
+    shell_colorscheme_node = _declare(['colorschemes', 'shell', 'default'])
+
+    @ctx.rule(target=shell_colorscheme_node, vars=['PYENV', 'RBENV'])
+    def _make_shell_colorscheme(tsk):
+        groups = {}
+        if tsk.env.PYENV:
+            groups['pyenv'] = {
+                'fg': 'brightyellow',
+                'bg': 'mediumgreen',
+                'attrs': [],
+            }
+        if tsk.env.RBENV:
+            groups['rbenv'] = {
+                'fg': 'brightestorange',
+                'bg': 'darkestred',
+                'attrs': [],
+            }
+        _json_dump_node(
+            {
+                'name': "Sean's color scheme for shell prompts",
+                'groups': groups,
+            },
+            tsk.outputs[0],
+        )
+
+    ctx(source=[
+        config_node,
+        shell_theme_node,
+        # The tmux theme doesn't need any configuration.
+        join('dotfiles', 'config', 'powerline', 'themes', 'tmux',
+             'sean.cjson'),
+        shell_colorscheme_node,
+    ])
 
     # Install segments file.
     ctx.install_dotfile(ctx.path.find_resource([
