@@ -4,7 +4,6 @@
 
 from __future__ import unicode_literals, absolute_import, division
 import re
-import errno
 import sys
 
 # subprocess32 is a backport of Python 3.2's subprocess module to Python 2.
@@ -50,16 +49,10 @@ def _make_tool_segment(tool):
                 # Have to specify these so that the extension works correctly
                 # with the daemon.
                 cwd=segment_info['getcwd'](), env=segment_info['environ'])
-        except OSError as exc:
-            if exc.errno == errno.ENOENT:
-                # This error probably means that the operating system couldn't
-                # find the tool's executable. In this case, don't render the
-                # segment. This is an opinionated decision, but it is useful
-                # for people who don't have the tool installed on all of the
-                # machines on which they use their Powerline configuration.
-                pl.debug('Tool executable not found: {0}', tool)
-                return []
-            raise
+        except OSError:
+            pl.exception('Could not execute command: {0}', command_str)
+            return []
+
         outs = proc.communicate()
 
         # Try to decode the output.
@@ -68,6 +61,7 @@ def _make_tool_segment(tool):
                         for b in outs)
         except UnicodeDecodeError:
             pl.exception('Decoding output of command failed: {0}', command_str)
+            return []
 
         # Check for success.
         if proc.returncode == 0:
