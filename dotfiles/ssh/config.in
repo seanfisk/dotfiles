@@ -65,11 +65,13 @@ ControlPath none
 Host *
 # Enable multiple connections for all hosts except the ones excluded above.
 ControlMaster auto
-#                       Host
-#                         |Port
-#                         |  | Username
-#                         V  V  V
-ControlPath /tmp/ssh_mux_%h_%p_%r
+# Double-quote to handle possible spaces in the temporary directory path.
+#
+# @TEMP_DIR_LEN@               Host
+# @TEMP_DIR_LEN@                 |Port
+# @TEMP_DIR_LEN@                 |  | Username
+# @TEMP_DIR_LEN@                 V  V  V
+ControlPath "@TEMP_DIR@/ssh_mux_%h_%p_%r"
 
 # Persist connections for 2 hours.
 ControlPersist 2h

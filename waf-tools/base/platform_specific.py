@@ -3,6 +3,7 @@
 
 from os.path import join
 import platform
+import tempfile
 
 from waflib.Configure import conf
 
@@ -40,6 +41,9 @@ def configure(ctx):
             ctx.env.PREFIX, 'Library', 'LaunchAgents')
     elif ctx.env.LINUX:
         ctx.find_program('gnome-open', var='GNOME_OPEN', mandatory=False)
+
+    # Not sure this exactly fits in here, but it differs platform-to-platform.
+    ctx.env.TEMP_DIR = tempfile.gettempdir()
 
 def build(ctx):
     if ctx.env.MACOSX:
