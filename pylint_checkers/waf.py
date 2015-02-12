@@ -42,7 +42,3 @@ class WafChecker(BaseChecker):
                 # other decorators called 'conf'.
                 if inferred.qname() == 'waflib.Configure.conf':
                     self.add_message('waf-conf-arg', node=node)
-
-def register(linter):
-    """Method to auto-register our checkers."""
-    linter.register_checker(WafChecker(linter))

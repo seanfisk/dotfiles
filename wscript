@@ -112,17 +112,15 @@ def lint(ctx):
         base, ext = os.path.splitext(os.path.basename(path))
         return ext == '.py' or base == 'wscript'
     # Waf will take care of colors on Windows with its ansiterm module.
-    checkers_dir_path = ctx.path.find_dir('pylint-checkers').abspath()
     retcodes = ctx.exec_command(
-        ctx.env.PYLINT +
-        ['--load-plugins',
-         ','.join(_python_modules_in_dir(checkers_dir_path))] +
-        list(filter(_is_py_file, ctx.get_git_files())),
+        ctx.env.PYLINT + list(filter(_is_py_file, ctx.get_git_files())),
         # Add the current directory so that we can find our checkers modules.
         # Add the Waf modules dir so that pylint can find those modules.
         env={
             'PYTHONPATH': os.pathsep.join([
-                waflib.Context.waf_dir, checkers_dir_path]),
+                ctx.srcnode.abspath(),
+                waflib.Context.waf_dir,
+            ]),
         })
 
     if ctx.env.POWERLINE_LINT:

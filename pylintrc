@@ -20,7 +20,7 @@ persistent=yes
 
 # List of plugins (as comma separated values of python modules names) to load,
 # usually to register additional checkers.
-load-plugins=
+load-plugins=pylint_checkers
 
 # Use multiple processes to speed up Pylint.
 # XXX: Multiple jobs cause Pylint to load the configuration incorrectly.

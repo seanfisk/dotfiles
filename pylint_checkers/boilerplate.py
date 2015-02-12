@@ -61,7 +61,3 @@ class BoilerplateChecker(BaseChecker):
                         # Multi-line file; no hash-bang; first line did not
                         # contain required declaration
                         add_msg(1)
-
-def register(linter):
-    """Method to auto-register our checkers."""
-    linter.register_checker(BoilerplateChecker(linter))
