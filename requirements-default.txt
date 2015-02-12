@@ -32,6 +32,7 @@ psutil==2.2.1
 # 2 as the default Python, these can be installed.
 #bzr==2.6.0
 #mercurial==3.2.2
+netifaces==0.10.4
 
 # Portable archive file manager
 patool==1.7

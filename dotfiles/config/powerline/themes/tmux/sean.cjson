@@ -26,6 +26,10 @@
 	"segments": {
 		"right": [
 			{
+				"function": "powerline.segments.common.sys.cpu_load_percent",
+				"priority": 15
+			},
+			{
 				"function": "powerline.segments.common.wthr.weather",
 				"args": {
 					"unit": "F",
@@ -33,26 +37,25 @@
 				},
 				"priority": 20
 			},
-			{
-				"function": "powerline.segments.common.sys.cpu_load_percent",
-				"priority": 10
-			},
+			/* TODO We don't want to hard-code the interface for OS X.
+			 * The auto-detection needs improvement in Powerline.
+			 *
+			 * {
+			 *     "function": "powerline.segments.common.net.internal_ip",
+			 *     "before": "I ",
+			 *     "args": {
+			 *         "interface": "en1"
+			 *     },
+			 *     "priority": 10
+			 * },
+			 */
 			{
 				"function": "powerline.segments.common.net.external_ip",
+				"before": "E ",
 				"args": {
-					"query_url": "http://icanhazip.com/"
+					"query_url": "http://ipv4.icanhazip.com/"
 				},
-				"priority": 10
-			},
-			{
-				"function": "powerline.segments.common.net.network_load",
-				"priority": 10
-			},
-			{
-				"function": "powerline.segments.common.bat.battery",
-				// This is Unicode BATTERY followed by a space.
-				"before": "🔋 ",
-				"priority": 10
+				"priority": 5
 			}
 		]
 	}
