@@ -1,5 +1,28 @@
-/* -*- mode: js; coding: utf-8; -*- */
+/* -*- mode: js; coding: utf-8 -*- */
 {
+	/* Set the dividers to make the layout more compact. This is
+	 * copied from 'themes/powerline.json' and space has been removed.
+	 * It doesn't look the greatest to the left of the current window
+	 * index, but it allows for more status line real estate.
+	 *
+	 * Note on the dividers issue: The real problem here is that the
+	 * classic Powerline dividers are used as characters in the actual
+	 * window status field of tmux and not as tmux window status
+	 * separators. This is presumably due to the technical reason that
+	 * tmux only allows a global separator string. This means that the
+	 * classic Powerline symbols can't truly invert when the current
+	 * window changes, as each window status has its own fixed width
+	 * which the Powerline dividers inhabit. If this is not done, then
+	 * the window statuses shift when the current window changes. The
+	 * end result of this is that each divider takes up twice the
+	 * amount of space it actually needs, to reserve space for it when
+	 * it's not present. Ugh.
+	 */
+	"dividers": {
+		"left": {
+			"hard": ""
+		}
+	},
 	"segments": {
 		"right": [
 			{
@@ -34,3 +57,7 @@
 		]
 	}
 }
+
+// Local Variables:
+// eval: (buffer-face-set (quote (:family "Inconsolata for Powerline")))
+// End:

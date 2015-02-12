@@ -19,4 +19,7 @@ bind-key c command-prompt "new-window -n '%%'"
 # Kill the entire session
 bind-key k confirm-before kill-session
 
+# Make the display more compact.
+set-window-option -g window-status-separator ''
+
 @POWERLINE_COMMANDS@
