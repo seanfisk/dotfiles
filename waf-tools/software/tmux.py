@@ -19,8 +19,6 @@ def build(ctx):
     if not ctx.env.TMUX_:
         return
 
-    ctx.add_shell_rc_node(ctx.path.find_resource(['shell', 'tmux.sh']))
-
     # Don't pass -l; we don't want a login shell.
     # Prefer Zsh, but go with Bash if necessary.
     shell = ctx.env.ZSH or ctx.env.BASH
@@ -59,3 +57,20 @@ def build(ctx):
         ctx.env.SHELL_ALIASES['mytmux'] = (
             shquote(ctx.env.LSOF[0]) +
             ' -u "$(id -un)" -a -U | grep \'^tmux\'')
+
+    # Attach or new
+    in_node = ctx.path.find_resource(['shell', 'tmux.sh.in'])
+    out_node = in_node.change_ext(ext='.sh', ext_in='.sh.in')
+    new_session_cmd = (
+        ctx.env.TMUXIFIER_ + [
+            'load-session', ctx.env.TMUXIFIER_DEFAULT_SESSION]
+        if ctx.env.TMUXIFIER_DEFAULT_SESSION
+        else ctx.env.TMUX_ + ['new-session'])
+
+    ctx(features='subst',
+        source=in_node,
+        target=out_node,
+        TMUX=shquote(ctx.env.TMUX_[0]),
+        TMUX_NEW_SESSION=ctx.shquote_cmd(new_session_cmd),
+       )
+    ctx.add_shell_rc_node(out_node)

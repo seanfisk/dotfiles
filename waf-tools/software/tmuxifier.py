@@ -6,7 +6,16 @@ import os
 def configure(ctx):
     # Don't conflict with the TMUXIFIER environment variable, which tmuxifier
     # sets to its base directory.
-    ctx.find_program('tmuxifier', var='TMUXIFIER_', mandatory=False)
+    if ctx.find_program('tmuxifier', var='TMUXIFIER_', mandatory=False):
+        session_name = 'default'
+        ctx.start_msg("Checking for tmuxifier '{}' session".format(
+            session_name))
+        has_default_session = session_name in ctx.cmd_and_log(
+            ctx.env.TMUXIFIER_ + ['list-sessions']).splitlines()
+        if has_default_session:
+            ctx.env.TMUXIFIER_DEFAULT_SESSION = session_name
+        ctx.end_msg(has_default_session)
+
 
 def _make_tmuxifier_file(tsk):
     out_node = tsk.outputs[0]
