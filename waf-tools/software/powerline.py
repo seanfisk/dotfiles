@@ -162,24 +162,6 @@ def build(ctx):
 
         ctx.install_launch_agent(plist_node)
 
-    # TODO zpython is disabled until we can figure out how to install/use it
-    # properly.
-    #
-    # The Homebrew package for zpython is old. It still uses the zpython branch
-    # of ZyX's zsh repo, <https://bitbucket.org/ZyX_I/zsh>. However, it seems
-    # that ZyX is doing all new development in
-    # <https://bitbucket.org/ZyX_I/zpython>. We're not really comfortable
-    # installing from Homebrew until this is fixed. And we've not had luck
-    # compiling zpython in its current state. Furthermore, since zpython
-    # depends on both Zsh and Python, it needs to be compiled with both. This
-    # is particularly important for Python, as in the past we've had zpython
-    # use the system Python with an old version of Powerline while we were
-    # using another Python with a newer Powerline. If zpython is ever
-    # re-enabled, we need to institute a check to make sure that zpython's
-    # Python and the default Python under which Powerline is installed are the
-    # same interpreter.
-    ctx.env.SHELL_ENV['POWERLINE_NO_ZSH_ZPYTHON'] = '1'
-
     # These are overrides for where Powerline executables should be found.
     # These are used in case virtualenvs have Powerline installed (most will).
     # We want the Powerline executables from the default Python to be used.
@@ -226,6 +208,25 @@ def build(ctx):
         if not tsk.env.POWERLINE_DAEMON_LAUNCHD:
             lines.append(
                 '{} --quiet'.format(ctx.shquote_cmd(tsk.env.POWERLINE_DAEMON)))
+
+        # TODO zpython is disabled until we can figure out how to install/use
+        # it properly.
+        #
+        # The Homebrew package for zpython is old. It still uses the zpython
+        # branch of ZyX's zsh repo, <https://bitbucket.org/ZyX_I/zsh>. However,
+        # it seems that ZyX is doing all new development in
+        # <https://bitbucket.org/ZyX_I/zpython>. We're not really comfortable
+        # installing from Homebrew until this is fixed. And we've not had luck
+        # compiling zpython in its current state. Furthermore, since zpython
+        # depends on both Zsh and Python, it needs to be compiled with both.
+        # This is particularly important for Python, as in the past we've had
+        # zpython use the system Python with an old version of Powerline while
+        # we were using another Python with a newer Powerline. If zpython is
+        # ever re-enabled, we need to institute a check to make sure that
+        # zpython's Python and the default Python under which Powerline is
+        # installed are the same interpreter.
+        lines.append('POWERLINE_NO_ZSH_ZPYTHON=1')
+
         lines.append('source {}'.format(shquote(ctx.get_powerline_path(join(
             'bindings', 'zsh', 'powerline.zsh')))))
         tsk.outputs[0].write('\n'.join(lines) + '\n')
