@@ -199,6 +199,7 @@ def build(ctx):
             # For use in the shell version segment.
             # TODO: Make Powerline PR.
             'POWERLINE_COMMAND_ARGS=--renderer-arg='
+            # Credit: http://stackoverflow.com/a/9429887
             'shell_version=bash-"$(IFS=.; echo "${BASH_VERSINFO[*]:0:3}")"',
             # Powerline bindings
             'POWERLINE_BASH_CONTINUATION=1',
