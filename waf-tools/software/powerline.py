@@ -196,6 +196,11 @@ def build(ctx):
             lines.append(
                 '{} --quiet'.format(ctx.shquote_cmd(tsk.env.POWERLINE_DAEMON)))
         lines += [
+            # For use in the shell version segment.
+            # TODO: Make Powerline PR.
+            'POWERLINE_COMMAND_ARGS=--renderer-arg='
+            'shell_version=bash-"$(IFS=.; echo "${BASH_VERSINFO[*]:0:3}")"',
+            # Powerline bindings
             'POWERLINE_BASH_CONTINUATION=1',
             'POWERLINE_BASH_SELECT=1',
             'source {}'.format(shquote(ctx.get_powerline_path(join(
@@ -226,6 +231,12 @@ def build(ctx):
         # zpython's Python and the default Python under which Powerline is
         # installed are the same interpreter.
         lines.append('POWERLINE_NO_ZSH_ZPYTHON=1')
+
+        # For use in the shell version segment.
+        # TODO: Make Powerline PR.
+        lines.append(
+            'POWERLINE_COMMAND_ARGS=--renderer-arg='
+            'shell_version="$ZSH_NAME-$ZSH_VERSION"')
 
         lines.append('source {}'.format(shquote(ctx.get_powerline_path(join(
             'bindings', 'zsh', 'powerline.zsh')))))
@@ -280,6 +291,10 @@ def build(ctx):
             {
                 'function': 'powerline.segments.common.env.user',
                 'priority': 30,
+            },
+            {
+                'function': 'powerline_sean_segments.shell_version',
+                'priority': 40,
             },
             {
                 'function': 'powerline.segments.shell.cwd',
@@ -355,7 +370,13 @@ def build(ctx):
 
     @ctx.rule(target=shell_colorscheme_node, vars=['PYENV', 'RBENV'])
     def _make_shell_colorscheme(tsk):
-        groups = {}
+        groups = {
+            'shell_version': {
+                'fg': 'gray70',
+                'bg': 'darkestpurple',
+                'attrs': [],
+            },
+        }
         if tsk.env.PYENV:
             groups['pyenv'] = {
                 'fg': 'brightyellow',

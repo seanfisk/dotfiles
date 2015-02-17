@@ -27,6 +27,9 @@ else:
 from powerline.lib.encoding import get_preferred_input_encoding # pylint: disable=import-error,no-name-in-module
 from powerline.theme import requires_segment_info # pylint: disable=import-error,no-name-in-module
 
+# rbenv/pyenv segments
+# TODO: Make into installable Powerline segments.
+
 NOT_INSTALLED_RE = re.compile(
     r".*: version `(?P<version>.*)' is not installed$")
 """Pattern to extract the missing version from the program's error message."""
@@ -86,3 +89,10 @@ def _make_tool_segment(tool):
 
 for _tool in ['rbenv', 'pyenv']:
     globals()[_tool] = _make_tool_segment(_tool)
+
+# Shell segments
+# TODO: Make Powerline PR.
+@requires_segment_info
+def shell_version(pl, segment_info): # pylint: disable=invalid-name,unused-argument
+    """Display the name and version of the currently-running shell."""
+    return segment_info.get('shell_version', None)
