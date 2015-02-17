@@ -25,8 +25,7 @@
 #     pip install --user pygit2==0.21.4
 #
 
-# See https://github.com/powerline/powerline/pull/1297
-git+https://github.com/powerline/powerline.git@b40e45a0e72eaebe4160aa0c1b5666f698ac8ac5#egg=powerline-status
+git+https://github.com/powerline/powerline.git@c1bcaaad9e0af19bed43d0188fbdf39ad0fba520#egg=powerline-status
 psutil==2.2.1
 # Both Bazaar and Mercurial don't support Python 3. When using Python
 # 2 as the default Python, these can be installed.
