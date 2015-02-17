@@ -147,7 +147,9 @@ def configure(ctx):
     ctx.env.POWERLINE_MAIL_PASSWORD = keyring.get_password(
         ctx.env.POWERLINE_MAIL_SERVER, ctx.env.POWERLINE_MAIL_USERNAME)
     ctx.msg("Checking for '{}' password".format(ctx.env.POWERLINE_MAIL_SERVER),
-            ctx.env.POWERLINE_MAIL_PASSWORD is not None)
+            # Will be set to an empty list if keyring.get_password() returns
+            # None.
+            ctx.env.POWERLINE_MAIL_PASSWORD != [])
 
 def build(ctx):
     if not ctx.env.HAS_POWERLINE:
