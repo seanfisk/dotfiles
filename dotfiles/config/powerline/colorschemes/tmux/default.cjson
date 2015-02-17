@@ -1,0 +1,11 @@
+/* -*- mode: js; coding: utf-8 -*-
+ *
+ * TODO Account for a Powerline bug -- "email_alert" is set to "warning:regular", which is not defined in the default theme.
+ * See https://github.com/powerline/powerline/commit/72d9b8305a163ff64c1bcfdd5ab66912e6102c27
+ */
+{
+    "name": "Sean's color scheme for tmux",
+    "groups": {
+        "email_alert": { "fg": "brightyellow", "bg": "gray0", "attrs": ["bold"] }
+    }
+}

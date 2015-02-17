@@ -11,6 +11,7 @@ import plistlib
 import waflib
 from waflib.Configure import conf
 import appdirs
+import keyring
 
 PACKAGE_NAME = 'powerline-status'
 
@@ -135,6 +136,18 @@ def configure(ctx):
 
     # Grab the default language for Powerline.
     ctx.env.POWERLINE_LANG = ctx.environ['LANG']
+
+    # Powerline mail configuration
+    ctx.env.POWERLINE_MAIL_SERVER = 'imap.gmail.com'
+    ctx.env.POWERLINE_MAIL_PORT = 993
+    ctx.env.POWERLINE_MAIL_USERNAME = 'seanfisk'
+    # TODO Move fetching of this password into Powerline itself (with a PR,
+    # hopefully). It's not good to store this in the configuration environment,
+    # nor in the Powerline config files.
+    ctx.env.POWERLINE_MAIL_PASSWORD = keyring.get_password(
+        ctx.env.POWERLINE_MAIL_SERVER, ctx.env.POWERLINE_MAIL_USERNAME)
+    ctx.msg("Checking for '{}' password".format(ctx.env.POWERLINE_MAIL_SERVER),
+            ctx.env.POWERLINE_MAIL_PASSWORD is not None)
 
 def build(ctx):
     if not ctx.env.HAS_POWERLINE:
@@ -398,13 +411,100 @@ def build(ctx):
             tsk.outputs[0],
         )
 
+    tmux_theme_node = _declare(['themes', 'tmux', 'sean'])
+    # Use an ordered dict else it will trigger unnecessary rebuilds.
+    mail_vars = OrderedDict(
+        (base, 'POWERLINE_MAIL_' + base.upper())
+        for base in ['server', 'port', 'username', 'password'])
+
+    @ctx.rule(target=tmux_theme_node, vars=list(mail_vars.values()))
+    def _make_tmux_theme(tsk):
+        # TODO: Consider moving this back to a JSON file which gets read and
+        # merged.
+        segments_right = [
+            {
+                'function': 'powerline.segments.common.sys.cpu_load_percent',
+                'priority': 15,
+            },
+            {
+                'function': 'powerline.segments.common.wthr.weather',
+                'args': {
+                    'unit': 'F',
+                    'location_query': 'Jenison, Michigan',
+                },
+                'priority': 20,
+            },
+        ]
+        # Will be set to an empty list if keyring.get_password() returns None.
+        if tsk.env.POWERLINE_MAIL_PASSWORD != []:
+            segments_right.append({
+                'function': 'powerline.segments.common.mail.email_imap_alert',
+                'args': dict(
+                    (base, tsk.env[var]) for base, var in mail_vars.items()),
+                'priority': 10,
+            })
+
+        # TODO We don't want to hard-code the interface for OS X.
+        # The auto-detection needs improvement in Powerline.
+        #
+        # segments_right.append({
+        #     'function': 'powerline.segments.common.net.internal_ip',
+        #     'before': 'I ',
+        #     'args': {
+        #         'interface': 'en1'
+        #     },
+        #     'priority': 10
+        # })
+
+        segments_right.append({
+            'function': 'powerline.segments.common.net.external_ip',
+            'before': 'E ',
+            'args': {
+                'query_url': 'http://ipv4.icanhazip.com/',
+            },
+            'priority': 5,
+        })
+
+        _json_dump_node(
+            {
+                # Set the dividers to make the layout more compact. This is
+                # copied from 'themes/powerline.json' and space has been
+                # removed. It doesn't look the greatest to the left of the
+                # current window index, but it allows for more status line real
+                # estate.
+                #
+                # Note on the dividers issue: The real problem here is that the
+                # classic Powerline dividers are used as characters in the
+                # actual window status field of tmux and not as tmux window
+                # status separators. This is presumably due to the technical
+                # reason that tmux only allows a global separator string. This
+                # means that the classic Powerline symbols can't truly invert
+                # when the current window changes, as each window status has
+                # its own fixed width which the Powerline dividers inhabit. If
+                # this is not done, then the window statuses shift when the
+                # current window changes. The end result of this is that each
+                # divider takes up twice the amount of space it actually needs,
+                # to reserve space for it when it's not present. Ugh.
+                'dividers': {
+                    'left': {
+                        'hard': '',
+                    },
+                },
+                'segments': {
+                    'right': segments_right,
+                },
+            },
+            tsk.outputs[0],
+        )
+
     ctx(source=[
         config_node,
         shell_theme_node,
-        # The tmux theme doesn't need any configuration.
-        join('dotfiles', 'config', 'powerline', 'themes', 'tmux',
-             'sean.cjson'),
         shell_colorscheme_node,
+        tmux_theme_node,
+        # These files don't need any configuration.
+        join('dotfiles', 'config', 'powerline', 'colorschemes', 'tmux',
+             'default.cjson'),
     ])
 
     # Install segments file.
@@ -414,4 +514,10 @@ def build(ctx):
 @waflib.TaskGen.extension('.json')
 def process_json(tsk_gen, node):
     """Install Powerline configuration files after processing."""
-    tsk_gen.bld.install_dotfile(node)
+    # TODO Restrict the mode due to the imap password being written to one of
+    # these files.
+    tsk_gen.bld.install_dotfile(node, chmod=0o600)
+
+# Local Variables:
+# eval: (buffer-face-set (quote (:family "Inconsolata for Powerline")))
+# End:

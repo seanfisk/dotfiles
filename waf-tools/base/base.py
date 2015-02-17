@@ -8,12 +8,12 @@ import waflib
 from waflib.Configure import conf
 
 @conf
-def install_dotfile(self, node):
-    """Install a dotfile node."""
+def install_dotfile(self, node, **kwargs):
+    """Install a dotfile node. Extra keywords are passed to ``install_as``."""
     # Strip the dotfiles/ directory (for both source and build nodes).
     relative_path_list = waflib.Node.split_path(node.relpath())[1:]
     relative_path_list[0] = '.' + relative_path_list[0]
-    self.install_as(join(self.env.PREFIX, *relative_path_list), node)
+    self.install_as(join(self.env.PREFIX, *relative_path_list), node, **kwargs)
 
 @conf
 def shquote_cmd(self, cmd): # pylint: disable=unused-argument
