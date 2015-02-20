@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+set -o nounset
+set -o errexit
+
 # Checks if stdin is a TTY.
 if [[ -t 0 ]]; then
 	# If there is nothing piped to the command, open a named file.

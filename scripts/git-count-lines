@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+set -o nounset
+set -o errexit
+
 # Count lines of code in git repository
 filenames=()
 git ls-files -z | while read -r -d$'\0' filename; do
