@@ -8,6 +8,14 @@ import waflib
 from waflib.Configure import conf
 
 @conf
+def install_script(self, script_basename):
+    """Install a script given the basename."""
+    self.install_files(
+        self.env.SCRIPTS_DIR,
+        [join('scripts', script_basename)],
+        chmod=waflib.Utils.O755)
+
+@conf
 def install_dotfile(self, node, **kwargs):
     """Install a dotfile node. Extra keywords are passed to ``install_as``."""
     # Strip the dotfiles/ directory (for both source and build nodes).

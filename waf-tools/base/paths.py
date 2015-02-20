@@ -9,16 +9,7 @@ from os.path import join
 import platform
 from shlex import quote as shquote
 
-import waflib
 from waflib.Configure import conf
-
-@conf
-def install_script(self, script_basename):
-    """Install a script given the basename."""
-    self.install_files(
-        self.env.SCRIPTS_DIR,
-        [join('scripts', script_basename)],
-        chmod=waflib.Utils.O755)
 
 @conf
 def check_paths_for_issues(self):
