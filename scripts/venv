@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+set -o nounset
+set -o errexit
+
+if [[ $# -ne 1 || $1 == -h || $1 == --help ]]; then
+	echo "Usage: $0 PYTHON_VERSION" >&2
+	exit 1
+fi
+
+readonly PYTHON_VERSION=$1
+readonly VENV=${PWD##*/}${PYTHON_VERSION//./}
+
+pyenv virtualenv "$PYTHON_VERSION" "$VENV"
+pyenv local "$VENV"

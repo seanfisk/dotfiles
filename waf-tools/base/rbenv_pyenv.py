@@ -129,3 +129,6 @@ def build(ctx):
             join(ctx.env.PYENV_ROOT,
                  requirements_node.path_from(pyenv_build_node)),
             requirements_node)
+
+        # Install shortcut script.
+        ctx.install_script('venv')
