@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """Detect and configure Git."""
 
+from pipes import quote as shquote
+
 def configure(ctx):
     ctx.find_program('git', mandatory=False)
     ctx.find_program('hub', mandatory=False)
@@ -58,4 +60,5 @@ def build(ctx):
         # awk '{total+=$1} END {print total}
 
     if ctx.env.OHCOUNT:
-        ctx.install_script('git-count-lines')
+        ctx.install_subst_script(
+            'git-count-lines', GIT=shquote(ctx.env.GIT[0]))

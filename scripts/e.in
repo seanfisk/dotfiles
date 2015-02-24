@@ -6,7 +6,7 @@ set -o errexit
 # Checks if stdin is a TTY.
 if [[ -t 0 ]]; then
 	# If there is nothing piped to the command, open a named file.
-	exec emacsclient --no-wait "$@"
+	exec @EMACSCLIENT@ --no-wait "$@"
 fi
 # Otherwise, utilize e-sink.
-exec e-sink "$@"
+exec @E_SINK@ "$@"

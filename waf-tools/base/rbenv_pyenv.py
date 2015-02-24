@@ -131,4 +131,4 @@ def build(ctx):
             requirements_node)
 
         # Install shortcut script.
-        ctx.install_script('venv')
+        ctx.install_subst_script('venv', PYENV=shquote(ctx.env.PYENV[0]))

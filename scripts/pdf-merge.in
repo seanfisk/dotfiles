@@ -10,4 +10,4 @@ fi
 
 output_file=$1
 shift
-qpdf --empty --pages "$@" -- "$output_file"
+@QPDF@ --empty --pages "$@" -- "$output_file"

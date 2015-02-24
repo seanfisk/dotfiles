@@ -11,5 +11,5 @@ fi
 readonly PYTHON_VERSION=$1
 readonly VENV=${PWD##*/}${PYTHON_VERSION//./}
 
-pyenv virtualenv "$PYTHON_VERSION" "$VENV"
-pyenv local "$VENV"
+@PYENV@ virtualenv "$PYTHON_VERSION" "$VENV"
+@PYENV@ local "$VENV"

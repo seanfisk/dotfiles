@@ -5,7 +5,7 @@ set -o errexit
 
 # Count lines of code in git repository
 filenames=()
-git ls-files -z | while read -r -d$'\0' filename; do
+@GIT@ ls-files -z | while read -r -d$'\0' filename; do
 	filenames+=("$filename")
 done
 ohcount "${filenames[@]}"

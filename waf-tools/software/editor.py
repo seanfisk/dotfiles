@@ -18,7 +18,10 @@ def build(ctx):
         editor_maybe_nonblock = ctx.env.EMACSCLIENT + ['--no-wait']
 
         if ctx.env.E_SINK:
-            ctx.install_script('e')
+            ctx.install_subst_script(
+                'e',
+                EMACSCLIENT=shquote(ctx.env.EMACSCLIENT[0]),
+                E_SINK=shquote(ctx.env.E_SINK[0]))
         else:
             ctx.env.SHELL_ALIASES['e'] = ctx.shquote_cmd(editor_maybe_nonblock)
 

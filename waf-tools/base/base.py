@@ -8,12 +8,22 @@ import waflib
 from waflib.Configure import conf
 
 @conf
-def install_script(self, script_basename):
-    """Install a script given the basename."""
-    self.install_files(
-        self.env.SCRIPTS_DIR,
-        [join('scripts', script_basename)],
-        chmod=waflib.Utils.O755)
+def install_script(self, node):
+    """Install a script node to the scripts directory."""
+    self.install_files(self.env.SCRIPTS_DIR, node, chmod=waflib.Utils.O755)
+
+@conf
+def install_subst_script(self, script_basename, **kwargs):
+    """Install a script node to the scripts directory, substituting any extra
+    variables and values given in the keyword arguments."""
+    script_in_node = self.path.find_resource([
+        'scripts', script_basename + '.in'])
+    script_out_node = script_in_node.change_ext('')
+    self(features='subst',
+         target=script_out_node,
+         source=script_in_node,
+         **kwargs)
+    self.install_script(script_out_node)
 
 @conf
 def install_dotfile(self, node, **kwargs):
