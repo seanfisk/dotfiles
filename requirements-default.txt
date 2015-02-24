@@ -5,6 +5,9 @@
 
 # Powerline stuff
 #
+# powerline-status itself is specified in the default virtualenv
+# requirements (which is run by the 'pyup' script).
+#
 # Powerline is able to work with pygit2 -or- the plain git executable.
 # Installing pygit2 is disabled by default because it has dependencies
 # (libgit2, which depends on cmake) which are not necessarily simple
@@ -24,8 +27,6 @@
 #
 #     pip install --user pygit2==0.21.4
 #
-
-git+https://github.com/powerline/powerline.git@c1bcaaad9e0af19bed43d0188fbdf39ad0fba520#egg=powerline-status
 psutil==2.2.1
 # Both Bazaar and Mercurial don't support Python 3. When using Python
 # 2 as the default Python, these can be installed.

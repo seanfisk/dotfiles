@@ -130,5 +130,11 @@ def build(ctx):
                  requirements_node.path_from(pyenv_build_node)),
             requirements_node)
 
-        # Install shortcut script.
+        # Install shortcut scripts.
         ctx.install_subst_script('venv', PYENV=shquote(ctx.env.PYENV[0]))
+        ctx.install_subst_script(
+            'pyup',
+            PYENV=repr(ctx.env.PYENV[0]),
+            DEFAULT_PYTHON_REQUIREMENTS_PATH=repr(ctx.path.find_resource(
+                'requirements-default.txt').abspath()),
+            DEFAULT_VENV_REQUIREMENTS_PATH=repr(requirements_install_path))
