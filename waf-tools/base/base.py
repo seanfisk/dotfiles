@@ -22,6 +22,7 @@ def install_subst_script(self, script_basename, **kwargs):
     self(features='subst',
          target=script_out_node,
          source=script_in_node,
+         chmod=waflib.Utils.O755,
          **kwargs)
     self.install_script(script_out_node)
 
