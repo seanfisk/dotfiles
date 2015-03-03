@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -o nounset
+# nounset doesn't understand 'read'
 set -o errexit
 
 # Count lines of code in git repository
