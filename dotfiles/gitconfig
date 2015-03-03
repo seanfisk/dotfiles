@@ -41,6 +41,7 @@
 	untracked = cyan
 [grep]
 	lineNumber = true
+	patternType = perl
 [gui]
 	fontui = -family \"Lucida Grande\" -size 14 -weight normal -slant roman -underline 0 -overstrike 0
 	fontdiff = -family \"PrimaSansMono BT Roman\" -size 14 -weight normal -slant roman -underline 0 -overstrike 0
