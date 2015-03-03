@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """Detect and configure grc, the generic colouriser."""
 
+import os.path
+
 def configure(ctx):
     ctx.env.HAS_GRC = all([
         ctx.find_program('grc', mandatory=False),
@@ -30,13 +32,12 @@ def configure(ctx):
     if not ctx.env.MACOSX:
         grc_tool_names.append('ifconfig')
 
-    grc_tools = {}
+    ctx.env.GRC_TOOLS = []
+    # Guarantee a stable build order by sorting.
     for name in sorted(grc_tool_names):
         path = ctx.find_program(name, mandatory=False)
         if path:
-            grc_tools[name] = path
-
-    ctx.env.GRC_TOOLS = grc_tools
+            ctx.env.GRC_TOOLS.append(path)
 
 def build(ctx):
     if not ctx.env.HAS_GRC:
@@ -51,9 +52,10 @@ def build(ctx):
             # to a pager which can accept color. If no color is wanted, we can
             # always run 'command <command>', etc.
         ])
-    for name, path in ctx.env.GRC_TOOLS.items():
-        # Override the default tool name with an alias.
-        ctx.env.SHELL_ALIASES[name] = ctx.shquote_cmd(['colorify', name])
+    for path in ctx.env.GRC_TOOLS:
+        name = os.path.basename(path[0])
+        # Override the tool with an alias.
+        ctx.env.SHELL_ALIASES[name] = ctx.shquote_cmd(['colorify'] + path)
 
     # configure doesn't have a path, but we'll create some aliases.
 
