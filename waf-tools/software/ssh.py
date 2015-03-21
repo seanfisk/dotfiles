@@ -13,6 +13,9 @@ def build(ctx):
     ctx(features='subst',
         source=in_node,
         target=out_node,
+        EOS_USERNAME='fiskse',
+        # We used to use eos10, but it has issues.
+        GOTO_EOS_HOST='eos11.cis.gvsu.edu',
         TEMP_DIR=ctx.env.TEMP_DIR,
         TEMP_DIR_LEN=(
             ' ' *
