@@ -229,9 +229,8 @@ logging-modules=logging
 [MISCELLANEOUS]
 
 # List of note tags to take in consideration, separated by a comma.
-#
-# FIXME and TODO are fine, but issues marked XXX should be fixed immediately.
-notes=XXX
+# Take no notes into consideration.
+notes=
 
 
 [SIMILARITIES]
