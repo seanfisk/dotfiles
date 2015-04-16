@@ -232,7 +232,11 @@ def build_shell_env(self):
     that each tool has an opportunity to modify the environment.
     """
     out_node = self.path.find_or_declare('env.sh')
-    self.add_shell_profile_node(out_node)
+
+    for shell in self.env.AVAILABLE_SHELLS:
+        # Insert this before all the other nodes so that they may modify the
+        # shell environment. Useful for rbenv/pyenv.
+        self.env['{}_PROFILE_NODES'.format(shell.upper())].insert(0, out_node)
 
     @self.rule(target=out_node, vars=['SHELL_ENV'])
     def _make_shell_env(tsk):

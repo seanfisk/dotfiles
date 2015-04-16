@@ -5,6 +5,9 @@ import os
 from os.path import join
 from shlex import quote as shquote
 import subprocess
+import re
+
+TOOL_FILENAME_RE = re.compile(r'(?P<tool>.*)-.*\.(?P<shell>.*)')
 
 def configure(ctx):
     ctx.find_program('rbenv', mandatory=False)
@@ -39,37 +42,64 @@ def _make_rbenv_pyenv_file(tsk):
     # to load this in the rc file because it loads up shell functions. For
     # example, `pyenv shell' is only available when this `eval' command is run
     # *within the shell*.
-    output_node = tsk.outputs[0]
-    # The tool is determined by the basename without the extension.
-    # The shell is determined by the output file's extension. suffix() returns
-    # the extension with a preceding dot, so strip it off.
-    tool, ext = os.path.splitext(output_node.name)
-    shell = ext[1:]
+    rc_node, profile_node = tsk.outputs
+    # XXX Parsing stuff we've generated is kind of ugly, but there aren't a lot
+    # of better options AFAIK.
+    match = TOOL_FILENAME_RE.fullmatch(rc_node.name)
+    if match is None:
+        raise ValueError('Unparseable tool filename: {}'.format(rc_node.name))
+    tool = match.group('tool')
+    shell = match.group('shell')
     tool_cmd = tsk.env[tool.upper()]
-    with open(output_node.abspath(), 'w') as output_file:
-        # Instead of running pyenv and rbenv to generate code and eval'ing it
-        # every time, just generate it now and source it. Because we aren't
-        # running it from within a shell, we need to tell rbenv and pyenv what
-        # shell for which to generate the code. Otherwise, they determine it
-        # through ps or $SHELL, $SHELL is just plain wrong, because that is the
-        # login shell, which is not necessarily the shell that is running.
-        ret = tsk.exec_command(
-            tool_cmd + ['init', '-', shell], stdout=output_file)
+    # Instead of running pyenv and rbenv to generate code and eval'ing it every
+    # time, just generate it now and source it. Because we aren't running it
+    # from within a shell, we need to tell rbenv and pyenv what shell for which
+    # to generate the code. Otherwise, they determine it through ps or $SHELL,
+    # $SHELL is just plain wrong, because that is the login shell, which is not
+    # necessarily the shell that is running.
+    contents = subprocess.check_output(
+        tool_cmd + ['init', '-', shell]).splitlines()
+    # XXX We don't agree with some of the decisions that were made in this
+    # shell file, so we are hacking it up :) However, the contents are assumed
+    # and the indices are hard-coded :\
 
-    return ret
+    # Write the 'export PATH=...' line.
+    profile_node.write(contents[0] + b'\n', flags='wb')
+
+    if tsk.env.BREW:
+        # If we installed the tool using Homebrew, rewrite the path to the opt/
+        # directory instead of using a specific version. This allows our file
+        # to survive upgrades of the tool.
+        brew_opt_path = subprocess.check_output(
+            tsk.env.BREW + ['--prefix', tool]).rstrip()
+        brew_cellar_path = os.path.realpath(brew_opt_path)
+        source_line_index = 1 if tool == 'rbenv' else 2
+        print(contents[source_line_index], brew_cellar_path, brew_opt_path)
+        contents[source_line_index] = contents[source_line_index].replace(
+            brew_cellar_path, brew_opt_path)
+        contents.insert(
+            source_line_index,
+            b"# Use of Homebrew's opt/ directory was hacked in here; "
+            b'this is not stock')
+
+    rc_node.write(b'\n'.join(contents[1:]), flags='wb')
 
 def build(ctx):
     for shell in ctx.env.AVAILABLE_SHELLS:
         # Build files that load rbenv and pyenv
         for prefix in ['rb', 'py']:
             tool = prefix + 'env'
-            path = ctx.env[tool.upper()]
+            tool_up = tool.upper()
+            path = ctx.env[tool_up]
             if path:
-                out_node = ctx.path.find_or_declare(
-                    '{}.{}'.format(tool, shell))
-                ctx.add_shell_rc_node(out_node, shell)
-                ctx(rule=_make_rbenv_pyenv_file, target=out_node,
-                    vars=[tool.upper()])
+                out_nodes = []
+                for filetype in ['rc', 'profile']:
+                    out_node = ctx.path.find_or_declare(
+                        '{}-{}.{}'.format(tool, filetype, shell))
+                    out_nodes.append(out_node)
+                    ctx.add_shell_node(out_node, filetype, shell)
+                ctx(rule=_make_rbenv_pyenv_file, target=out_nodes,
+                    vars=[tool_up])
 
         if ctx.env.PYENV_VIRTUALENV:
             # If pyenv-virtualenv is installed, generate a file for it, too.

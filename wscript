@@ -38,7 +38,8 @@ WAF_TOOLS_DIR = 'waf-tools'
 WAF_DEV_TOOLS_DIR = _join(WAF_TOOLS_DIR, 'dev')
 WAF_DEV_TOOLS = _python_modules_in_dir(WAF_DEV_TOOLS_DIR)
 # Order matters here. All after 'platform_specific' are dependent on it. All
-# after 'paths' are dependent on it. 'shells' is dependent upon 'brew'.
+# after 'paths' are dependent on it. 'shells' and 'rbenv_pyenv' are dependent
+# upon 'brew'.
 WAF_BASE_TOOLS_DIR = _join(WAF_TOOLS_DIR, 'base')
 WAF_BASE_TOOLS = [
     'base',
