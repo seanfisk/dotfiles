@@ -74,7 +74,6 @@ def _make_rbenv_pyenv_file(tsk):
             tsk.env.BREW + ['--prefix', tool]).rstrip()
         brew_cellar_path = os.path.realpath(brew_opt_path)
         source_line_index = 1 if tool == 'rbenv' else 2
-        print(contents[source_line_index], brew_cellar_path, brew_opt_path)
         contents[source_line_index] = contents[source_line_index].replace(
             brew_cellar_path, brew_opt_path)
         contents.insert(
