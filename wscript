@@ -68,7 +68,7 @@ def options(ctx):
     default_prefix = os.path.expanduser('~')
     ctx.add_option(
         '--prefix', default=default_prefix,
-        help='installation prefix [default: {}]'.format(repr(default_prefix)))
+        help='installation prefix [default: %default]')
 
 def configure(ctx):
     ctx.find_program('pylint')
