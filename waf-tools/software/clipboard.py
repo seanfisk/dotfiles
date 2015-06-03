@@ -43,3 +43,8 @@ def build(ctx):
         ctx.env.SHELL_ALIASES['dlsha'] = (
             'dlo "$(cpaste)" | ' + ctx.shquote_cmd(ctx.env.SHA256SUM) +
             ' - | ' + ctx.shquote_cmd(ctx.env.CUT) + " -d' ' -f1 | ccopy")
+
+    # htmlink aliases
+    for type_ in ['a', 'md']:
+        ctx.env.SHELL_ALIASES[type_ + 'link'] = (
+            'htmlink -t {type} "$(cpaste)" | ccopy'.format(type=type_))

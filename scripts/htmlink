@@ -1,0 +1,40 @@
+#!/usr/bin/env python
+
+# Python 2/3 compatible
+
+from __future__ import (
+    division, absolute_import, print_function, unicode_literals)
+import sys
+import argparse
+
+import lxml.html
+from lxml.html import builder as E
+import requests
+
+arg_parser = argparse.ArgumentParser(
+    description="Generate a link for a web page given URL.")
+type_choices = ['a', 'md']
+arg_parser.add_argument(
+    '-t', '--type', choices=type_choices,
+    help='type of link to output ({}) [default: {}]'.format(
+        '/'.join(type_choices), type_choices[0]))
+arg_parser.add_argument('url', help='URL for which to create link')
+args = arg_parser.parse_args()
+
+try:
+    response = requests.get(args.url)
+except requests.exceptions.RequestException as exc:
+    sys.exit('error: {}'.format(exc))
+
+url = response.url # this is the normalized URL
+doc = lxml.html.document_fromstring(response.text)
+title_results = doc.xpath('/html/head/title/text()')
+if not title_results:
+    sys.exit('error: page has no title')
+
+title = title_results[0]
+
+print('[{0}]({1})'.format(title, url)
+      if args.type == 'md' else
+      # Serialize to Unicode string
+      lxml.html.tostring(E.A(title, href=url), encoding='unicode'))
