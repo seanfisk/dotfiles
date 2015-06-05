@@ -62,4 +62,4 @@ zope.interface==4.1.2
 
 # htmlink
 lxml==3.4.4
-#requests
+# requests # already specified by devpi section above; can't specify twice otherwise errors occur
