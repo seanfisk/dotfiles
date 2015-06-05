@@ -6,8 +6,8 @@
 [core]
 	excludesfile = ~/.gitignore-global
 [alias]
-        # add all new and changed files in the repo, even if in a subdirectory
-        # according to git-config(1), shell commands are executed from the top of the repository
+	# add all new and changed files in the repo, even if in a subdirectory
+	# according to git-config(1), shell commands are executed from the top of the repository
 	all = !git add --all
 	br = branch
 	ci = commit
