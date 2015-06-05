@@ -200,9 +200,7 @@ def build(ctx):
                    ctx.env.POWERLINE_RENDER[0])
 
     ctx.env.PYENV_VIRTUALENV_DEFAULT_PACKAGES.append(
-        'git+https://github.com/powerline/powerline.git'
-        '@c1bcaaad9e0af19bed43d0188fbdf39ad0fba520#egg={0}'.format(
-            PACKAGE_NAME))
+        '{0}==2.1.4'.format(PACKAGE_NAME))
 
     def _make_bash(tsk):
         lines = []

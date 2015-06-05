@@ -21,11 +21,11 @@
 # first (annoyingly). Only use '--user' if the default Python is also
 # the system Python.
 #
-#     pip install --user cffi==0.8.6 pycparser==2.10
+#     pip install --user cffi==1.1.0 pycparser==2.13
 #
 # Finally install pygit2:
 #
-#     pip install --user pygit2==0.21.4
+#     pip install --user pygit2==0.22.0
 #
 psutil==2.2.1
 # Both Bazaar and Mercurial don't support Python 3. When using Python
