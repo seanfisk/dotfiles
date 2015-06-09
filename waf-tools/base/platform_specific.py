@@ -4,6 +4,7 @@
 from os.path import join
 import platform
 import tempfile
+import plistlib
 
 from waflib.Configure import conf
 
@@ -29,6 +30,22 @@ def install_launch_agent(self, node):
         # launchd will not load it. Be conservative and zero the group and
         # other permissions.
         chmod=0o0600)
+
+# OS X-focused command, but supported on all platforms
+@conf
+def plist_dump_node(self, obj, node):
+    """Dump an object's plist representation to an output node.
+
+    :param obj: object to dump
+    :type obj: :class:`object`
+    :param node: node to which to write the plist
+    :type node: :class:`waflib.Node.Node`
+    """
+    with open(node.abspath(), 'wb') as out_file:
+        plistlib.dump( # plistlib.dump is Python >= 3.4
+            obj, out_file,
+            sort_keys=False, # Keep our own order.
+        )
 
 def configure(ctx):
     try:

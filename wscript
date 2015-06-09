@@ -49,6 +49,7 @@ WAF_BASE_TOOLS = [
     'gnu_utils',
     'shells',
     'rbenv_pyenv',
+    'logrotate',
 ]
 WAF_SOFTWARE_TOOLS_DIR = _join(WAF_TOOLS_DIR, 'software')
 # Each piece of software is independent.
@@ -88,6 +89,9 @@ def build(ctx):
 
     # Call the build() function in each of the software tools.
     ctx.load(WAF_SOFTWARE_TOOLS, tooldir=WAF_SOFTWARE_TOOLS_DIR)
+
+    # Build logrotate configuration file.
+    ctx.load(['logrotate'])
 
     # Build and install rbenv and pyenv-related files.
     ctx.load(['rbenv_pyenv'])

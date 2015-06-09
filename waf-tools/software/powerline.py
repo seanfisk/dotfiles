@@ -6,7 +6,6 @@ from os.path import join
 from shlex import quote as shquote
 import json
 from collections import OrderedDict
-import plistlib
 
 import waflib
 from waflib.Configure import conf
@@ -48,20 +47,6 @@ def _json_dump_node(obj, node):
 
             # Because Powerline reads as UTF-8, it's not necessary to escape.
             ensure_ascii=False,
-        )
-
-def _plist_dump_node(obj, node):
-    """Dump an object's plist representation to an output node.
-
-    :param obj: object to dump
-    :type obj: :class:`object`
-    :param node: node to which to write the plist
-    :type node: :class:`waflib.Node.Node`
-    """
-    with open(node.abspath(), 'wb') as out_file:
-        plistlib.dump( # plistlib.dump is Python >= 3.4
-            obj, out_file,
-            sort_keys=False, # Keep our own order.
         )
 
 def options(ctx):
@@ -161,7 +146,7 @@ def build(ctx):
         plist_node = ctx.path.find_or_declare(label + '.plist')
         @ctx.rule(target=plist_node, vars=['POWERLINE_DAEMON'])
         def _make_launch_agent(tsk):
-            _plist_dump_node(
+            ctx.plist_dump_node(
                 OrderedDict([
                     ('Label', label),
                     ('ProgramArguments',
@@ -509,6 +494,16 @@ def build(ctx):
     # Install segments file.
     ctx.install_dotfile(ctx.path.find_resource([
         'dotfiles', 'config', 'powerline', 'powerline_sean_segments.py']))
+
+    # Rotate the log using logrotate (if available)
+    logrotate_conf_in_node = ctx.path.find_resource([
+        'dotfiles', 'config', 'powerline', 'logrotate.conf.in'])
+    logrotate_conf_node = logrotate_conf_in_node.change_ext(
+        ext_in='.conf.in', ext='.conf')
+    ctx(features='subst',
+        source=logrotate_conf_in_node,
+        target=logrotate_conf_node)
+    ctx.env.LOGROTATE_NODES.append(logrotate_conf_node)
 
 @waflib.TaskGen.extension('.json')
 def process_json(tsk_gen, node):

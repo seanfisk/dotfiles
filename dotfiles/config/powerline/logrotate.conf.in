@@ -1,0 +1,12 @@
+# Using quotes allows us to account for spaces.
+"@POWERLINE_LOG_PATH@" {
+	# Truncate the file in-place. This allows the daemon to keep
+	# writing to the same file without being restarted, and avoids
+	# having to kill/restart the daemon in a prerotate/postrotate
+	# block.
+	copytruncate
+	# Rotate only one old version.
+	rotate 1
+	# Limit log size.
+	size 1M
+}
