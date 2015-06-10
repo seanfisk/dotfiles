@@ -3,7 +3,16 @@
 
 DEVPI_PYPI_URL = 'http://localhost:3141/root/pypi/+simple/'
 
+def options(ctx):
+    # Add a command-line option to explicity disable devpi.
+    ctx.add_option('--disable-devpi', action='store_true', default=False,
+                   help='Explicitly disable devpi')
+
 def configure(ctx):
+    if ctx.options.disable_devpi:
+        ctx.msg('Checking for devpi', 'disabled', color='YELLOW')
+        return
+
     ctx.find_program('devpi-server', var='DEVPI_SERVER', mandatory=False)
 
 def build(ctx):
