@@ -4,7 +4,6 @@ alias c='cd'
 alias u='cd ..' # thanks Karlin
 alias less='less -R'
 alias godmode='sudo -i'
-alias bash-basic='env -i bash --login --noprofile --norc'
 alias mkdate='date +%Y-%m-%d'
 
 alias l='ls -l' # list

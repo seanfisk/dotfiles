@@ -130,6 +130,13 @@ def setup_shell_defaults(self):
         # profile files.
         self.env[shell_up + '_PROFILE_NODES'] = []
 
+    # Add some aliases for shells without all the customizations.
+    self.env.SHELL_ALIASES['bash-basic'] = self.shquote_cmd(
+        self.env.BASH + ['--noprofile', '--norc'])
+    if self.env.ZSH:
+        self.env.SHELL_ALIASES['zsh-basic'] = self.shquote_cmd(
+            self.env.ZSH + ['--no-rcs'])
+
     # Key bindings
     #
     # There is apparently no way portable between Bash and Zsh to declare
