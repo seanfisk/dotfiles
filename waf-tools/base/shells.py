@@ -101,17 +101,6 @@ def add_shell_node(self, node, filetype, shell=None):
         self.env['{}_{}_NODES'.format(shell.upper(), filetype.upper())].append(
             node)
 
-def _concatenate(tsk):
-    output_node = tsk.outputs[0]
-    with open(output_node.abspath(), 'w') as output_file:
-        final_filename = SHELL_FILE_NAMES[output_node.name]
-        print('# ' + final_filename, file=output_file)
-        for input_node in tsk.inputs:
-            print(file=output_file)
-            with open(input_node.abspath()) as input_file:
-                for line in input_file:
-                    output_file.write(line)
-
 @conf
 def setup_shell_defaults(self):
     """Set up shell defaults. Call this function before opening up the shell
@@ -323,10 +312,13 @@ def build(ctx):
             in_nodes = ctx.env[env_var_name]
             out_node = ctx.path.find_or_declare(filename)
             shell_nodes.append(out_node)
-            ctx(rule=_concatenate,
-                target=out_node,
-                source=in_nodes,
-                vars=[env_var_name])
+            @ctx.rule(target=out_node, source=in_nodes, vars=[env_var_name])
+            def _concat(tsk):
+                output_node = tsk.outputs[0]
+                with open(output_node.abspath(), 'w') as output_file:
+                    final_filename = SHELL_FILE_NAMES[output_node.name]
+                    print('# ' + final_filename, file=output_file)
+                    ctx.concat_nodes(output_file, tsk.inputs)
 
     # Install files
     #

@@ -8,6 +8,16 @@ import waflib
 from waflib.Configure import conf
 
 @conf
+def concat_nodes(self, output_file, input_nodes): # pylint: disable=unused-argument
+    """Write the contents of a list of nodes into an already-opened output
+    file."""
+    for input_node in input_nodes:
+        print(file=output_file)
+        with open(input_node.abspath()) as input_file:
+            for line in input_file:
+                output_file.write(line)
+
+@conf
 def install_script(self, node):
     """Install a script node to the scripts directory."""
     self.install_files(self.env.SCRIPTS_DIR, node, chmod=waflib.Utils.O755)

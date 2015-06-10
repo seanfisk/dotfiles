@@ -33,11 +33,8 @@ def build(ctx):
     @ctx.rule(target=conf_node, source=ctx.env.LOGROTATE_NODES)
     def _concat(tsk):
         with open(tsk.outputs[0].abspath(), 'w') as output_file:
-            for input_node in tsk.inputs:
-                print(file=output_file)
-                with open(input_node.abspath()) as input_file:
-                    for line in input_file:
-                        output_file.write(line)
+            print('# Logrotate configuration file', file=output_file)
+            ctx.concat_nodes(output_file, tsk.inputs)
 
     ctx.install_as(ctx.env.LOGROTATE_CONF_PATH, conf_node)
 
