@@ -19,21 +19,7 @@ cmdline_parser.add_argument('-d', '--debug', action='store_true',
 cmdline_args = cmdline_parser.parse_args()
 debug = cmdline_args.debug
 
-packages = ['pip', 'setuptools']
-requirements_files = [@DEFAULT_VENV_REQUIREMENTS_PATH@]
-
-# If this is the default (system) Python, update requirements for it.
-pyenv_version = subprocess.check_output(
-    [@PYENV@, 'version-name']).decode(
-    locale.getpreferredencoding()).rstrip()
-if pyenv_version == 'system':
-    requirements_files.append(@DEFAULT_PYTHON_REQUIREMENTS_PATH@)
-# If there is a requirements file in the current directory, update using it.
-REQUIREMENTS_FILE_NAME = 'requirements.txt'
-if os.path.isfile(REQUIREMENTS_FILE_NAME):
-    requirements_files.append(REQUIREMENTS_FILE_NAME)
-
-# Create pip arguments and run.
+# Setup arguments
 pip_args = ['pip', 'install']
 
 # If any of the site-packages directories are not writable by us, add the
@@ -42,8 +28,31 @@ if any(os.path.isdir(d) and not os.access(d, os.W_OK)
        for d in site.getsitepackages()):
     pip_args.append('--user')
 
-pip_args += ['--upgrade'] + packages + list(itertools.chain.from_iterable(
-    ('--requirement', path) for path in requirements_files))
-if debug:
-    print('Running: ' + ' '.join(shquote(arg) for arg in pip_args))
-subprocess.check_call(pip_args)
+pip_args += ['--upgrade']
+
+def _run_pip(args):
+    if debug:
+        print('Running: ' + ' '.join(
+            shquote(arg) for arg in (pip_args + args)))
+    subprocess.check_call(pip_args + args)
+
+# First, upgrade pip and setuptools themselves.
+_run_pip(['pip', 'setuptools'])
+
+# Now, update all requirements files.
+requirements_files = [@DEFAULT_VENV_REQUIREMENTS_PATH@]
+
+# If this is the default (system) Python, update requirements for it.
+pyenv_version = subprocess.check_output(
+    [@PYENV@, 'version-name']).decode(
+    locale.getpreferredencoding()).rstrip()
+if pyenv_version == 'system':
+    requirements_files.append(@DEFAULT_PYTHON_REQUIREMENTS_PATH@)
+
+# If there is a requirements file in the current directory, update using it.
+REQUIREMENTS_FILE_NAME = 'requirements.txt'
+if os.path.isfile(REQUIREMENTS_FILE_NAME):
+    requirements_files.append(REQUIREMENTS_FILE_NAME)
+
+_run_pip(list(itertools.chain.from_iterable(
+    ('--requirement', path) for path in requirements_files)))
