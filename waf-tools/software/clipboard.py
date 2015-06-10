@@ -44,6 +44,10 @@ def build(ctx):
             'dlo "$(cpaste)" | ' + ctx.shquote_cmd(ctx.env.SHA256SUM) +
             ' - | ' + ctx.shquote_cmd(ctx.env.CUT) + " -d' ' -f1 | ccopy")
 
+    if ctx.env.YOUTUBE_DL:
+        ctx.env.SHELL_ALIASES['ytdlc'] = (
+            ctx.shquote_cmd(ctx.env.YOUTUBE_DL) + ' "$(cpaste)"')
+
     # htmlink aliases
     for type_ in ['a', 'md']:
         ctx.env.SHELL_ALIASES[type_ + 'link'] = (
