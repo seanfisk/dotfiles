@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """Detect and configure thefuck."""
 
-import os
 import subprocess
 from pipes import quote as shquote
 

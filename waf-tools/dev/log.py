@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*- pylint: disable=unused-argument
-# The unused-argument is for 'self'.
+# -*- coding: utf-8 -*-
 
 """Logging helpers"""
 
@@ -7,7 +6,7 @@ import waflib
 from waflib.Configure import conf
 
 @conf
-def log_success(self, msg):
+def log_success(self, msg): # pylint: disable=unused-argument
     """Log a message indicating success in green color.
 
     :param msg: the message to print

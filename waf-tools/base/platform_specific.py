@@ -33,7 +33,7 @@ def install_launch_agent(self, node):
 
 # OS X-focused command, but supported on all platforms
 @conf
-def plist_dump_node(self, obj, node):
+def plist_dump_node(self, obj, node): # pylint: disable=unused-argument
     """Dump an object's plist representation to an output node.
 
     :param obj: object to dump
