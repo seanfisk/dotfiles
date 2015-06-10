@@ -72,6 +72,8 @@ def options(ctx):
         help='installation prefix [default: %default]')
 
 def configure(ctx):
+    ctx.check_python_version(version=('3', '4'))
+
     ctx.find_program('pylint')
 
     # Call the configure() function in each of the tools.
