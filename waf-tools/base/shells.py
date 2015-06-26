@@ -150,7 +150,12 @@ def setup_shell_defaults(self):
     self.env.SHELL_KEYBINDINGS = OrderedDict([
         # Paging
         # Note: `|&' is Bash 4 and Zsh only.
-        (r'\C-j', r' |& less\C-m'),
+        # Note: We used to bind this to C-j, but that interferes with
+        # tmuxifier's `run_cmd "clear"' line in `lib/layout-helpers.sh' for
+        # some reason. It causes the command strings to be piped to less, which
+        # brings the terminal into less and doesn't execute the commands. Not
+        # sure about the cause.
+        (r'\C-x\C-l', r' |& less\C-m'),
         # Executing last command.
         # This is equivalent to pressing C-p or the up arrow, then Enter.
         (r'\C-xp', r'\C-p\C-m'),
@@ -164,7 +169,7 @@ def setup_shell_defaults(self):
         # configuration, but lolcat is an rbenv-managed gem, and that makes it
         # hard to do.
         (r'\C-xl', r' |& lolcat\C-m'),
-        (r'\C-x\C-l', r' |& lolcat --force |& less -R\C-m'),
+        (r'\C-xL', r' |& lolcat --force |& less -R\C-m'),
         (r'\C-xa', r' |& lolcat --animate\C-m'),
     ])
 
