@@ -143,8 +143,8 @@ def setup_shell_defaults(self):
     # subscripts to an associative array which have backslashes. In the past,
     # we used an intermediate `key' variable workaround to get consistent
     # quoting. However, now that we have the superb data structures of Python,
-    # and the ablility to change what goes in to them via configuration
-    # options, we opted for the Python data structure.
+    # and the ability to change what goes in to them via configuration options,
+    # we opted for the Python data structure.
     #
     # We use an OrderedDict to guarantee a stable order for the build.
     self.env.SHELL_KEYBINDINGS = OrderedDict([
