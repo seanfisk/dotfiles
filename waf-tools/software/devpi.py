@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """Detect and configure devpi."""
 
+import subprocess
+
 DEVPI_PYPI_URL = 'http://localhost:3141/root/pypi/+simple/'
 
 def options(ctx):
@@ -35,7 +37,8 @@ def build(ctx):
 
         @ctx.rule(target=out_nodes, vars=['DEVPI_SERVER'])
         def _make_devpi_gen_config(tsk):
-            return tsk.exec_command(tsk.env.DEVPI_SERVER + ['--gen-config'])
+            return tsk.exec_command(tsk.env.DEVPI_SERVER + ['--gen-config'],
+                                    stdout=subprocess.DEVNULL)
 
         ctx.install_launch_agent(plist_node)
 
