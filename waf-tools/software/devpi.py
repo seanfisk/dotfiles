@@ -3,8 +3,6 @@
 
 import subprocess
 
-DEVPI_PYPI_URL = 'http://localhost:3141/root/pypi/+simple/'
-
 def options(ctx):
     # Add a command-line option to explicity disable devpi.
     ctx.add_option('--disable-devpi', action='store_true', default=False,
@@ -15,7 +13,9 @@ def configure(ctx):
         ctx.msg('Checking for devpi', 'disabled', color='YELLOW')
         return
 
-    ctx.find_program('devpi-server', var='DEVPI_SERVER', mandatory=False)
+    if ctx.find_program('devpi-server', var='DEVPI_SERVER', mandatory=False):
+        ctx.env.DEVPI_HOST = 'localhost' # devpi default
+        ctx.env.DEVPI_PORT = 3141 # devpi default
 
 def build(ctx):
     if not ctx.env.DEVPI_SERVER:
@@ -35,13 +35,21 @@ def build(ctx):
         ]
         plist_node = out_nodes[0]
 
-        @ctx.rule(target=out_nodes, vars=['DEVPI_SERVER'])
+        @ctx.rule(target=out_nodes, vars=[
+            'DEVPI_SERVER', 'DEVPI_HOST', 'DEVPI_PORT'])
         def _make_devpi_gen_config(tsk):
-            return tsk.exec_command(tsk.env.DEVPI_SERVER + ['--gen-config'],
-                                    stdout=subprocess.DEVNULL)
+            return tsk.exec_command(
+                tsk.env.DEVPI_SERVER + [
+                    '--gen-config',
+                    '--host', tsk.env.DEVPI_HOST,
+                    '--port', str(tsk.env.DEVPI_PORT),
+                ],
+                stdout=subprocess.DEVNULL)
 
         ctx.install_launch_agent(plist_node)
 
+    devpi_pypi_url = 'http://{}:{}/root/pypi/+simple/'.format(
+        ctx.env.DEVPI_HOST, ctx.env.DEVPI_PORT)
     # Ugh... this is ugly. Unfortunately double extensions are not fun.
     for relpath_list in [['pip', 'pip.conf'], ['pydistutils.cfg']]:
         relpath_list = ['dotfiles'] + relpath_list
@@ -51,6 +59,6 @@ def build(ctx):
         ctx(features='subst',
             source=in_node,
             target=out_node,
-            DEVPI_PYPI_URL=DEVPI_PYPI_URL)
+            DEVPI_PYPI_URL=devpi_pypi_url)
 
         ctx.install_dotfile(out_node)
