@@ -40,14 +40,14 @@ def _run_pip(args):
 _run_pip(['pip', 'setuptools'])
 
 # Now, update all requirements files.
-requirements_files = [@DEFAULT_VENV_REQUIREMENTS_PATH@]
+requirements_files = [@REQUIREMENTS_DEFAULT_VENV_PATH@]
 
 # If this is the default (system) Python, update requirements for it.
 pyenv_version = subprocess.check_output(
     [@PYENV@, 'version-name']).decode(
     locale.getpreferredencoding()).rstrip()
 if pyenv_version == 'system':
-    requirements_files.append(@DEFAULT_PYTHON_REQUIREMENTS_PATH@)
+    requirements_files.append(@REQUIREMENTS_DEFAULT_PYTHON_PATH@)
 
 # If there is a requirements file in the current directory, update using it.
 REQUIREMENTS_FILE_NAME = 'requirements.txt'

@@ -119,9 +119,14 @@ def build(ctx):
                         stdout=output_file)
                 return ret
 
+    # Install requirements file for the default Python.
+    requirements_default_py_node = ctx.path.find_resource([
+        'dotfiles', 'pyenv', 'pyenv.d', 'requirements-default-python.txt'])
+    ctx.install_dotfile(requirements_default_py_node)
+
     if ctx.env.PYENV_VIRTUALENV:
         # Generate a default virtualenv requirements file.
-        requirements_base = 'default-virtualenv-requirements.txt'
+        requirements_base = 'requirements-default-virtualenv.txt'
         requirements_node = ctx.path.find_or_declare([
             'dotfiles', 'pyenv', 'pyenv.d', requirements_base])
         @ctx.rule(target=requirements_node,
@@ -164,6 +169,6 @@ def build(ctx):
         ctx.install_subst_script(
             'pyup',
             PYENV=repr(ctx.env.PYENV[0]),
-            DEFAULT_PYTHON_REQUIREMENTS_PATH=repr(ctx.path.find_resource(
-                'requirements-default.txt').abspath()),
-            DEFAULT_VENV_REQUIREMENTS_PATH=repr(requirements_install_path))
+            REQUIREMENTS_DEFAULT_PYTHON_PATH=repr(ctx.dotfile_install_path(
+                requirements_default_py_node)),
+            REQUIREMENTS_DEFAULT_VENV_PATH=repr(requirements_install_path))

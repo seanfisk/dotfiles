@@ -37,12 +37,17 @@ def install_subst_script(self, script_basename, **kwargs):
     self.install_script(script_out_node)
 
 @conf
-def install_dotfile(self, node, **kwargs):
-    """Install a dotfile node. Extra keywords are passed to ``install_as``."""
+def dotfile_install_path(self, node):
+    """Compute the install path of a dotfile node."""
     # Strip the dotfiles/ directory (for both source and build nodes).
     relative_path_list = waflib.Node.split_path(node.relpath())[1:]
     relative_path_list[0] = '.' + relative_path_list[0]
-    self.install_as(join(self.env.PREFIX, *relative_path_list), node, **kwargs)
+    return join(self.env.PREFIX, *relative_path_list)
+
+@conf
+def install_dotfile(self, node, **kwargs):
+    """Install a dotfile node. Extra keywords are passed to ``install_as``."""
+    self.install_as(self.dotfile_install_path(node), node, **kwargs)
 
 @conf
 def shquote_cmd(self, cmd): # pylint: disable=unused-argument
