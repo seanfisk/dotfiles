@@ -31,25 +31,35 @@ def build(ctx):
     in_node = ctx.path.find_resource(['dotfiles', 'tmux.conf.in'])
     out_node = in_node.change_ext(ext='.conf', ext_in='.conf.in')
 
-    powerline_commands = []
+    more_commands = []
+
     if ctx.env.HAS_POWERLINE:
         tmux_powerline_file = ctx.get_powerline_path(
             join('bindings', 'tmux', 'powerline.conf'))
         if not ctx.env.POWERLINE_DAEMON_LAUNCHD:
-            powerline_commands.append(
+            more_commands.append(
                 # Not exactly sure about the quoting rules in this config
                 # file...
                 'run-shell ' + shquote(ctx.shquote_cmd(
                     ctx.env.POWERLINE_DAEMON + ['--quiet'])))
-
-        powerline_commands.append(
+        more_commands.append(
             'source-file ' + shquote(tmux_powerline_file))
+
+    # When copying in copy mode in tmux, send the copied text to the system
+    # clipboard. See:
+    # https://robots.thoughtbot.com/tmux-copy-paste-on-os-x-a-better-future
+    if ctx.env.COPY_COMMAND:
+        # XXX: These keys are hard-coded
+        for key in ['M-w', 'C-w']:
+            more_commands.append(
+                'bind-key -t emacs-copy {} copy-pipe {}'.format(
+                    key, ctx.shquote_cmd(ctx.env.COPY_COMMAND)))
 
     ctx(features='subst',
         source=in_node,
         target=out_node,
         DEFAULT_COMMAND=default_command,
-        POWERLINE_COMMANDS='\n'.join(powerline_commands))
+        MORE_COMMANDS='\n'.join(more_commands))
     ctx.install_dotfile(out_node)
 
     if ctx.env.LSOF:

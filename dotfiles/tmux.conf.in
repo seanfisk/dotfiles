@@ -22,4 +22,4 @@ bind-key k confirm-before kill-session
 # Make the display more compact.
 set-window-option -g window-status-separator ''
 
-@POWERLINE_COMMANDS@
+@MORE_COMMANDS@
