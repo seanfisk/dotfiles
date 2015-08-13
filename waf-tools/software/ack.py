@@ -25,5 +25,5 @@ def build(ctx):
         # Just 'less' is fine; we don't need to pass 'less -R' to get colors to
         # work.
         ctx.env.SHELL_ALIASES['agp'] = ctx.shquote_cmd(
-            ctx.env.AG + ['--pager less'])
+            ctx.env.AG + ['--pager', 'less'])
         # ag doesn't support `--files-from'. Too bad.
