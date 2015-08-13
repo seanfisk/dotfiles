@@ -17,6 +17,8 @@ APPNAME = 'dotfiles'
 VERSION = '0.1'
 top = '.' # pylint: disable=invalid-name
 out = 'build' # pylint: disable=invalid-name
+# Override the default prefix.
+default_prefix = os.path.expanduser('~') # pylint: disable=invalid-name
 
 def _python_modules_in_dir(dirpath):
     """Find all Python modules within a directory.
@@ -65,11 +67,6 @@ def _load_tools(self):
 def options(ctx):
     # Call the options() function in each of the tools.
     _load_tools(ctx)
-    # Override the default prefix of '/usr/local'.
-    default_prefix = os.path.expanduser('~')
-    ctx.add_option(
-        '--prefix', default=default_prefix,
-        help='installation prefix [default: %default]')
 
 def configure(ctx):
     ctx.check_python_version(version=('3', '4'))
