@@ -39,3 +39,5 @@
 	patternType = perl
 [clean]
 	requireForce = false
+[push]
+	default = simple
