@@ -2,20 +2,25 @@
 
 """Check for Python version.
 
-Waf has some built-in ways to check for Python version.
-However, the Python version only checks for a *minimum* version whereas we want
-an exact version. The module test is OK, but relies on Waf Python
-infrastructure (which we are not using). Our checks are simpler and ignore
-environment variable hints, but they should get the job done.
+Waf has a built-in module to check for Python. This module differs from it in
+the following ways:
+
+- The Waf module finds the Python executable and checks that. This module
+  checks the version of the currently-running Python interpreter.
+- The Waf module checks for a minimum Python version. This module allows the
+  user to provide their own comparison function.
+- This module ignores environment variable hints.
+- This module only checks the version of Python.
 """
 
 import sys
 import platform
+import operator
 
 from waflib.Configure import conf
 
 @conf
-def check_python_version(self, impl=None, version=()):
+def check_python_version(self, impl=None, version=(), cmp_=operator.ge):
     """Check for Python version. Very loosely based upon
     :meth:`waflib.Tools.python.check_python_version()`, but simplified and
     designed to check the currently running interpreter.
@@ -26,13 +31,15 @@ def check_python_version(self, impl=None, version=()):
     :param version: Partial or full version tuple as returned by
         :func:`platform.python_version_tuple()`
     :type version: :class:`tuple` of :class:`str`
+    :param cmp_: Comparison operator for the version
+    :type cmp_: :class:`func`
     """
     meets_requirements = (
         (impl is None or platform.python_implementation() == impl) and
-        platform.python_version_tuple()[:len(version)] == version)
+        (version == () or cmp_(platform.python_version_tuple(), version)))
     required_version_string = '.'.join(version)
-    required_name = '{}{}{}'.format(
-        impl or 'Python', ' ' if version else '', required_version_string)
+    required_name = (impl or 'Python') + (' ' if version else '') + (
+        required_version_string)
     found_name = '{0} {1}'.format(
         platform.python_implementation(), platform.python_version())
     self.msg('Checking for ' + required_name,

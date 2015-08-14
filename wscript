@@ -69,6 +69,7 @@ def options(ctx):
     _load_tools(ctx)
 
 def configure(ctx):
+    import operator
     ctx.check_python_version(version=('3', '4'))
 
     ctx.find_program('pylint')
