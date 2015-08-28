@@ -1,0 +1,31 @@
+#!/usr/bin/env python
+# -*- coding: utf-8; -*-
+
+import argparse
+import signal
+import sys
+
+import psutil
+
+PROGRAM_NAME = 'SophosUIServer'
+
+arg_parser = argparse.ArgumentParser(
+    description='Reboot the {}'.format(PROGRAM_NAME),
+    epilog=(
+        'Opening the Sophos interface activates the discrete GPU and leaves '
+        'it on. Rebooting the {} de-activates the discrete GPU and switches '
+        'back to integrated.').format(PROGRAM_NAME))
+arg_parser = arg_parser.parse_args()
+
+for process in psutil.process_iter():
+    if process.name() == PROGRAM_NAME:
+        # Send SIGKILL; SIGTERM doesn't do it. The process will restart
+        # automatically.
+        print('Killing {} (PID {})…'.format(PROGRAM_NAME, process.pid), end='')
+        sys.stdout.flush()
+        process.kill()
+        print(' Killed.')
+        # There is only one server running
+        sys.exit(0)
+else:
+    sys.exit('{} is not running'.format(PROGRAM_NAME))
