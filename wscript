@@ -87,6 +87,9 @@ def build(ctx):
     # Set up shell environment to be modified by other tools.
     ctx.setup_shell_defaults()
 
+    # Add Homebrew vars, if any.
+    ctx.load(['brew'])
+
     # Call the build() function in each of the software tools.
     ctx.load(WAF_SOFTWARE_TOOLS, tooldir=WAF_SOFTWARE_TOOLS_DIR)
 
