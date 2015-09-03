@@ -429,26 +429,27 @@ def build(ctx):
                 'priority': 10,
             })
 
-        # TODO We don't want to hard-code the interface for OS X.
-        # The auto-detection needs improvement in Powerline.
-        #
-        # segments_right.append({
-        #     'function': 'powerline.segments.common.net.internal_ip',
-        #     'before': 'I ',
-        #     'args': {
-        #         'interface': 'en1'
-        #     },
-        #     'priority': 10
-        # })
-
-        segments_right.append({
-            'function': 'powerline.segments.common.net.external_ip',
-            'before': 'E ',
-            'args': {
-                'query_url': 'http://ipv4.icanhazip.com/',
+        segments_right += [
+            {
+                'function': 'powerline.segments.common.net.internal_ip',
+                'before': 'I ',
+                'args': {
+                    # TODO For OS X, the interface is hard-coded to the
+                    # wireless card. The auto-detection needs improvement in
+                    # Powerline.
+                    'interface': 'en1' if ctx.env.MACOSX else 'auto',
+                },
+                'priority': 10,
             },
-            'priority': 5,
-        })
+            {
+                'function': 'powerline.segments.common.net.external_ip',
+                'before': 'E ',
+                'args': {
+                    'query_url': 'http://ipv4.icanhazip.com/',
+                },
+                'priority': 5,
+            },
+        ]
 
         _json_dump_node(
             {
