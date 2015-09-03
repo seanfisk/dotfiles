@@ -13,6 +13,7 @@ import appdirs
 import keyring
 
 PACKAGE_NAME = 'powerline-status'
+PACKAGE_VERSION = '2.2'
 
 @conf
 def get_powerline_path(self, relpath):
@@ -185,7 +186,7 @@ def build(ctx):
                    ctx.env.POWERLINE_RENDER[0])
 
     ctx.env.PYENV_VIRTUALENV_DEFAULT_PACKAGES.append(
-        '{0}==2.1.4'.format(PACKAGE_NAME))
+        '{}=={}'.format(PACKAGE_NAME, PACKAGE_VERSION))
 
     def _make_bash(tsk):
         lines = []
