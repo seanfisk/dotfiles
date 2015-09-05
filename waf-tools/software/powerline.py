@@ -12,9 +12,6 @@ from waflib.Configure import conf
 import appdirs
 import keyring
 
-PACKAGE_NAME = 'powerline-status'
-PACKAGE_VERSION = '2.2'
-
 @conf
 def get_powerline_path(self, relpath):
     """Get the absolute path to a file in the Powerline package given a
@@ -186,7 +183,10 @@ def build(ctx):
                    ctx.env.POWERLINE_RENDER[0])
 
     ctx.env.PYENV_VIRTUALENV_DEFAULT_PACKAGES.append(
-        '{}=={}'.format(PACKAGE_NAME, PACKAGE_VERSION))
+        'git+https://github.com/powerline/powerline.git'
+        # For my interface='default_gateway' feature
+        '@d78d29c61e1d1d74274c33f4cf57f36b17273058'
+        '#egg=powerline-status')
 
     def _make_bash(tsk):
         lines = []
@@ -434,10 +434,7 @@ def build(ctx):
                 'function': 'powerline.segments.common.net.internal_ip',
                 'before': 'I ',
                 'args': {
-                    # TODO For OS X, the interface is hard-coded to the
-                    # wireless card. The auto-detection needs improvement in
-                    # Powerline.
-                    'interface': 'en1' if ctx.env.MACOSX else 'auto',
+                    'interface': 'default_gateway',
                 },
                 'priority': 10,
             },
