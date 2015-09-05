@@ -262,6 +262,7 @@ def build(ctx):
                 'common': {
                     'paths': [tsk.env.POWERLINE_SEGMENTS_PATH],
                     'log_file': tsk.env.POWERLINE_LOG_PATH,
+                    'log_level': 'INFO',
                 },
                 'ext': {
                     'shell': {'theme': 'sean'},
