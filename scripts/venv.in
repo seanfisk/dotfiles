@@ -3,13 +3,18 @@
 set -o nounset
 set -o errexit
 
-if [[ $# -ne 1 || $1 == -h || $1 == --help ]]; then
-	echo "Usage: $0 PYTHON_VERSION" >&2
+if [[ $# -eq 0 || $# -gt 2 || $1 == -h || $1 == --help ]]; then
+	echo "Usage: $0 PYTHON_VERSION [VENV_NAME]" >&2
 	exit 1
+fi
+if [[ $# -eq 1 ]]; then
+	readonly VENV_NAME=${PWD##*/}
+else
+	readonly VENV_NAME=$2
 fi
 
 readonly PYTHON_VERSION=$1
-readonly VENV=${PWD##*/}${PYTHON_VERSION//./}
+readonly VENV=$VENV_NAME${PYTHON_VERSION//./}
 
 @PYENV@ virtualenv "$PYTHON_VERSION" "$VENV"
 @PYENV@ local "$VENV"
