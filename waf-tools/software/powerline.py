@@ -184,8 +184,8 @@ def build(ctx):
 
     ctx.env.PYENV_VIRTUALENV_DEFAULT_PACKAGES.append(
         'git+https://github.com/powerline/powerline.git'
-        # For my interface='default_gateway' feature
-        '@d78d29c61e1d1d74274c33f4cf57f36b17273058'
+        # tmux 2.1 support
+        '@ddfbb20eba6758f385e5c064b6c411ab27bc42c4'
         '#egg=powerline-status')
 
     def _make_bash(tsk):
