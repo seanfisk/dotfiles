@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+set -o nounset
+set -o errexit
+
+if [[ $# -ne 2 || $1 == -h || $1 == --help ]]; then
+	echo "Usage: $0 INPUT OUTPUT" >&2
+	exit 1
+fi
+
+# See here for options: http://www.ghostscript.com/doc/9.02/Ps2pdf.htm
+
+@GS@ -dNOPAUSE -dBATCH -dSAFER \
+ -sDEVICE=pdfwrite \
+ -dPDFSETTINGS=/ebook -dAutoRotatePages=/None -dCompatibilityLevel=1.4 \
+ -sOutputFile="$2" "$1"
