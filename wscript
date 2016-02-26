@@ -6,8 +6,8 @@
 # picked up as Waf commands.
 
 import os
-import fnmatch
 from os.path import join as _join
+import fnmatch
 import itertools
 
 import waflib

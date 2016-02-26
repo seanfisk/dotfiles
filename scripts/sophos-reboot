@@ -18,7 +18,11 @@ arg_parser = argparse.ArgumentParser(
 arg_parser = arg_parser.parse_args()
 
 for process in psutil.process_iter():
-    if process.name() == PROGRAM_NAME:
+    try:
+        name = process.name()
+    except psutil.NoSuchProcess:
+        continue
+    if name == PROGRAM_NAME:
         # Send SIGKILL; SIGTERM doesn't do it. The process will restart
         # automatically.
         print('Killing {} (PID {})…'.format(PROGRAM_NAME, process.pid), end='')

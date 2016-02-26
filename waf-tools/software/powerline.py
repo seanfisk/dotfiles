@@ -7,10 +7,10 @@ from shlex import quote as shquote
 import json
 from collections import OrderedDict
 
-import waflib
-from waflib.Configure import conf
 import appdirs
 import keyring
+import waflib
+from waflib.Configure import conf
 
 @conf
 def get_powerline_path(self, relpath):
@@ -182,11 +182,7 @@ def build(ctx):
     ctx.symlink_as(join(ctx.env.SCRIPTS_DIR, 'powerline-render'),
                    ctx.env.POWERLINE_RENDER[0])
 
-    ctx.env.PYENV_VIRTUALENV_DEFAULT_PACKAGES.append(
-        'git+https://github.com/powerline/powerline.git'
-        # tmux 2.1 support
-        '@ddfbb20eba6758f385e5c064b6c411ab27bc42c4'
-        '#egg=powerline-status')
+    ctx.env.PYENV_VIRTUALENV_DEFAULT_PACKAGES.append('powerline-status==2.3')
 
     def _make_bash(tsk):
         lines = []
