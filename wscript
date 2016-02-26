@@ -70,7 +70,7 @@ def options(ctx):
 
 def configure(ctx):
     import operator
-    ctx.check_python_version(version=('3', '4'))
+    ctx.check_python_version(version=('3', '5'))
 
     ctx.find_program('pylint')
 
