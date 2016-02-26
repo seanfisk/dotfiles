@@ -125,6 +125,10 @@ def build(ctx):
     ctx.install_dotfile(requirements_default_py_node)
 
     if ctx.env.PYENV_VIRTUALENV:
+        # Disable prompt changing
+        # See here: https://github.com/yyuu/pyenv-virtualenv/issues/135
+        ctx.env.SHELL_ENV['PYENV_VIRTUALENV_DISABLE_PROMPT'] = '1'
+
         # Generate a default virtualenv requirements file.
         requirements_base = 'requirements-default-virtualenv.txt'
         requirements_node = ctx.path.find_or_declare([
