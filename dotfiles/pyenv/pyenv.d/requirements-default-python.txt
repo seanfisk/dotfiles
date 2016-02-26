@@ -33,27 +33,31 @@ netifaces==0.10.4
 patool==1.12
 
 # Devpi server and web interface
-devpi-server==2.1.3
-devpi-web==2.2.2
-beautifulsoup4==4.3.2
-Chameleon==2.20
-devpi-common==2.0.4
-docutils==0.12
-execnet==1.2.0
-itsdangerous==0.24
+devpi-server==3.0.1
 PasteDeploy==1.5.2
-py==1.4.26
-pyramid==1.5.2
-pyramid-chameleon==0.3
+WebOb==1.5.1
+apipkg==1.4
+devpi-common==2.0.8
+execnet==1.4.1
+itsdangerous==0.24
+pluggy==0.3.1
+py==1.4.31
+pyramid==1.6.1
 repoze.lru==0.6
-requests==2.5.1
+requests==2.9.1
 translationstring==1.3
 venusian==1.0
-waitress==0.8.9
-WebOb==1.4
-Whoosh==2.6.0
+waitress==0.8.10
 zope.deprecation==4.1.2
-zope.interface==4.1.2
+zope.interface==4.1.3
+
+devpi-web==3.0.0
+Chameleon==2.24
+Whoosh==2.7.2
+beautifulsoup4==4.4.1
+defusedxml==0.4.1
+docutils==0.12
+pyramid-chameleon==0.3
 
 # htmlink
 lxml==3.5.0
