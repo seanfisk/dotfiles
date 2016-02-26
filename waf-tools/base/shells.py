@@ -69,18 +69,16 @@ def find_zsh(self):
     full_version = self.cmd_and_log(
         exe_path + ['-c', 'echo -n $ZSH_VERSION'])
     version_split = full_version.split('.')
-    if len(version_split) != 3:
-        self.fatal('Unrecognized Zsh version.')
     major_version = version_split[0]
     version_ok = major_version == required_major_version
 
     self.msg('Checking for Zsh version', full_version,
              color='GREEN' if version_ok else 'YELLOW')
-    if version_ok:
-        self.env.ZSH = exe_path
-    else:
+    if not version_ok:
         self.fatal('This configuration requires Zsh {}.'.format(
             required_major_version))
+
+    self.env.ZSH = exe_path
 
     return exe_path
 
