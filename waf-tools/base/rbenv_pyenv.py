@@ -4,10 +4,22 @@
 import os
 from os.path import join
 from shlex import quote as shquote
-import subprocess
 import re
+import subprocess
+
+import waflib
 
 TOOL_FILENAME_RE = re.compile(r'(?P<tool>.*)-.*\.(?P<shell>.*)')
+
+def _split_exports(lines):
+    profile_lines = []
+    rc_lines = []
+    for line in lines:
+        if line.startswith('export '):
+            profile_lines.append(line)
+        else:
+            rc_lines.append(line)
+    return (profile_lines, rc_lines)
 
 def configure(ctx):
     ctx.find_program('rbenv', mandatory=False)
@@ -28,7 +40,8 @@ def configure(ctx):
         )
         ctx.env.PYENV_VIRTUALENV = ret == 0
 
-        ctx.env.PYENV_ROOT = ctx.cmd_and_log(ctx.env.PYENV + ['root']).rstrip()
+        ctx.env.PYENV_ROOT = ctx.cmd_and_log(
+            ctx.env.PYENV + ['root'], quiet=waflib.Context.BOTH).rstrip()
 
     ctx.msg('Checking for pyenv-virtualenv', ctx.env.PYENV_VIRTUALENV)
 
@@ -37,12 +50,12 @@ def configure(ctx):
     # availability of pyenv so that other files don't get errors.
     ctx.env.PYENV_VIRTUALENV_DEFAULT_PACKAGES = ['ipython==4.1.1']
 
-def _make_rbenv_pyenv_file(tsk):
+def _make_rbenv_pyenv_files(tsk):
     # The generated code loads pyenv and rbenv into the shell session. We need
     # to load this in the rc file because it loads up shell functions. For
     # example, `pyenv shell' is only available when this `eval' command is run
     # *within the shell*.
-    rc_node, profile_node = tsk.outputs
+    profile_node, rc_node = tsk.outputs
     # XXX Parsing stuff we've generated is kind of ugly, but there aren't a lot
     # of better options AFAIK.
     match = TOOL_FILENAME_RE.fullmatch(rc_node.name)
@@ -57,31 +70,59 @@ def _make_rbenv_pyenv_file(tsk):
     # to generate the code. Otherwise, they determine it through ps or $SHELL,
     # $SHELL is just plain wrong, because that is the login shell, which is not
     # necessarily the shell that is running.
-    contents = subprocess.check_output(
-        tool_cmd + ['init', '-', shell]).splitlines()
-    # XXX We don't agree with some of the decisions that were made in this
-    # shell file, so we are hacking it up :) However, the contents are assumed
-    # and the indices are hard-coded :\
+    profile_lines, rc_lines = _split_exports(tsk.generator.bld.cmd_and_log(
+        tool_cmd + ['init', '-', shell],
+        quiet=waflib.Context.BOTH).splitlines())
 
-    # Write the 'export PATH=...' line.
-    profile_node.write(contents[0] + b'\n', flags='wb')
-
-    if tsk.env.BREW:
-        # If we installed the tool using Homebrew, rewrite the path to the opt/
-        # directory instead of using a specific version. This allows our file
-        # to survive upgrades of the tool.
-        brew_opt_path = subprocess.check_output(
-            tsk.env.BREW + ['--prefix', tool]).rstrip()
+    # If we installed the tool using Homebrew, rewrite the path to the opt/
+    # directory instead of using a specific version. This allows our file
+    # to survive upgrades of the tool.
+    try:
+        brew_opt_path = tsk.generator.bld.cmd_and_log(
+            tsk.env.BREW + ['--prefix', tool],
+            quiet=waflib.Context.BOTH).rstrip()
+    except waflib.Errors.WafError:
+        pass
+    else:
         brew_cellar_path = os.path.realpath(brew_opt_path)
-        source_line_index = 1 if tool == 'rbenv' else 2
-        contents[source_line_index] = contents[source_line_index].replace(
+        rc_lines[0] = rc_lines[0].replace(
             brew_cellar_path, brew_opt_path)
-        contents.insert(
-            source_line_index,
-            b"# Use of Homebrew's opt/ directory was hacked in here; "
-            b'this is not stock')
+        rc_lines.insert(
+            0,
+            "# Use of Homebrew's opt/ directory was hacked in here; "
+            'this is not stock')
 
-    rc_node.write(b'\n'.join(contents[1:]), flags='wb')
+    profile_node.write('\n'.join(profile_lines))
+    rc_node.write('\n'.join(rc_lines))
+
+def _make_pyenv_virtualenv_files(tsk):
+    profile_node, rc_node = tsk.outputs
+    # The shell is determined by the output file's extension.
+    # suffix() returns the extension with a preceding dot, so strip
+    # it off.
+    ext = os.path.splitext(rc_node.name)[1]
+    shell = ext[1:]
+    profile_lines, rc_lines = _split_exports(
+        tsk.generator.bld.cmd_and_log(
+            tsk.env.PYENV + ['virtualenv-init', '-', shell],
+            quiet=waflib.Context.BOTH).splitlines())
+
+    # XXX: The code introduced in this commit causes ${PATH} to be
+    # resolved when this code is output, not when it is run.
+    #
+    # https://github.com/yyuu/pyenv-virtualenv/commit/
+    # dfd165506933d2f81e3b5a0eb6528f06ce653d01
+    # #diff-0df4de328d02bb89f5b3ef3838d1ab1bL68
+    # Also see my PR: https://github.com/yyuu/pyenv-virtualenv/pull/154
+    #
+    # For now, we have a hacky fix.
+    shims_path = join(tsk.generator.bld.cmd_and_log(
+        tsk.env.BREW + ['--prefix', 'pyenv-virtualenv'],
+        quiet=waflib.Context.BOTH).rstrip(), 'shims')
+    profile_lines[0] = 'export PATH="{}:$PATH"'.format(shims_path)
+
+    profile_node.write('\n'.join(profile_lines))
+    rc_node.write('\n'.join(rc_lines))
 
 def build(ctx):
     for shell in ctx.env.AVAILABLE_SHELLS:
@@ -92,32 +133,25 @@ def build(ctx):
             path = ctx.env[tool_up]
             if path:
                 out_nodes = []
-                for filetype in ['rc', 'profile']:
+                for filetype in ['profile', 'rc']:
                     out_node = ctx.path.find_or_declare(
                         '{}-{}.{}'.format(tool, filetype, shell))
                     out_nodes.append(out_node)
                     ctx.add_shell_node(out_node, filetype, shell)
-                ctx(rule=_make_rbenv_pyenv_file, target=out_nodes,
+                ctx(rule=_make_rbenv_pyenv_files, target=out_nodes,
                     vars=[tool_up])
 
         if ctx.env.PYENV_VIRTUALENV:
             # If pyenv-virtualenv is installed, generate a file for it, too.
-            out_node = ctx.path.find_or_declare('pyenv-virtualenv.' + shell)
-            ctx.add_shell_rc_node(out_node, shell)
+            out_nodes = []
+            for filetype in ['profile', 'rc']:
+                out_node = ctx.path.find_or_declare(
+                    'pyenv-virtualenv-{}.{}'.format(filetype, shell))
+                out_nodes.append(out_node)
+                ctx.add_shell_node(out_node, filetype, shell)
 
-            @ctx.rule(target=out_node, vars=['PYENV', 'PYENV_VIRTUALENV'])
-            def _make_pyenv_virtualenv_file(tsk):
-                output_node = tsk.outputs[0]
-                # The shell is determined by the output file's extension.
-                # suffix() returns the extension with a preceding dot, so strip
-                # it off.
-                _, ext = os.path.splitext(output_node.name)
-                shell = ext[1:]
-                with open(output_node.abspath(), 'w') as output_file:
-                    ret = tsk.exec_command(
-                        ctx.env.PYENV + ['virtualenv-init', '-', shell],
-                        stdout=output_file)
-                return ret
+            ctx(rule=_make_pyenv_virtualenv_files, target=out_nodes,
+                vars=['PYENV', 'PYENV_VIRTUALENV'])
 
     # Install requirements file for the default Python.
     requirements_default_py_node = ctx.path.find_resource([
