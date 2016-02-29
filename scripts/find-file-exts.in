@@ -1,0 +1,59 @@
+#!@PYTHON@
+# -*- mode: python; -*-
+
+# Python 2/3 compatible
+
+# List files extensions used in the current directory, using Git files if this
+# is a Git repository. This is useful for making sure that all are covered by
+# an EditorConfig file.
+
+from __future__ import (
+    division, absolute_import, print_function, unicode_literals)
+import sys
+import os.path
+import argparse
+import itertools
+
+import pygit2
+
+def _splitext_full(path):
+    """Like :func:`os.path.splitext`, but returns the "full" extension."""
+    basename = os.path.basename(path)
+    ext_start = basename.find('.')
+    if ext_start == 0:
+        # Hidden file, look for another extension
+        ext_start = basename.find('.', 1)
+    if ext_start == -1:
+        # Either no dot in the basename or the only dot was the first
+        # character.
+        ext_start = len(basename)
+    return (os.path.join(os.path.dirname(path), basename[:ext_start]),
+            basename[ext_start:])
+
+arg_parser = argparse.ArgumentParser(
+    description='List files extensions of directory or Git repo.')
+arg_parser.add_argument('dir', nargs='?', default='.',
+                        help='directory to search [default: %(default)s]')
+args = arg_parser.parse_args()
+
+try:
+    # Check for a Git repo
+    repo_path = pygit2.discover_repository(args.dir)
+    msg = 'Git repo found at: ' + repo_path
+except KeyError:
+    msg = 'No Git repo found'
+    filenames = itertools.chain.from_iterable(
+        filenames for dirpath, dirnames, filenames in os.walk(args.dir))
+else:
+    repo = pygit2.Repository(repo_path)
+    filenames = (entry.path for entry in repo.index)
+
+exts = set()
+for path in filenames:
+    ext = _splitext_full(path)[1]
+    if ext:
+        exts.add(ext)
+
+# Print to stderr to avoid corrupting data that could be used for piping, etc.
+print('# ' + msg, file=sys.stderr)
+print(*sorted(exts), sep='\n')

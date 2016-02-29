@@ -43,6 +43,8 @@ def build(ctx):
     for name in ['gitconfig', 'gitignore-global']:
         ctx.install_dotfile(ctx.path.find_resource(['dotfiles', name]))
 
+    ctx.install_subst_script('find-file-exts', PYTHON=ctx.env.DEFAULT_PYTHON)
+
     if ctx.env.WC and ctx.env.NUMFMT:
         # Find size of the working tree in a git repo.
         # See here for sources of approaches:
