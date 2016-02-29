@@ -31,7 +31,7 @@ from powerline.theme import requires_segment_info # pylint: disable=import-error
 # TODO: Make into installable Powerline segments.
 
 NOT_INSTALLED_RE = re.compile(
-    r".*: version `(?P<version>.*)' is not installed$")
+    r".*: version `(?P<version>.*)' is not installed")
 """Pattern to extract the missing version from the program's error message."""
 
 def _make_tool_segment(tool):
