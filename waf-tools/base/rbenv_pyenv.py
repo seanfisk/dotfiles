@@ -206,6 +206,7 @@ def build(ctx):
         ctx.install_subst_script('venv', PYENV=shquote(ctx.env.PYENV[0]))
         ctx.install_subst_script(
             'pyup',
+            PYTHON=ctx.env.DEFAULT_PYTHON,
             PYENV=repr(ctx.env.PYENV[0]),
             REQUIREMENTS_DEFAULT_PYTHON_PATH=repr(ctx.dotfile_install_path(
                 requirements_default_py_node)),

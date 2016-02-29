@@ -15,5 +15,5 @@ def configure(ctx):
 def build(ctx):
     if not ctx.env.SOPHOS:
         return
-    ctx.install_script(ctx.path.find_resource(['scripts', 'sophos-reboot']))
+    ctx.install_subst_script('sophos-reboot', PYTHON=ctx.env.DEFAULT_PYTHON)
     ctx.env.SHELL_ALIASES['sr'] = 'sophos-reboot'

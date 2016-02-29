@@ -2,4 +2,4 @@
 """Install htmlink."""
 
 def build(ctx):
-    ctx.install_script(ctx.path.find_resource(['scripts', 'htmlink']))
+    ctx.install_subst_script('htmlink', PYTHON=ctx.env.DEFAULT_PYTHON)
