@@ -8,4 +8,6 @@ def build(ctx):
     if not ctx.env.SQLITE:
         return
     ctx.env.SHELL_ALIASES['sqlite'] = ctx.shquote_cmd(
-        ctx.env.SQLITE + ['-header', '-column', '-nullvalue', 'NULL'])
+        # We used to use -header -column, but this cuts off values if the width
+        # is too small.
+        ctx.env.SQLITE + ['-line', '-nullvalue', 'NULL'])
