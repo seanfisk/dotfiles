@@ -18,3 +18,4 @@ readonly VENV=$VENV_NAME${PYTHON_VERSION//./}
 
 @PYENV@ virtualenv "$PYTHON_VERSION" "$VENV"
 @PYENV@ local "$VENV"
+pip install --upgrade pip
