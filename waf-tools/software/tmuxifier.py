@@ -30,6 +30,13 @@ def build(ctx):
     if not ctx.env.TMUXIFIER_:
         return
 
+    # We used to set EDITOR for Tmuxifier's edit-session and edit-window. This
+    # is fine for those commands, but when launching sessions (load-session)
+    # the value of this variable is passed through. Though there are other ways
+    # to solve this (setting it in the rc, etc.), we've decided just to deal
+    # with a blocking editor for these commands.
+    ctx.env.SHELL_ALIASES['mux'] = ctx.shquote_cmd(ctx.env.TMUXIFIER_)
+
     for shell in ctx.env.AVAILABLE_SHELLS:
         out_node = ctx.path.find_or_declare('tmuxifier.' + shell)
         ctx.add_shell_rc_node(out_node, shell)
