@@ -23,15 +23,14 @@ def _make_alias(tsk):
             tsk.env[shell.upper()], stdin=subprocess.PIPE, stdout=output_file,
             # Allows stdin and stdout to be text instead of bytes.
             universal_newlines=True)
-        proc.communicate(shquote(tsk.env.THEFUCK[0]) + ' --alias \n')
+        proc.communicate(shquote(tsk.env.THEFUCK[0]) + ' --alias\n')
     return proc.returncode
 
 def build(ctx):
-    if not ctx.env.THEFUCK_ALIAS:
+    if not ctx.env.THEFUCK:
         return
 
     for shell in ctx.env.AVAILABLE_SHELLS:
         out_node = ctx.path.find_or_declare('thefuck.' + shell)
         ctx.add_shell_rc_node(out_node, shell)
-        ctx(rule=_make_alias, target=out_node, vars=[
-            shell.upper(), 'THEFUCK_ALIAS'])
+        ctx(rule=_make_alias, target=out_node, vars=[shell.upper(), 'THEFUCK'])
