@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+if $# -gt 0; then
+	echo <<EOF
+Usage: $0
+
+Update iTerm2 shell integration scripts in this directory.
+EOF
+	exit
+fi
+
+# We've considered a Git submodule/subtree for this, but we'd have to
+# clone the entire iTerm2 website, which contains downloads and is
+# very large. This is relatively simple and lightweight.
+
+for shell in bash zsh; do
+	wget "https://iterm2.com/misc/${shell}_startup.in"
+done

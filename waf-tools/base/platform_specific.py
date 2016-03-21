@@ -47,6 +47,23 @@ def plist_dump_node(self, obj, node): # pylint: disable=unused-argument
             sort_keys=False, # Keep our own order.
         )
 
+# OS X only
+@conf
+def osx_app_locations(self, app):
+    """Return paths of app bundles matching a specific name. Always returns
+    ``False`` on non-OS X systems.
+
+    :param app: name of the application
+    :type app: :class:`str`
+    """
+    if not self.env.MACOSX:
+        return False
+    # Inspired by: http://apple.stackexchange.com/a/129943
+    return self.cmd_and_log([
+        'mdfind', 'kMDItemContentType = "com.apple.application-bundle"'
+        ' && kMDItemDisplayName = {}'.format(
+            repr(app))]).splitlines()
+
 def configure(ctx):
     try:
         ctx.env[SYSTEM_OS_MAPPING[platform.system()]] = True

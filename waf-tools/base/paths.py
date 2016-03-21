@@ -71,8 +71,9 @@ def configure(ctx):
             python + ['-m', 'site', '--user-base']).rstrip())
 
     # Emacs.app on Mac OS X contains some paths in some weird places.
-    if ctx.env.MACOSX:
-        emacs_app_contents = '/Applications/Emacs.app/Contents'
+    emacs_locations = ctx.osx_app_locations('Emacs')
+    if emacs_locations:
+        emacs_contents_dir = join(emacs_locations[0], 'Contents')
 
         # The bin directories look like this:
         #
@@ -95,10 +96,10 @@ def configure(ctx):
             major=major,
             minor=minor)
         _add_to_path_var(ctx, 'PATH', join(
-            emacs_app_contents, 'MacOS', bin_dir_name))
+            emacs_contents_dir, 'MacOS', bin_dir_name))
 
         # man and info directories
-        resources_dir = join(emacs_app_contents, 'Resources')
+        resources_dir = join(emacs_contents_dir, 'Resources')
         _add_to_path_var(ctx, 'MANPATH', join(resources_dir, 'man'))
         _add_to_path_var(ctx, 'INFOPATH', join(resources_dir, 'info'))
 
