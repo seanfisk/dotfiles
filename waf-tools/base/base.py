@@ -3,6 +3,7 @@
 
 from os.path import join
 from shlex import quote as shquote
+import subprocess
 
 import waflib
 from waflib.Configure import conf
@@ -59,3 +60,34 @@ def shquote_cmd(self, cmd): # pylint: disable=unused-argument
     :rtype: :class:`str`
     """
     return ' '.join(map(shquote, cmd))
+
+@conf
+def feed_to_shell(self, shell, cmd, out_node):
+    """Feed a command to a shell, writing the output to a specified node.
+
+    This is useful for commands like ``the-fuck --alias`` and ``brew
+    command-not-found-init`` that do automatic shell detection. In these cases,
+    we can't use, e.g.,
+
+        bash -c 'cmd --opt arg'
+
+    because this [apparently] causes the shell to exec directly rather than
+    forking, which messes up the parent process detection. Instead, we are
+    feeding the input via stdin.
+
+    :param shell: shell to run, e.g. bash, zsh
+    :type shell: :class:`str`
+    :param cmd: command list
+    :type cmd: :class:`list`
+    :param out_node: node to which to write output
+    :type out_node: waflib.Node.Node
+    :return: exit code of the shell
+    :rtype: :class:`int`
+    """
+    with open(out_node.abspath(), 'w') as output_file:
+        proc = subprocess.Popen(
+            self.env[shell.upper()], stdin=subprocess.PIPE, stdout=output_file,
+            # Allows stdin and stdout to be text instead of bytes.
+            universal_newlines=True)
+        proc.communicate(self.shquote_cmd(cmd) + '\n')
+    return proc.returncode
