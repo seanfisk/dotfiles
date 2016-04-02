@@ -312,25 +312,21 @@ def build(ctx):
                 }
             }
         ]
-        if tsk.env.PYENV:
-            top_left.append({
-                'function': 'powerline_sean_segments.pyenv',
-                # This value is Unicode SNAKE followed by two spaces.
-                'before': '🐍  '
-            })
-        if tsk.env.RBENV:
-            top_left.append({
-                'function': 'powerline_sean_segments.rbenv',
-                # This value is a Unicode GEM STONE followed by two spaces.
-                'before': '💎  '
-            })
-        if tsk.env.PLENV:
-            top_left.append({
-                'function': 'powerline_sean_segments.plenv',
-                # This value is a Unicode DROMEDARY CAMEL followed by two
-                # spaces.
-                'before': '🐪  '
-            })
+        for tool, icon in [
+                # Unicode SNAKE
+                ('pyenv', '🐍'),
+                # Unicode GEM STONE
+                ('rbenv', '💎'),
+                # Unicode DROMEDARY CAMEL
+                ('plenv', '🐪'),
+                # Unicode HOT BEVERAGE
+                ('jenv', '☕'),
+        ]:
+            if tsk.env[tool.upper()]:
+                top_left.append(dict(
+                    function='powerline_sean_segments.' + tool,
+                    before=icon + '  ',
+                ))
         theme = {
             'segments': {
                 # The 'above' key allows us to have a multiline prompt.
@@ -380,24 +376,30 @@ def build(ctx):
                 'attrs': [],
             },
         }
-        if tsk.env.PYENV:
-            groups['pyenv'] = {
-                'fg': 'brightyellow',
-                'bg': 'mediumgreen',
-                'attrs': [],
-            }
-        if tsk.env.RBENV:
-            groups['rbenv'] = {
-                'fg': 'brightestorange',
-                'bg': 'darkestred',
-                'attrs': [],
-            }
-        if tsk.env.PLENV:
-            groups['plenv'] = {
-                'fg': 'gray9',
-                'bg': 'darkestblue',
-                'attrs': [],
-            }
+        for tool, group in dict(
+                pyenv=dict(
+                    fg='brightyellow',
+                    bg='mediumgreen',
+                    attrs=[],
+                ),
+                rbenv=dict(
+                    fg='brightestorange',
+                    bg='darkestred',
+                    attrs=[],
+                ),
+                plenv=dict(
+                    fg='gray9',
+                    bg='darkestblue',
+                    attrs=[],
+                ),
+                jenv=dict(
+                    fg='gray10',
+                    bg='darkestpurple',
+                    attrs=[],
+                ),
+        ).items():
+            if tsk.env[tool.upper()]:
+                groups[tool] = group
         _json_dump_node(
             {
                 'name': "Sean's color scheme for shell prompts",
