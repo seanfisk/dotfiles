@@ -270,7 +270,7 @@ def build(ctx):
 
     shell_theme_node = _declare(['themes', 'shell', 'sean'])
 
-    @ctx.rule(target=shell_theme_node, vars=['PYENV', 'RBENV'])
+    @ctx.rule(target=shell_theme_node, vars=ctx.env.RBENV_TOOLS)
     def _make_shell_theme(tsk):
         # TODO: Consider moving this back to a JSON file which gets read and
         # merged.
@@ -324,6 +324,13 @@ def build(ctx):
                 # This value is a Unicode GEM STONE followed by two spaces.
                 'before': '💎  '
             })
+        if tsk.env.PLENV:
+            top_left.append({
+                'function': 'powerline_sean_segments.plenv',
+                # This value is a Unicode DROMEDARY CAMEL followed by two
+                # spaces.
+                'before': '🐪  '
+            })
         theme = {
             'segments': {
                 # The 'above' key allows us to have a multiline prompt.
@@ -364,7 +371,7 @@ def build(ctx):
     # 'colorschemes/default.json'.
     shell_colorscheme_node = _declare(['colorschemes', 'shell', 'default'])
 
-    @ctx.rule(target=shell_colorscheme_node, vars=['PYENV', 'RBENV'])
+    @ctx.rule(target=shell_colorscheme_node, vars=ctx.env.RBENV_TOOLS)
     def _make_shell_colorscheme(tsk):
         groups = {
             'shell_version': {
@@ -383,6 +390,12 @@ def build(ctx):
             groups['rbenv'] = {
                 'fg': 'brightestorange',
                 'bg': 'darkestred',
+                'attrs': [],
+            }
+        if tsk.env.PLENV:
+            groups['plenv'] = {
+                'fg': 'gray9',
+                'bg': 'darkestblue',
                 'attrs': [],
             }
         _json_dump_node(

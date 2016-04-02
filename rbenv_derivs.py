@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Detect and configure rbenv and pyenv."""
+"""Detect and configure rbenv derivatives."""
 
 import os
 from os.path import join
@@ -22,8 +22,9 @@ def _split_exports(lines):
     return (profile_lines, rc_lines)
 
 def configure(ctx):
-    ctx.find_program('rbenv', mandatory=False)
-    ctx.find_program('pyenv', mandatory=False)
+    ctx.env.RBENV_TOOLS = ['rbenv', 'pyenv', 'plenv']
+    for tool in ctx.env.RBENV_TOOLS:
+        ctx.find_program(tool, mandatory=False)
 
     # Check for pyenv-virtualenv. In the Homebrew install, pyenv-virtualenv is
     # an actual executable and is also accessible as a subcommand. However,
@@ -50,7 +51,7 @@ def configure(ctx):
     # availability of pyenv so that other files don't get errors.
     ctx.env.PYENV_VIRTUALENV_DEFAULT_PACKAGES = ['ipython==4.1.1']
 
-def _make_rbenv_pyenv_files(tsk):
+def _make_tool_files(tsk):
     # The generated code loads pyenv and rbenv into the shell session. We need
     # to load this in the rc file because it loads up shell functions. For
     # example, `pyenv shell' is only available when this `eval' command is run
@@ -127,8 +128,7 @@ def _make_pyenv_virtualenv_files(tsk):
 def build(ctx):
     for shell in ctx.env.AVAILABLE_SHELLS:
         # Build files that load rbenv and pyenv
-        for prefix in ['rb', 'py']:
-            tool = prefix + 'env'
+        for tool in ctx.env.RBENV_TOOLS:
             tool_up = tool.upper()
             path = ctx.env[tool_up]
             if path:
@@ -138,7 +138,7 @@ def build(ctx):
                         '{}-{}.{}'.format(tool, filetype, shell))
                     out_nodes.append(out_node)
                     ctx.add_shell_node(out_node, filetype, shell)
-                ctx(rule=_make_rbenv_pyenv_files, target=out_nodes,
+                ctx(rule=_make_tool_files, target=out_nodes,
                     vars=[tool_up])
 
         if ctx.env.PYENV_VIRTUALENV:

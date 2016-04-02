@@ -40,7 +40,7 @@ WAF_TOOLS_DIR = 'waf-tools'
 WAF_DEV_TOOLS_DIR = _join(WAF_TOOLS_DIR, 'dev')
 WAF_DEV_TOOLS = _python_modules_in_dir(WAF_DEV_TOOLS_DIR)
 # Order matters here. All after 'platform_specific' are dependent on it. All
-# after 'paths' are dependent on it. 'shells' and 'rbenv_pyenv' are dependent
+# after 'paths' are dependent on it. 'shells' and 'rbenv_derivs' are dependent
 # upon 'brew'.
 WAF_BASE_TOOLS_DIR = _join(WAF_TOOLS_DIR, 'base')
 WAF_BASE_TOOLS = [
@@ -50,7 +50,7 @@ WAF_BASE_TOOLS = [
     'brew',
     'gnu_utils',
     'shells',
-    'rbenv_pyenv',
+    'rbenv_derivs',
     'logrotate',
 ]
 WAF_SOFTWARE_TOOLS_DIR = _join(WAF_TOOLS_DIR, 'software')
@@ -96,8 +96,8 @@ def build(ctx):
     # Build logrotate configuration file.
     ctx.load(['logrotate'])
 
-    # Build and install rbenv and pyenv-related files.
-    ctx.load(['rbenv_pyenv'])
+    # Build and install rbenv derivative files.
+    ctx.load(['rbenv_derivs'])
 
     # Add platform-specific shell environment.
     ctx.load(['platform_specific'])
