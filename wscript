@@ -41,7 +41,7 @@ WAF_DEV_TOOLS_DIR = _join(WAF_TOOLS_DIR, 'dev')
 WAF_DEV_TOOLS = _python_modules_in_dir(WAF_DEV_TOOLS_DIR)
 # Order matters here. All after 'platform_specific' are dependent on it. All
 # after 'paths' are dependent on it. 'shells' and 'rbenv_derivs' are dependent
-# upon 'brew'.
+# upon 'brew'. 'zsh_syntax_highlighting' is dependent on 'brew' and 'shells'.
 WAF_BASE_TOOLS_DIR = _join(WAF_TOOLS_DIR, 'base')
 WAF_BASE_TOOLS = [
     'base',
@@ -50,6 +50,7 @@ WAF_BASE_TOOLS = [
     'brew',
     'gnu_utils',
     'shells',
+    'zsh_syntax_highlighting',
     'rbenv_derivs',
     'logrotate',
 ]
@@ -101,6 +102,10 @@ def build(ctx):
 
     # Add platform-specific shell environment.
     ctx.load(['platform_specific'])
+
+    # As zsh-syntax-highlighting overrides ZLE widgets, it must be the last to
+    # be loaded.
+    ctx.load(['zsh_syntax_highlighting'])
 
     # Build and install shell files.
     ctx.load(['shells'])
