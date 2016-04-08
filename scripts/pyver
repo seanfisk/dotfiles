@@ -1,0 +1,8 @@
+#!/usr/bin/env python
+
+from __future__ import print_function
+import platform
+
+for func in ['platform', 'mac_ver', 'python_compiler', 'python_implementation',
+             'python_version', 'architecture']:
+    print('platform.{}(): {}'.format(func, getattr(platform, func)()))
