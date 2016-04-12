@@ -1,0 +1,7 @@
+# Using quotes allows us to account for spaces.
+"@LOG_PATH@" {
+	# Rotate only one old version.
+	rotate 1
+	# Limit log size.
+	size 1M
+}

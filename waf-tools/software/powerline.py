@@ -509,8 +509,7 @@ def build(ctx):
     # Rotate the log using logrotate (if available)
     logrotate_conf_in_node = ctx.path.find_resource([
         'dotfiles', 'config', 'powerline', 'logrotate.conf.in'])
-    logrotate_conf_node = logrotate_conf_in_node.change_ext(
-        ext_in='.conf.in', ext='.conf')
+    logrotate_conf_node = logrotate_conf_in_node.change_ext('')
     ctx(features='subst',
         source=logrotate_conf_in_node,
         target=logrotate_conf_node)

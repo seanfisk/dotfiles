@@ -50,9 +50,9 @@ def build(ctx):
                 ('Label', label),
                 ('ProgramArguments',
                  ctx.env.LOGROTATE + [ctx.env.LOGROTATE_CONF_PATH]),
-                # Run daily at midnight (or whenver the comp comes online;
+                # Run daily at 1 AM (or whenver the machine comes online;
                 # launchd will account for this).
-                ('StartCalendarInterval', {'Hour': 0}),
+                ('StartCalendarInterval', {'Hour': 1}),
             ]),
             tsk.outputs[0],
         )
