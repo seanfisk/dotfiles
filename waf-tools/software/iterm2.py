@@ -7,7 +7,8 @@ def configure(ctx):
     locs = ctx.osx_app_locations('iTerm')
     ctx.msg('Checking for iTerm2', locs[0] if locs else False)
     ctx.env.ITERM2 = bool(locs)
-    ctx.find_program('fasd-iterm2-generate-profiles', var='FASD_ITERM2')
+    ctx.find_program(
+        'fasd-iterm2-generate-profiles', var='FASD_ITERM2', mandatory=False)
 
 def build(ctx):
     if not ctx.env.ITERM2:
