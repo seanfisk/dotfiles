@@ -108,20 +108,6 @@ def _make_pyenv_virtualenv_files(tsk):
             tsk.env.PYENV + ['virtualenv-init', '-', shell],
             quiet=waflib.Context.BOTH).splitlines())
 
-    # XXX: The code introduced in this commit causes ${PATH} to be
-    # resolved when this code is output, not when it is run.
-    #
-    # https://github.com/yyuu/pyenv-virtualenv/commit/
-    # dfd165506933d2f81e3b5a0eb6528f06ce653d01
-    # #diff-0df4de328d02bb89f5b3ef3838d1ab1bL68
-    # Also see my PR: https://github.com/yyuu/pyenv-virtualenv/pull/154
-    #
-    # For now, we have a hacky fix.
-    shims_path = join(tsk.generator.bld.cmd_and_log(
-        tsk.env.BREW + ['--prefix', 'pyenv-virtualenv'],
-        quiet=waflib.Context.BOTH).rstrip(), 'shims')
-    profile_lines[0] = 'export PATH="{}:$PATH"'.format(shims_path)
-
     profile_node.write('\n'.join(profile_lines))
     rc_node.write('\n'.join(rc_lines))
 
