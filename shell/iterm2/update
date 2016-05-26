@@ -14,5 +14,6 @@ fi
 # very large. This is relatively simple and lightweight.
 
 for shell in bash zsh; do
-	wget "https://iterm2.com/misc/${shell}_startup.in"
+	# Add --timestamping to allow overwrite
+	wget --timestamping "https://iterm2.com/misc/${shell}_startup.in"
 done
