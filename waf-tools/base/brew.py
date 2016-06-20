@@ -15,11 +15,12 @@ def configure(ctx):
     if token:
         ctx.env.HOMEBREW_API_TOKEN = token
     if ctx.env.BREW:
-        cmd = 'command-not-found-init'
-        has_cmd = ctx.exec_command(ctx.env.BREW + ['command', cmd]) == 0
-        ctx.env.BREW_COMMAND_NOT_FOUND_INIT = (
-            ctx.env.BREW + [cmd] if has_cmd else False)
-        ctx.msg("Checking for brew-command-not-found", has_cmd)
+        for cmd in ['command-not-found-init', 'cask']:
+            has_cmd = ctx.exec_command(ctx.env.BREW + ['command', cmd]) == 0
+            var_name = 'BREW_' + cmd.replace('-', '_').upper()
+            ctx.env[var_name] = (
+                ctx.env.BREW + [cmd] if has_cmd else False)
+            ctx.msg("Checking for brew-{}".format(cmd), has_cmd)
 
 def _make_cmd_not_found(tsk):
     out_node = tsk.outputs[0]
@@ -37,3 +38,6 @@ def build(ctx):
             ctx.add_shell_rc_node(out_node, shell)
             ctx(rule=_make_cmd_not_found, target=out_node,
                 vars=[shell.upper(), 'BREW_COMMAND_NOT_FOUND_INIT'])
+    if ctx.env.BREW_CASK:
+        ctx.install_script(ctx.path.find_resource([
+            'scripts', 'brew-cask-migrate']))

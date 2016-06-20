@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+
+# Script to migrate a cask to the new "move" workflow
+# https://github.com/caskroom/homebrew-cask/issues/13201
+
+brew cask uninstall "$@"
+brew cask install "$@"
