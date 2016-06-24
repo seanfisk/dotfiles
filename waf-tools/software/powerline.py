@@ -81,7 +81,10 @@ def configure(ctx):
     # Don't look in the directory to which the script is going to be symlinked.
     # (see the build phase for justification on why this is done).
     render_paths = ctx.environ['PATH'].split(os.pathsep)
-    render_paths.remove(ctx.env.SCRIPTS_DIR)
+    try:
+        render_paths.remove(ctx.env.SCRIPTS_DIR)
+    except ValueError:
+        pass
 
     # Set this variable to give us an easy way to tell if we have Powerline.
     ctx.env.HAS_POWERLINE = all([
