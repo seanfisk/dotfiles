@@ -1,19 +1,13 @@
 # -*- coding: utf-8 -*-
 """Detect and configure Homebrew/Linuxbrew."""
 
-import keyring
-
 GITHUB_USERNAME = 'seanfisk'
 
 def configure(ctx):
     ctx.find_program('brew', mandatory=False)
     # Set Homebrew API token; see here:
     # https://gist.github.com/christopheranderton/8644743
-    try:
-        token = keyring.get_password('Homebrew API Token', GITHUB_USERNAME)
-    except RuntimeError:
-        # Raised when no suitable backends are found
-        token = None
+    token = ctx.safe_get_password('Homebrew API Token', GITHUB_USERNAME)
     ctx.msg("Checking for Homebrew API token for '{}'".format(GITHUB_USERNAME),
             token is not None)
     if token:

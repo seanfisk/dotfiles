@@ -8,7 +8,6 @@ import json
 from collections import OrderedDict
 
 import appdirs
-import keyring
 import waflib
 from waflib.Configure import conf
 
@@ -130,7 +129,7 @@ def configure(ctx):
     # TODO Move fetching of this password into Powerline itself (with a PR,
     # hopefully). It's not good to store this in the configuration environment,
     # nor in the Powerline config files.
-    ctx.env.POWERLINE_MAIL_PASSWORD = keyring.get_password(
+    ctx.env.POWERLINE_MAIL_PASSWORD = ctx.safe_get_password(
         ctx.env.POWERLINE_MAIL_SERVER, ctx.env.POWERLINE_MAIL_USERNAME)
     ctx.msg("Checking for '{}' password".format(ctx.env.POWERLINE_MAIL_SERVER),
             # Will be set to an empty list if keyring.get_password() returns

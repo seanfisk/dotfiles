@@ -53,6 +53,7 @@ WAF_BASE_TOOLS = [
     'zsh_syntax_highlighting',
     'rbenv_derivs',
     'logrotate',
+    'passwords',
 ]
 WAF_SOFTWARE_TOOLS_DIR = _join(WAF_TOOLS_DIR, 'software')
 # Each piece of software is independent.
