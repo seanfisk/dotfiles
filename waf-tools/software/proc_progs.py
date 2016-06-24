@@ -3,11 +3,11 @@
 
 from shlex import quote as shquote
 
-PROCESS_PROGRAMS = ['ps', 'pgrep', 'pkill', 'htop', 'lsof', 'pstree']
-
 def configure(ctx):
-    for prog in PROCESS_PROGRAMS:
-        ctx.find_program(prog, mandatory=False)
+    ctx.env.PROCESS_PROGRAMS = []
+    for prog in ['ps', 'pgrep', 'pkill', 'htop', 'lsof', 'pstree']:
+        if ctx.find_program(prog, mandatory=False):
+            ctx.env.PROCESS_PROGRAMS.append(prog)
 
 def build(ctx):
     # Process programs
@@ -24,7 +24,7 @@ def build(ctx):
     #
     # Note: `id -un' was used since `whoami' has been obsoleted and is not
     # POSIX.
-    for prog in PROCESS_PROGRAMS:
+    for prog in ctx.env.PROCESS_PROGRAMS:
         prog_path = ctx.env[prog.upper()]
         ctx.env.SHELL_ALIASES['my' + prog] = (
             shquote(prog_path[0]) + ' -u "$(id -un)"')
