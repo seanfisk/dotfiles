@@ -9,7 +9,11 @@ def configure(ctx):
     ctx.find_program('brew', mandatory=False)
     # Set Homebrew API token; see here:
     # https://gist.github.com/christopheranderton/8644743
-    token = keyring.get_password('Homebrew API Token', GITHUB_USERNAME)
+    try:
+        token = keyring.get_password('Homebrew API Token', GITHUB_USERNAME)
+    except RuntimeError:
+        # Raised when no suitable backends are found
+        token = None
     ctx.msg("Checking for Homebrew API token for '{}'".format(GITHUB_USERNAME),
             token is not None)
     if token:
