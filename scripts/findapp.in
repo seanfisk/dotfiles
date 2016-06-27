@@ -1,0 +1,29 @@
+#!@PYTHON@
+# -*- mode: python; -*-
+
+# Python 2/3 compatible
+
+from __future__ import (
+    division, absolute_import, print_function, unicode_literals)
+import os
+import sys
+import argparse
+
+arg_parser = argparse.ArgumentParser(
+    description="Find a .app bundle on the system using Spotlight's interface")
+arg_parser.add_argument('-d', '--debug', action='store_true',
+                        help='print mdfind command-line which is run')
+arg_parser.add_argument('app_name', help='name of the .app bundle')
+args = arg_parser.parse_args()
+
+mdfind_args = [
+    @MDFIND@,
+    "kMDItemContentType = 'com.apple.application-bundle' "
+    "&& kMDItemDisplayName = '{}'".format(
+        # Since we quoting with single quotes, escape them as shown here:
+        # http://stackoverflow.com/a/29870856
+        args.app_name.replace("'", r"'\''")
+    )]
+if args.debug:
+    print('Executing:', mdfind_args, file=sys.stderr)
+os.execv(mdfind_args[0], mdfind_args)

@@ -59,8 +59,8 @@ def osx_app_locations(self, app):
     if not self.env.MACOSX:
         return []
     # Inspired by: http://apple.stackexchange.com/a/129943
-    return self.cmd_and_log([
-        'mdfind', 'kMDItemContentType = "com.apple.application-bundle"'
+    return self.cmd_and_log(self.env.MDFIND + [
+        'kMDItemContentType = "com.apple.application-bundle"'
         ' && kMDItemDisplayName = {}'.format(
             repr(app))]).splitlines()
 
@@ -73,6 +73,7 @@ def configure(ctx):
     if ctx.env.MACOSX:
         ctx.env.LAUNCH_AGENTS_DIR = join(
             ctx.env.PREFIX, 'Library', 'LaunchAgents')
+        ctx.find_program('mdfind')
     elif ctx.env.LINUX:
         ctx.find_program('gnome-open', var='GNOME_OPEN', mandatory=False)
 
@@ -92,6 +93,10 @@ def build(ctx):
 
         # Open Xcode project.
         ctx.env.SHELL_ALIASES['openx'] = 'env -i open *.xcodeproj'
+
+        ctx.install_subst_script(
+            'findapp', MDFIND=repr(ctx.env.MDFIND[0]),
+            PYTHON=ctx.env.DEFAULT_PYTHON)
     elif ctx.env.LINUX:
         # Colorize, human readable file sizes, classify
         ctx.env.SHELL_ALIASES['ls'] = 'ls --color=always -hF'
