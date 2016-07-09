@@ -3,6 +3,8 @@
 
 # Python 2/3 compatible
 
+# TODO: Rewrite this in JavaScript for Automation or Swift.
+
 from __future__ import (
     division, absolute_import, print_function, unicode_literals)
 import os
@@ -15,11 +17,29 @@ arg_parser.add_argument(
     help='state of password-protection')
 args = arg_parser.parse_args()
 
+# Solutions:
+#
+# http://apple.stackexchange.com/a/51454
+# The AppleScript solution works for me even without sudo.
+#
+# http://apple.stackexchange.com/a/110911
+# The defaults command in combination with this code (in C or with pyobjc) also
+# works for me.
+#
+# For reference, code to do this:
+#
+#     import CoreFoundation as CF
+#     port = CF.CFMessagePortCreateRemote(None, 'com.apple.loginwindow.notify')
+#     CF.CFMessagePortSendRequest(port, 500, None, 0, 0, None, None)
+#
+# The osascript solution seems simpler, so we've gone with that.
+
 exec_args = (
     # Do something useful when the state is not passed: lock the screen :)
     [@PMSET@, 'displaysleepnow'] if args.state is None else
     # Otherwise set the state
-    # XXX May need to be modified; see http://apple.stackexchange.com/questions/51443/disable-screensaver-password-requirement-from-command-line
-    [@DEFAULTS@, 'write', 'com.apple.screensaver', 'askForPassword', '-bool',
-     'true' if args.state == 'on' else 'false'])
+    [@OSASCRIPT@, '-e', (
+        'tell application "System Events" to set require '
+        'password to wake of security preferences to {}').format(
+            'true' if args.state == 'on' else 'false')])
 os.execvp(exec_args[0], exec_args)

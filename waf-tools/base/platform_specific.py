@@ -5,6 +5,7 @@ from os.path import join
 import platform
 import tempfile
 import plistlib
+import itertools
 
 from waflib.Configure import conf
 
@@ -12,6 +13,11 @@ SYSTEM_OS_MAPPING = {
     'Linux': 'LINUX',
     'Darwin': 'MACOSX',
 }
+
+SCRIPT_DEPS = dict(
+    findapp=['mdfind'],
+    lock=['pmset', 'osascript'],
+)
 
 # OS X only, uses launchd
 @conf
@@ -73,8 +79,8 @@ def configure(ctx):
     if ctx.env.MACOSX:
         ctx.env.LAUNCH_AGENTS_DIR = join(
             ctx.env.PREFIX, 'Library', 'LaunchAgents')
-        for prog in ['mdfind', 'pmset', 'defaults']:
-            ctx.find_program(prog)
+        for dep in itertools.chain.from_iterable(SCRIPT_DEPS.values()):
+            ctx.find_program(dep)
     elif ctx.env.LINUX:
         ctx.find_program('gnome-open', var='GNOME_OPEN', mandatory=False)
 
@@ -95,13 +101,11 @@ def build(ctx):
         # Open Xcode project.
         ctx.env.SHELL_ALIASES['openx'] = 'env -i open *.xcodeproj'
 
-        ctx.install_subst_script(
-            'findapp', MDFIND=repr(ctx.env.MDFIND[0]),
-            PYTHON=ctx.env.DEFAULT_PYTHON)
-        ctx.install_subst_script(
-            'lock', PYTHON=ctx.env.DEFAULT_PYTHON,
-            **dict((prog.upper(), repr(ctx.env[prog.upper()][0]))
-                   for prog in ['pmset', 'defaults']))
+        for script, deps in SCRIPT_DEPS.items():
+            ctx.install_subst_script(
+                script, PYTHON=ctx.env.DEFAULT_PYTHON,
+                **dict((dep.upper(), repr(ctx.env[dep.upper()][0]))
+                       for dep in deps))
     elif ctx.env.LINUX:
         # Colorize, human readable file sizes, classify
         ctx.env.SHELL_ALIASES['ls'] = 'ls --color=always -hF'
