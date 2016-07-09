@@ -73,7 +73,8 @@ def configure(ctx):
     if ctx.env.MACOSX:
         ctx.env.LAUNCH_AGENTS_DIR = join(
             ctx.env.PREFIX, 'Library', 'LaunchAgents')
-        ctx.find_program('mdfind')
+        for prog in ['mdfind', 'pmset', 'defaults']:
+            ctx.find_program(prog)
     elif ctx.env.LINUX:
         ctx.find_program('gnome-open', var='GNOME_OPEN', mandatory=False)
 
@@ -97,6 +98,10 @@ def build(ctx):
         ctx.install_subst_script(
             'findapp', MDFIND=repr(ctx.env.MDFIND[0]),
             PYTHON=ctx.env.DEFAULT_PYTHON)
+        ctx.install_subst_script(
+            'lock', PYTHON=ctx.env.DEFAULT_PYTHON,
+            **dict((prog.upper(), repr(ctx.env[prog.upper()][0]))
+                   for prog in ['pmset', 'defaults']))
     elif ctx.env.LINUX:
         # Colorize, human readable file sizes, classify
         ctx.env.SHELL_ALIASES['ls'] = 'ls --color=always -hF'

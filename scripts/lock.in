@@ -1,0 +1,25 @@
+#!@PYTHON@
+# -*- mode: python; -*-
+
+# Python 2/3 compatible
+
+from __future__ import (
+    division, absolute_import, print_function, unicode_literals)
+import os
+import argparse
+
+arg_parser = argparse.ArgumentParser(
+    description='Toggle password-protection of lock screen.')
+arg_parser.add_argument(
+    'state', nargs='?', choices=['on', 'off'],
+    help='state of password-protection')
+args = arg_parser.parse_args()
+
+exec_args = (
+    # Do something useful when the state is not passed: lock the screen :)
+    [@PMSET@, 'displaysleepnow'] if args.state is None else
+    # Otherwise set the state
+    # XXX May need to be modified; see http://apple.stackexchange.com/questions/51443/disable-screensaver-password-requirement-from-command-line
+    [@DEFAULTS@, 'write', 'com.apple.screensaver', 'askForPassword', '-bool',
+     'true' if args.state == 'on' else 'false'])
+os.execvp(exec_args[0], exec_args)
