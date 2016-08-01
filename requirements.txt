@@ -1,17 +1,16 @@
 # Requirements for -this- project.
 
 appdirs==1.4.0
-keyring==8.4.1
+keyring==9.3.1
 
 # Compilation
-jsmin==2.2.0
+jsmin==2.2.1
 
 # Development
-
-astroid==1.4.4
-colorama==0.3.6
-lazy-object-proxy==1.2.1
-logilab-common==1.1.0
-pylint==1.5.4
+astroid==1.4.8
+isort==4.2.5
+lazy-object-proxy==1.2.2
+mccabe==0.5.2
+pylint==1.6.4
 six==1.10.0
-wrapt==1.10.6
+wrapt==1.10.8

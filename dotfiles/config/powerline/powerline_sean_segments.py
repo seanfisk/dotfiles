@@ -6,6 +6,9 @@ from __future__ import unicode_literals, absolute_import, division
 import re
 import sys
 
+from powerline.lib.encoding import get_preferred_input_encoding # pylint: disable=import-error,no-name-in-module
+from powerline.theme import requires_segment_info # pylint: disable=import-error,no-name-in-module
+
 # subprocess32 is a backport of Python 3.2's subprocess module to Python 2.
 # When using Python 2, it is required for using these segments. The reason we
 # require it is that Python 2's subprocess module attempts to encode its
@@ -23,9 +26,6 @@ if sys.version_info < (3,):
             'subprocess32 package. Please install it to use these segments.')
 else:
     import subprocess
-
-from powerline.lib.encoding import get_preferred_input_encoding # pylint: disable=import-error,no-name-in-module
-from powerline.theme import requires_segment_info # pylint: disable=import-error,no-name-in-module
 
 # rbenv/pyenv segments
 # TODO: Make into installable Powerline segments.
