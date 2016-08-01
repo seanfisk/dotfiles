@@ -19,6 +19,7 @@
 	cob = checkout -b # create a new branch
 	pr = remote prune origin
 	st = status
+	mod = ls-files --exclude-standard --modified --others # list modified or untracked files
 [color]
 	ui = auto
 [color "branch"]
