@@ -41,7 +41,7 @@ def install_subst_script(self, script_basename, **kwargs):
 def dotfile_install_path(self, node):
     """Compute the install path of a dotfile node."""
     # Strip the dotfiles/ directory (for both source and build nodes).
-    relative_path_list = waflib.Node.split_path(node.relpath())[1:]
+    relative_path_list = waflib.Utils.split_path(node.relpath())[1:]
     relative_path_list[0] = '.' + relative_path_list[0]
     return join(self.env.PREFIX, *relative_path_list)
 
