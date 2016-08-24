@@ -20,7 +20,7 @@ indent_style = tab
 indent_size = 2
 
 # Tabbed indentation, size 4
-[{gitconfig,hgrc,logrotate.conf.in}]
+[{gitconfig,hgrc,*.conf.in,*.conf}]
 indent_style = tab
 indent_size = 4
 

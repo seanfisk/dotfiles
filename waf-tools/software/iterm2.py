@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """Detect and configure iTerm2 shell integration."""
 
-import os
-
 def configure(ctx):
     locs = ctx.osx_app_locations('iTerm')
     ctx.msg('Checking for iTerm2', locs[0] if locs else False)
@@ -26,12 +24,5 @@ def build(ctx):
 
     # Rotate the fasd/iterm2 log using logrotate (if available)
     if ctx.env.FASD and ctx.env.FASD_ITERM2:
-        logrotate_conf_in_node = ctx.path.find_resource([
-            'dotfiles', 'iterm2', 'logrotate.conf.in'])
-        logrotate_conf_node = logrotate_conf_in_node.change_ext('')
-        ctx(features='subst',
-            source=logrotate_conf_in_node,
-            target=logrotate_conf_node,
-            LOG_PATH=os.path.expanduser(
-                '~/Library/Logs/com.seanfisk.iterm2-profiles.log'))
-        ctx.env.LOGROTATE_NODES.append(logrotate_conf_node)
+        ctx.env.LOGROTATE_NODES.append(ctx.path.find_resource([
+            'dotfiles', 'iterm2', 'logrotate.conf']))

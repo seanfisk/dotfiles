@@ -30,10 +30,11 @@ def build(ctx):
         return
 
     conf_node = ctx.path.find_or_declare('logrotate.conf')
-    @ctx.rule(target=conf_node, source=ctx.env.LOGROTATE_NODES)
+    @ctx.rule(target=conf_node, source=[
+        ctx.path.find_resource(['dotfiles', 'logrotate-base.conf'])
+    ] + ctx.env.LOGROTATE_NODES)
     def _concat(tsk):
         with open(tsk.outputs[0].abspath(), 'w') as output_file:
-            print('# Logrotate configuration file', file=output_file)
             ctx.concat_nodes(output_file, tsk.inputs)
 
     ctx.install_as(ctx.env.LOGROTATE_CONF_PATH, conf_node)

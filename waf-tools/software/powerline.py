@@ -514,7 +514,9 @@ def build(ctx):
     logrotate_conf_node = logrotate_conf_in_node.change_ext('')
     ctx(features='subst',
         source=logrotate_conf_in_node,
-        target=logrotate_conf_node)
+        target=logrotate_conf_node,
+        # logrotate paths follow shell quoting rules.
+        LOG_PATH=shquote(ctx.env.POWERLINE_LOG_PATH))
     ctx.env.LOGROTATE_NODES.append(logrotate_conf_node)
 
 @waflib.TaskGen.extension('.json')
