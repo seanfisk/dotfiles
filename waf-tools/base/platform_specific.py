@@ -101,6 +101,15 @@ def build(ctx):
         # Open Xcode project.
         ctx.env.SHELL_ALIASES['openx'] = 'env -i open *.xcodeproj'
 
+        # List listening sockets.
+        if ctx.env.LSOF:
+            ctx.env.SHELL_ALIASES['lslisten'] = ctx.shquote_cmd(
+                ctx.env.LSOF + [
+                    '-nP', # Don't translate host names or ports
+                    '-iTCP',
+                    '-sTCP:LISTEN',
+                ])
+
         for script, deps in SCRIPT_DEPS.items():
             ctx.install_subst_script(
                 script, PYTHON=ctx.env.DEFAULT_PYTHON,
