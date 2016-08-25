@@ -289,10 +289,12 @@ def build(ctx):
             {
                 'function': 'powerline.segments.common.env.user',
                 'priority': 30,
+                'before': '👤  ', # Unicode BUSTS IN SILHOUETTE
             },
             {
                 'function': 'powerline_sean_segments.shell_version',
                 'priority': 40,
+                'before': '🐚  ', # Unicode SPIRAL SHELL
             },
             {
                 'function': 'powerline.segments.shell.cwd',
@@ -302,7 +304,8 @@ def build(ctx):
                     'use_path_separator': True,
                     # Don't ever shorten the cwd.
                     'dir_limit_depth': None,
-                }
+                },
+                'before': '📂  ', # Unicode OPEN FILE FOLDER
             },
             {
                 'function': (
