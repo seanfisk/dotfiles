@@ -326,6 +326,8 @@ def build(ctx):
                 ('plenv', '🐪'),
                 # Unicode HOT BEVERAGE
                 ('jenv', '☕'),
+                # Unicode WHITE HEXAGON
+                ('nodenv', '⬡'),
         ]:
             if tsk.env[tool.upper()]:
                 top_left.append(dict(
@@ -374,34 +376,33 @@ def build(ctx):
 
     @ctx.rule(target=shell_colorscheme_node, vars=ctx.env.RBENV_TOOLS)
     def _make_shell_colorscheme(tsk):
-        groups = {
-            'shell_version': {
-                'fg': 'gray70',
-                'bg': 'darkestpurple',
-                'attrs': [],
-            },
-        }
+        groups = dict(
+            shell_version=dict(
+                fg='gray70',
+                bg='darkestpurple',
+            )
+        )
         for tool, group in dict(
                 pyenv=dict(
                     fg='brightyellow',
                     bg='mediumgreen',
-                    attrs=[],
                 ),
                 rbenv=dict(
                     fg='brightestorange',
                     bg='darkestred',
-                    attrs=[],
                 ),
                 plenv=dict(
                     fg='gray9',
                     bg='darkestblue',
-                    attrs=[],
                 ),
                 jenv=dict(
                     fg='gray10',
                     bg='darkestpurple',
-                    attrs=[],
                 ),
+                nodenv=dict(
+                    fg='gray10',
+                    bg='darkgreen',
+                )
         ).items():
             if tsk.env[tool.upper()]:
                 groups[tool] = group

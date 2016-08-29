@@ -22,7 +22,7 @@ def _split_exports(lines):
     return (profile_lines, rc_lines)
 
 def configure(ctx):
-    ctx.env.RBENV_TOOLS = ['rbenv', 'pyenv', 'plenv', 'jenv']
+    ctx.env.RBENV_TOOLS = ['rbenv', 'pyenv', 'plenv', 'jenv', 'nodenv']
     for tool in ctx.env.RBENV_TOOLS:
         ctx.find_program(tool, mandatory=False)
 

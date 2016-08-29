@@ -87,7 +87,7 @@ def _make_tool_segment(tool):
 
     return tool_segment
 
-for _tool in ['rbenv', 'pyenv', 'plenv', 'jenv']:
+for _tool in ['rbenv', 'pyenv', 'plenv', 'jenv', 'nodenv']:
     globals()[_tool] = _make_tool_segment(_tool)
 
 # Shell segments
