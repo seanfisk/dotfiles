@@ -344,3 +344,6 @@ def build(ctx):
                    # Make sure to abspath the source, otherwise it will create
                    # a relative link.
                    os.path.abspath(join('shell', 'oh-my-zsh')))
+
+    ctx.install_subst_script('capture', PYTHON=ctx.env.DEFAULT_PYTHON,
+                             BASH=repr(ctx.env.BASH[0]))

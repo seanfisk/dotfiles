@@ -1,0 +1,31 @@
+#!@PYTHON@
+# -*- mode: python; -*-
+
+# Python 3.5 compatible
+
+import argparse
+import subprocess
+import platform
+import os
+
+def prompt_char():
+    if platform.system() == 'Windows':
+        return '>'
+    # Unix-like OSes
+    if os.getuid() == 0:
+        return '#'
+    return '$'
+
+arg_parser = argparse.ArgumentParser(
+    description="Run and format a shell command for inserting in a document")
+arg_parser.add_argument(
+    '-s', '--shell',
+    help='shell in which to run the command [default: %(default)s]',
+    default=@BASH@,
+)
+arg_parser.add_argument('command', help='command string to run')
+args = arg_parser.parse_args()
+
+print('{} {}'.format(prompt_char(), args.command))
+subprocess.run([args.shell], stderr=subprocess.STDOUT,
+               input=args.command + '\n', universal_newlines=True)
