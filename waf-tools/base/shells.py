@@ -256,14 +256,14 @@ def build_shell_aliases(self):
     @self.rule(target=out_node, source=in_node, vars=['SHELL_ALIASES'])
     def _make_aliases(tsk):
         with open(tsk.outputs[0].abspath(), 'w') as out_file:
-            with open(tsk.inputs[0].abspath()) as in_file:
-                for line in in_file:
-                    out_file.write(line)
             print('\n# Tool aliases\n', file=out_file)
             for alias, command in tsk.env.SHELL_ALIASES.items():
                 print(
                     'alias {}={}'.format(alias, shquote(command)),
                     file=out_file)
+            with open(tsk.inputs[0].abspath()) as in_file:
+                for line in in_file:
+                    out_file.write(line)
 
 @conf
 def build_shell_keybindings(self):
