@@ -20,7 +20,7 @@
 # Now install pygit2. Only use '--user' if the default Python is also
 # the system Python.
 #
-#     pip install --user pygit2==0.23.3 cffi==1.5.2 pycparser==2.14
+#     pip install --user pygit2==0.24.1 cffi==1.5.2 pycparser==2.14
 #
 psutil==4.0.0 # Also for sophos-reboot script
 # Both Bazaar and Mercurial don't support Python 3. When using Python
