@@ -5,13 +5,13 @@ from os.path import join
 from shlex import quote as shquote
 
 def configure(ctx):
-    locs = ctx.osx_app_locations('Frontier Services')
-    ctx.env.FRONTIER_SERVICES = locs[0] if locs else False
-    ctx.msg('Checking for Frontier Services', ctx.env.FRONTIER_SERVICES)
+    locs = ctx.osx_app_locations('SelectStarter')
+    ctx.env.SELECTSTARTER = locs[0] if locs else False
+    ctx.msg('Checking for SelectStarter', ctx.env.SELECTSTARTER)
 
 def build(ctx):
-    if not ctx.env.FRONTIER_SERVICES:
+    if not ctx.env.SELECTSTARTER:
         return
 
-    ctx.env.SHELL_ALIASES['fr'] = shquote(join(
-        ctx.env.FRONTIER_SERVICES, 'Contents', 'MacOS', 'Frontier Services'))
+    ctx.env.SHELL_ALIASES['ss'] = shquote(join(
+        ctx.env.SELECTSTARTER, 'Contents', 'MacOS', 'SelectStarter'))
