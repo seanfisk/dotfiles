@@ -14,10 +14,11 @@ SYSTEM_OS_MAPPING = {
     'Darwin': 'MACOSX',
 }
 
-SCRIPT_DEPS = dict(
-    findapp=['mdfind'],
-    lock=['pmset', 'osascript'],
-)
+SCRIPT_DEPS = {
+    'findapp': ['mdfind'],
+    'lock': ['pmset', 'osascript'],
+    'dns-lookup': ['dscacheutil'],
+}
 
 # OS X only, uses launchd
 @conf
@@ -79,7 +80,9 @@ def configure(ctx):
     if ctx.env.MACOSX:
         ctx.env.LAUNCH_AGENTS_DIR = join(
             ctx.env.PREFIX, 'Library', 'LaunchAgents')
-        for dep in itertools.chain.from_iterable(SCRIPT_DEPS.values()):
+        for dep in list(itertools.chain(*SCRIPT_DEPS.values())) + [
+                'sudo', 'killall' # DNS dependencies
+        ]:
             ctx.find_program(dep)
     elif ctx.env.LINUX:
         ctx.find_program('gnome-open', var='GNOME_OPEN', mandatory=False)
@@ -115,6 +118,16 @@ def build(ctx):
                 script, PYTHON=ctx.env.DEFAULT_PYTHON,
                 **dict((dep.upper(), repr(ctx.env[dep.upper()][0]))
                        for dep in deps))
+
+        # Override each of these DNS-related commands with a notice that the
+        # command does not use the native DNS facilities.
+        for util in ['nslookup', 'host', 'dig']:
+            ctx.env.SHELL_ALIASES[util] = ctx.shquote_cmd([
+                'non-native-dns', util])
+        ctx.add_shell_rc_node(
+            ctx.path.find_resource(['shell', 'macos.bash']))
+        ctx.env.SHELL_ALIASES['dns-clear'] = ctx.shquote_cmd(
+            ctx.env.SUDO + ctx.env.KILLALL + ['-HUP', 'mDNSResponder'])
     elif ctx.env.LINUX:
         # Colorize, human readable file sizes, classify
         ctx.env.SHELL_ALIASES['ls'] = 'ls --color=always -hF'
