@@ -279,7 +279,7 @@ def build(ctx):
         top_left = [
             {
                 'function': 'powerline.segments.common.net.hostname',
-                'priority': 30,
+                'priority': 50,
                 'args': {
                     # Always include the hostname.
                     'only_if_ssh': False,
@@ -288,12 +288,12 @@ def build(ctx):
             },
             {
                 'function': 'powerline.segments.common.env.user',
-                'priority': 30,
+                'priority': 40,
                 'before': '👤  ', # Unicode BUSTS IN SILHOUETTE
             },
             {
                 'function': 'powerline_sean_segments.shell_version',
-                'priority': 40,
+                'priority': 10,
                 'before': '🐚  ', # Unicode SPIRAL SHELL
             },
             {
@@ -310,7 +310,7 @@ def build(ctx):
             {
                 'function': (
                     'powerline.segments.common.vcs.branch'),
-                'priority': 10,
+                'priority': 30,
                 'args': {
                     # Show whether the branch is dirty.
                     'status_colors': True,
@@ -332,6 +332,7 @@ def build(ctx):
             if tsk.env[tool.upper()]:
                 top_left.append(dict(
                     function='powerline_sean_segments.' + tool,
+                    priority=2,
                     before=icon + '  ',
                 ))
         theme = {
@@ -361,7 +362,7 @@ def build(ctx):
                         #
                         'function': (
                             'powerline.segments.shell.last_pipe_status'),
-                        'priority': 10,
+                        'priority': 20,
                     }
                 ]
             }
