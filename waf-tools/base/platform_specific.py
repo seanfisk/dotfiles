@@ -18,6 +18,7 @@ SCRIPT_DEPS = {
     'findapp': ['mdfind'],
     'lock': ['pmset', 'osascript'],
     'dns-lookup': ['dscacheutil', 'sudo', 'killall'],
+    'unattend': ['pmset', 'caffeinate'],
 }
 
 # OS X only, uses launchd

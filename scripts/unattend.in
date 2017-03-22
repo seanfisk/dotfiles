@@ -1,0 +1,22 @@
+#!@PYTHON@
+# -*- mode: python; -*-
+
+# Python 3 compatible
+
+import sys
+import logging
+import subprocess
+
+PMSET = @PMSET@
+
+logging.basicConfig(format='[%(asctime)s] %(message)s', level=logging.INFO)
+
+logging.info('Putting display to sleep…')
+subprocess.run([PMSET, 'displaysleepnow'], check=True)
+command = [@CAFFEINATE@] + sys.argv[1:]
+logging.info('Running command: %r', command)
+proc = subprocess.run(command)
+logging.info('Putting machine to sleep…')
+# pmset prints 'Sleeping now...'; that is not useful in addition to our logging
+subprocess.run([PMSET, 'sleepnow'], stdout=subprocess.DEVNULL)
+sys.exit(proc.returncode)
