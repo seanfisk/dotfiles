@@ -17,7 +17,7 @@ SYSTEM_OS_MAPPING = {
 SCRIPT_DEPS = {
     'findapp': ['mdfind'],
     'lock': ['pmset', 'osascript'],
-    'dns-lookup': ['dscacheutil'],
+    'dns-lookup': ['dscacheutil', 'sudo', 'killall'],
 }
 
 # OS X only, uses launchd
@@ -80,9 +80,7 @@ def configure(ctx):
     if ctx.env.MACOSX:
         ctx.env.LAUNCH_AGENTS_DIR = join(
             ctx.env.PREFIX, 'Library', 'LaunchAgents')
-        for dep in list(itertools.chain(*SCRIPT_DEPS.values())) + [
-                'sudo', 'killall' # DNS dependencies
-        ]:
+        for dep in set(itertools.chain.from_iterable(SCRIPT_DEPS.values())):
             ctx.find_program(dep)
     elif ctx.env.LINUX:
         ctx.find_program('gnome-open', var='GNOME_OPEN', mandatory=False)
