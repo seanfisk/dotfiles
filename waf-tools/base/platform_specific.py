@@ -127,6 +127,8 @@ def build(ctx):
             ctx.path.find_resource(['shell', 'macos.bash']))
         ctx.env.SHELL_ALIASES['dns-clear'] = ctx.shquote_cmd(
             ctx.env.SUDO + ctx.env.KILLALL + ['-HUP', 'mDNSResponder'])
+        # Simpler alias for dns-lookup
+        ctx.env.SHELL_ALIASES['dns'] = 'dns-lookup'
     elif ctx.env.LINUX:
         # Colorize, human readable file sizes, classify
         ctx.env.SHELL_ALIASES['ls'] = 'ls --color=always -hF'
