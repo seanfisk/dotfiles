@@ -22,6 +22,10 @@ Icon
 .Spotlight-V100
 .Trashes
 
-# rbenv-derivative files
-.ruby-version
+# pyenv version file
+#
+# Ignore python-version because this can be used to point to a
+# specific virtualenv, but don't ignore ruby-version because that
+# typically only contains the version of Ruby the project needs to
+# use.
 .python-version
