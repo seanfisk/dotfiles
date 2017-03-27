@@ -29,3 +29,7 @@ Icon
 # typically only contains the version of Ruby the project needs to
 # use.
 .python-version
+
+# The Silver Searcher
+# Typically used to prevent ag from searching generated files.
+.agignore
