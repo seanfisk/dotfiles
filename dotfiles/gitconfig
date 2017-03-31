@@ -14,7 +14,8 @@
 	cia = commit --all # commit all tracked
 	ciam = commit --all -m # commit all tracked with a message
 	cim = commit -m # commit with a message
-	clone = clone --no-hardlinks
+	# I don't think there's any harm in using 'git lfs clone' to clone non-LFS-enabled repos
+	clone = lfs clone --no-hardlinks
 	co = checkout
 	cob = checkout -b # create a new branch
 	pr = remote prune origin
