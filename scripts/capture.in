@@ -3,10 +3,11 @@
 
 # Python 3.5 compatible
 
-import argparse
-import subprocess
-import platform
 import os
+import sys
+import argparse
+import platform
+import subprocess
 
 def prompt_char():
     if platform.system() == 'Windows':
@@ -27,5 +28,5 @@ arg_parser.add_argument('command', help='command string to run')
 args = arg_parser.parse_args()
 
 print('{} {}'.format(prompt_char(), args.command))
-subprocess.run([args.shell], stderr=subprocess.STDOUT,
-               input=args.command + '\n', universal_newlines=True)
+sys.stdout.flush()
+subprocess.run([args.shell], input=args.command + '\n', universal_newlines=True)

@@ -38,5 +38,5 @@ spwd() {
 }
 # Capture a command and its output and send it to the clipboard
 ccapture() {
-	capture "$@" | ccopy
+	capture "$@" |& ccopy
 }
