@@ -17,7 +17,6 @@
 	# Although there's no harm in using 'git lfs clone' to clone non-LFS-enabled repos, aliasing
 	# 'clone' to 'lfs clone' prevents Hub's clone helpers from being called. Avoid the LFS aliasing
 	# for now.
-	clone = --no-hardlinks
 	co = checkout
 	cob = checkout -b # create a new branch
 	pr = remote prune origin
