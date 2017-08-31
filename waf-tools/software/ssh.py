@@ -13,11 +13,6 @@ def build(ctx):
     ctx(features='subst',
         source=in_node,
         target=out_node,
-        EOS_USERNAME='fiskse',
-        TEMP_DIR=ctx.env.TEMP_DIR,
-        TEMP_DIR_LEN=(
-            ' ' *
-            (len('@TEMP_DIR_LEN@') - len('@TEMP_DIR@') + len(ctx.env.TEMP_DIR))
-        ))
+        EOS_USERNAME='fiskse')
 
     ctx.install_dotfile(out_node)

@@ -86,9 +86,6 @@ def configure(ctx):
     elif ctx.env.LINUX:
         ctx.find_program('gnome-open', var='GNOME_OPEN', mandatory=False)
 
-    # Not sure this exactly fits in here, but it differs platform-to-platform.
-    ctx.env.TEMP_DIR = tempfile.gettempdir()
-
 def build(ctx):
     if ctx.env.MACOSX:
         # Human readable file sizes, classify, and color

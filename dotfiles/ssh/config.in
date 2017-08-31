@@ -29,11 +29,16 @@ Host *
 ControlMaster auto
 # Double-quote to handle possible spaces in the temporary directory path.
 #
-# @TEMP_DIR_LEN@               Host
-# @TEMP_DIR_LEN@                 |Port
-# @TEMP_DIR_LEN@                 |  | Username
-# @TEMP_DIR_LEN@                 V  V  V
-ControlPath "@TEMP_DIR@/ssh_mux_%h_%p_%r"
+# We originally used to query for the system's temporary directory, but on macOS
+# that can result in paths that are too long. That's because the max path length
+# for a Unix socket is typically 104 on macOS and 108 on GNU/Linux. Just use
+# /tmp here to get a very short name -- it should work on most platforms.
+#
+#                        Host
+#                          |Port
+#                          |  | Username
+#                          V  V  V
+ControlPath "/tmp/ssh_mux_%h_%p_%r"
 
 # Persist connections for 2 hours.
 ControlPersist 2h
