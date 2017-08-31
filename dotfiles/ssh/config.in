@@ -17,50 +17,6 @@ Host eos??.cis.gvsu.edu arch??.cis.gvsu.edu
 User @EOS_USERNAME@
 
 # --------------------------------------------------------------------------------
-# EOS with VNC
-Host eosvnc
-HostName @GOTO_EOS_HOST@
-User @EOS_USERNAME@
-# For VNC. See <http://www.cis.gvsu.edu/Facilities/EOS/#vnc>
-# This specifies a resolution of 800x600. We specify the smallest size because this really only affects the login screen -- the desktop environment allows you to set the resolution within preferences, and remembers it from last time.
-LocalForward 5900 @GOTO_EOS_HOST@:5902
-# Forwarding of ports does not seem to work well with connection sharing, so we disable it.
-ControlPath none
-
-# This doesn't really have to do with SSH, but when using VNC with Chicken on Mac OS X, disable ZRLE because EOS has encoding problems with it. Falling back to other encodings seems to work fine.
-
-# --------------------------------------------------------------------------------
-# DEN Okami
-Host okami
-User @EOS_USERNAME@
-Port 43022
-ProxyCommand ssh @GOTO_EOS_HOST@ -W %h:%p
-
-# --------------------------------------------------------------------------------
-# DEN Seawolf
-Host seawolf
-User @EOS_USERNAME@
-Port 44022
-ProxyCommand ssh @GOTO_EOS_HOST@ -W %h:%p
-
-# --------------------------------------------------------------------------------
-# DEN Susi
-Host susi
-HostName 148.61.31.215
-User git
-Port 45022
-ProxyCommand ssh @GOTO_EOS_HOST@ -W %h:%p
-
-# DEN EOS Account
-Host deneos
-HostName @GOTO_EOS_HOST@
-User den
-# For DEN website previews.
-LocalForward 4000 @GOTO_EOS_HOST@:4000
-# Forwarding of ports does not seem to work well with connection sharing, so we disable it.
-ControlPath none
-
-# --------------------------------------------------------------------------------
 # General configurations.
 Host *
 # Enable multiple connections for all hosts except the ones excluded above.
