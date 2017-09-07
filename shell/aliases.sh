@@ -20,6 +20,9 @@ alias lafg='la | fgrep'
 
 alias py=python
 alias ipy=ipython
+# This overrides the w command. However, I use that so little I think it's a
+# worth compromise.
+alias w=./waf
 
 # Shortcut functions
 
