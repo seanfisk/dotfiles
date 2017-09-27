@@ -22,6 +22,7 @@
 	pr = remote prune origin
 	st = status
 	mod = ls-files --exclude-standard --modified --others # list modified or untracked files
+	sup = !git submodule init && git submodule update
 [color]
 	ui = auto
 [color "branch"]
