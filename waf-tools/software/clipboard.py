@@ -21,34 +21,39 @@ def build(ctx):
     if not (ctx.env.COPY_COMMAND and ctx.env.PASTE_COMMAND):
         return
 
+    aliases = ctx.env.SHELL_ALIASES
+
     for alias in ['copy', 'paste']:
         # Don't name it just 'paste' because there is already a POSIX program
         # called 'paste'.
-        ctx.env.SHELL_ALIASES['c' + alias] = ctx.shquote_cmd(
+        aliases['c' + alias] = ctx.shquote_cmd(
             ctx.env[alias.upper() + '_COMMAND'])
+
+    # Copy current working directory to clipboard
+    # Use 'echo -n' to strip the trailing newline
+    aliases['ccwd'] = 'echo -n "$(pwd)" | ccopy'
 
     # aria2 might be available, wget is always available
     downloader = ctx.shquote_cmd(ctx.env.ARIA2C or ctx.env.WGET)
     # Download URL in clipboard
-    ctx.env.SHELL_ALIASES['dlc'] = downloader + ' "$(cpaste)"'
+    aliases['dlc'] = downloader + ' "$(cpaste)"'
     # Download contents to stdout
-    ctx.env.SHELL_ALIASES['dlo'] = (ctx.shquote_cmd(
+    aliases['dlo'] = (ctx.shquote_cmd(
         ctx.env.WGET + ['--no-verbose', '--output-document=-']))
     # Download URL in clipboard and send contents to stdout
-    ctx.env.SHELL_ALIASES['dlco'] = 'dlo "$(cpaste)"'
+    aliases['dlco'] = 'dlo "$(cpaste)"'
     # Download URL in clipboard and put contents in clipboard
-    ctx.env.SHELL_ALIASES['dlcc'] = 'dlo "$(cpaste)" | ccopy'
+    aliases['dlcc'] = 'dlo "$(cpaste)" | ccopy'
     # Download URL in clipboard and do a SHA-256 sum on it (useful for Chef).
     if ctx.env.SHA256SUM and ctx.env.CUT:
-        ctx.env.SHELL_ALIASES['dlsha'] = (
+        aliases['dlsha'] = (
             'dlo "$(cpaste)" | ' + ctx.shquote_cmd(ctx.env.SHA256SUM) +
             ' - | ' + ctx.shquote_cmd(ctx.env.CUT) + " -d' ' -f1 | ccopy")
 
     if ctx.env.YOUTUBE_DL:
-        ctx.env.SHELL_ALIASES['ytdlc'] = (
-            ctx.shquote_cmd(ctx.env.YOUTUBE_DL) + ' "$(cpaste)"')
+        aliases['ytdlc'] = ctx.shquote_cmd(ctx.env.YOUTUBE_DL) + ' "$(cpaste)"'
 
     # htmlink aliases
     for type_ in ['a', 'md']:
-        ctx.env.SHELL_ALIASES[type_ + 'link'] = (
+        aliases[type_ + 'link'] = (
             'htmlink -t {type} "$(cpaste)" | ccopy'.format(type=type_))
