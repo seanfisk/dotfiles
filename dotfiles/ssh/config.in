@@ -15,6 +15,10 @@ Host vr??-sfisk
 HostName %h.bluemedora.localnet
 User root
 
+Host javadocs
+HostName %h.bluemedora.localnet
+User root
+
 # --------------------------------------------------------------------------------
 # GVSU EOS
 # Match all eos01, eos11, arch08, etc.
