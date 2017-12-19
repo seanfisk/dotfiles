@@ -24,6 +24,7 @@
 	mod = ls-files --exclude-standard --modified --others # list modified or untracked files
 	sup = !git submodule init && git submodule update
 	tags = tag -n # Show tags with their messages
+	nuke = reset --hard HEAD
 [color]
 	ui = auto
 [color "branch"]
