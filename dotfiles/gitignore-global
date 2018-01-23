@@ -31,6 +31,9 @@ Icon
 # use.
 .python-version
 
+# jEnv is more of a personal tool than a standard
+.java-version
+
 # The Silver Searcher
 # Typically used to prevent ag from searching generated files.
 .agignore
