@@ -11,7 +11,7 @@ Host vro??-sfisk
 HostName %h.bluemedora.localnet
 User root
 
-Host vr??-sfisk
+Host vr*-sfisk
 HostName %h.bluemedora.localnet
 User root
 
