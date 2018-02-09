@@ -19,6 +19,10 @@ Host javadocs
 HostName %h.bluemedora.localnet
 User root
 
+Host atlas
+Hostname %h.bluemedora.localnet
+User medora
+
 # --------------------------------------------------------------------------------
 # GVSU EOS
 # Match all eos01, eos11, arch08, etc.
