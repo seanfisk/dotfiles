@@ -23,6 +23,12 @@ Host atlas
 Hostname %h.bluemedora.localnet
 User medora
 
+# Disable shared connections for the full hostname for Atlas as this causes
+# 'rake release' to hang. Note that this ONLY seems to affect 'rake release' --
+# running from the command line, even individual commands, seems unaffected.
+Host atlas.bluemedora.localnet
+ControlPath none
+
 # --------------------------------------------------------------------------------
 # GVSU EOS
 # Match all eos01, eos11, arch08, etc.
