@@ -91,6 +91,9 @@ def build(ctx):
         # Human readable file sizes, classify, and color
         ctx.env.SHELL_ALIASES['ls'] = 'ls -hFG'
 
+        # File size in bytes
+        ctx.env.SHELL_ALIASES['fsb'] = 'stat -f %z'
+
         # ssh-agent handling code is not needed in Mac OS X because it is
         # handled by the operating system. However, it is useful to have an
         # alias to restart it in case it gets killed.
@@ -129,6 +132,10 @@ def build(ctx):
     elif ctx.env.LINUX:
         # Colorize, human readable file sizes, classify
         ctx.env.SHELL_ALIASES['ls'] = 'ls --color=always -hF'
+
+        # File size in bytes
+        ctx.env.SHELL_ALIASES['fsb'] = 'stat -c %s'
+
         if ctx.env.GNOME_OPEN:
             ctx.env.SHELL_ALIASES['open'] = ctx.shquote_cmd(ctx.env.GNOME_OPEN)
         ctx.add_shell_rc_node(
