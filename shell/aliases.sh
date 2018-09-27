@@ -10,14 +10,6 @@ alias l='ls -l' # list
 alias ll='ls -l' # list
 alias la='ls -al' # show hidden, list
 
-alias lg='ls | grep'
-alias leg='ls | egrep'
-alias lfg='ls | fgrep'
-
-alias lag='la | grep'
-alias laeg='la | egrep'
-alias lafg='la | fgrep'
-
 alias py=python
 alias ipy=ipython
 # This overrides the w command. However, I use that so little I think it's a
