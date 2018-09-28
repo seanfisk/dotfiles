@@ -6,10 +6,6 @@ alias less='less -R'
 alias godmode='sudo -i'
 alias mkdate='date +%Y-%m-%d'
 
-alias l='ls -l' # list
-alias ll='ls -l' # list
-alias la='ls -al' # show hidden, list
-
 alias py=python
 alias ipy=ipython
 # This overrides the w command. However, I use that so little I think it's a

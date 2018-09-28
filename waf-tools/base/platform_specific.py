@@ -88,9 +88,6 @@ def configure(ctx):
 
 def build(ctx):
     if ctx.env.MACOSX:
-        # Human readable file sizes, classify, and color
-        ctx.env.SHELL_ALIASES['ls'] = 'ls -hFG'
-
         # File size in bytes
         ctx.env.SHELL_ALIASES['fsb'] = 'stat -f %z'
 
@@ -130,9 +127,6 @@ def build(ctx):
         # Simpler alias for dns-lookup
         ctx.env.SHELL_ALIASES['dns'] = 'dns-lookup'
     elif ctx.env.LINUX:
-        # Colorize, human readable file sizes, classify
-        ctx.env.SHELL_ALIASES['ls'] = 'ls --color=always -hF'
-
         # File size in bytes
         ctx.env.SHELL_ALIASES['fsb'] = 'stat -c %s'
 
