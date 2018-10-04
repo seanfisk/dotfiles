@@ -17,7 +17,8 @@ SYSTEM_OS_MAPPING = {
 SCRIPT_DEPS = {
     'findapp': ['mdfind'],
     'lock': ['pmset', 'osascript'],
-    'dns-lookup': ['dscacheutil', 'sudo', 'killall'],
+    'dns': ['dscacheutil'],
+    'rdns': ['dscacheutil'],
     'unattend': ['pmset', 'caffeinate'],
 }
 
@@ -124,8 +125,6 @@ def build(ctx):
             ctx.path.find_resource(['shell', 'macos.bash']))
         ctx.env.SHELL_ALIASES['dns-clear'] = ctx.shquote_cmd(
             ctx.env.SUDO + ctx.env.KILLALL + ['-HUP', 'mDNSResponder'])
-        # Simpler alias for dns-lookup
-        ctx.env.SHELL_ALIASES['dns'] = 'dns-lookup'
     elif ctx.env.LINUX:
         # File size in bytes
         ctx.env.SHELL_ALIASES['fsb'] = 'stat -c %s'

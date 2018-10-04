@@ -9,9 +9,9 @@ import sys
 import argparse
 import subprocess
 
-arg_parser = argparse.ArgumentParser(
-    description="Resolve a DNS name on macOS using the native facilities.")
-arg_parser.add_argument('dns_name', help='DNS name to resolve')
+arg_parser = argparse.ArgumentParser(description=(
+    "Reverse-resolve an IP address on macOS using the native DNS facilities."))
+arg_parser.add_argument('ip_address', help='IP address to resolve')
 args = arg_parser.parse_args()
 
 # dscacheutil will print no output and exit with a 0 code if it doesn't find
@@ -22,12 +22,13 @@ output = subprocess.check_output(
     [
         @DSCACHEUTIL@,
         '-q', 'host',
-        '-a', 'name', args.dns_name,
+        '-a', 'ip_address', args.ip_address,
     ],
     universal_newlines=True
 )
 
 if len(output) == 0:
-    sys.exit('Could not resolve DNS name: {}'.format(args.dns_name))
+    sys.exit(
+        'Could not reverse-resolve IP address: {}'.format(args.ip_address))
 else:
     print(output, end='')
