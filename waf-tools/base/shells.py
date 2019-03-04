@@ -37,7 +37,7 @@ def find_bash(self):
     # also correct.
     exe_path = self.find_program('bash', var='_BASH')
 
-    required_major_version = '4'
+    required_major_version = '5'
     major_version = self.cmd_and_log(
         exe_path + ['-c', 'echo -n ${BASH_VERSINFO[0]}'])
     full_version = self.cmd_and_log(
