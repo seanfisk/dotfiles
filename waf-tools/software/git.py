@@ -30,6 +30,8 @@ def build(ctx):
     ctx.env.SHELL_ALIASES['gt'] = ctx.shquote_cmd(git + ['status'])
     ctx.env.SHELL_ALIASES['gobuddygo'] = ctx.shquote_cmd(git + ['push'])
     ctx.env.SHELL_ALIASES['cometome'] = ctx.shquote_cmd(git + ['pull'])
+    ctx.env.SHELL_ALIASES['gcm'] = ctx.shquote_cmd(
+        git + ['checkout', 'master'])
     # Update dotfiles alias
     ctx.env.SHELL_ALIASES['ud'] = ' && '.join([
         ctx.shquote_cmd(['cd', ctx.srcnode.abspath()]),
