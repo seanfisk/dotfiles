@@ -23,6 +23,10 @@ Host atlas
 Hostname %h.bluemedora.localnet
 User medora
 
+Host jenkins-mac
+Hostname jenkins-slave-imac-1.bluemedora.localnet
+User jenkins
+
 # Disable shared connections for the full hostname for Atlas as this causes
 # 'rake release' to hang. Note that this ONLY seems to affect 'rake release' --
 # running from the command line, even individual commands, seems unaffected.
