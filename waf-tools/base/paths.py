@@ -56,6 +56,9 @@ def configure(ctx):
     # Add tmuxifier.
     _add_path_hierarchy(ctx, join(ctx.env.PREFIX, '.tmuxifier'))
 
+    # Add Cargo for Rust.
+    _add_to_path_var(ctx, 'PATH', join(ctx.env.PREFIX, '.cargo', 'bin'))
+
     # Find the default Python, used for installing and running various
     # utilities.
     python = ctx.find_program(
