@@ -32,3 +32,7 @@ spwd() {
 ccapture() {
 	capture "$@" |& ccopy
 }
+
+# VMware
+alias eu=exuno
+alias vr=vrops
