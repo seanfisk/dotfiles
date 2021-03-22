@@ -60,5 +60,5 @@ docutils==0.12
 pyramid-chameleon==0.3
 
 # htmlink
-lxml==3.5.0
+lxml==4.6.3
 # requests # already specified by devpi section above; can't specify twice otherwise errors occur
