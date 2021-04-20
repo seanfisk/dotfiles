@@ -41,7 +41,7 @@ devpi-common==2.0.8
 execnet==1.4.1
 itsdangerous==0.24
 pluggy==0.3.1
-py==1.4.31
+py==1.10.0
 pyramid==1.6.1
 repoze.lru==0.6
 requests==2.9.1
