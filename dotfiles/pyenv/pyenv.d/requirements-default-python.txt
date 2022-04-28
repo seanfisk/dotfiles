@@ -22,7 +22,7 @@
 #
 #     pip install --user pygit2==0.24.1 cffi==1.5.2 pycparser==2.14
 #
-psutil==4.0.0 # Also for sophos-reboot script
+psutil==5.6.6 # Also for sophos-reboot script
 # Both Bazaar and Mercurial don't support Python 3. When using Python
 # 2 as the default Python, these can be installed.
 #bzr==2.6.0
