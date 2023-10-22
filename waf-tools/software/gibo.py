@@ -15,7 +15,7 @@ def build(ctx):
         ctx.env.BREW + ['--prefix', 'gibo'],
         quiet=waflib.Context.STDOUT).rstrip()
     ctx.add_shell_rc_node(ctx.root.find_node([
-        gibo_brew_prefix, 'etc', 'bash_completion.d', 'gibo-completion.bash']),
+        gibo_brew_prefix, 'etc', 'bash_completion.d', 'gibo']),
                           'bash')
     ctx.add_shell_rc_node(ctx.root.find_node([
         gibo_brew_prefix, 'share', 'zsh', 'site-functions', '_gibo']), 'zsh')
